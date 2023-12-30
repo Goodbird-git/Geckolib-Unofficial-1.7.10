@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 import com.eliotlash.molang.MolangParser;
+import software.bernie.geckolib3.molang.MolangRegistrar;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import com.eliotlash.mclib.math.Variable;
 
@@ -63,6 +64,6 @@ public class MolangMultiStatement extends MolangExpression {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException{
         expressions = (List<MolangExpression>) in.readObject();
         locals = (Map<String, Variable>) in.readObject();
-        context = GeckoLibCache.getInstance().parser;
+        context = MolangRegistrar.getParser();
     }
 }

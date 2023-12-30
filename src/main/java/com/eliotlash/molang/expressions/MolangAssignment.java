@@ -7,6 +7,7 @@ package com.eliotlash.molang.expressions;
 
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangParser;
+import software.bernie.geckolib3.molang.MolangRegistrar;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import com.eliotlash.mclib.math.Variable;
 
@@ -42,6 +43,6 @@ public class MolangAssignment extends MolangExpression {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException{
         variable= (Variable) in.readObject();
         expression = (MolangExpression) in.readObject();
-        context = GeckoLibCache.getInstance().parser;
+        context = MolangRegistrar.getParser();
     }
 }

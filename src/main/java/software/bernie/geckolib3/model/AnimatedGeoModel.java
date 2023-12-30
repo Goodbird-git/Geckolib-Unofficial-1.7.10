@@ -28,6 +28,7 @@ import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.model.provider.IAnimatableModelProvider;
+import software.bernie.geckolib3.molang.MolangRegistrar;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.geckolib3.util.MolangUtils;
 
@@ -75,7 +76,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
         predicate.animationTick = seekTime;
         animationProcessor.preAnimationSetup(predicate.getAnimatable(), seekTime);
         if (!this.animationProcessor.getModelRendererList().isEmpty()) {
-            animationProcessor.tickAnimation(entity, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser,
+            animationProcessor.tickAnimation(entity, uniqueID, seekTime, predicate, MolangRegistrar.getParser(),
                     shouldCrashOnMissing);
         }
     }
@@ -116,7 +117,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
     @Override
     public void setMolangQueries(IAnimatable animatable, double currentTick) {
-        MolangParser parser = GeckoLibCache.getInstance().parser;
+        MolangParser parser = MolangRegistrar.getParser();
         Minecraft minecraftInstance = Minecraft.getMinecraft();
         float partialTick = minecraftInstance.timer.renderPartialTicks;
 

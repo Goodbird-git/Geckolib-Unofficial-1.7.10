@@ -4,6 +4,14 @@ import com.eliotlash.mclib.math.GeckoVariable;
 import com.eliotlash.molang.MolangParser;
 
 public class MolangRegistrar {
+    private static MolangParser instance;
+    public static MolangParser getParser(){
+        if(instance==null){
+            instance = new MolangParser();
+            MolangRegistrar.registerVars(instance);
+        }
+        return instance;
+    }
 	public static void registerVars(MolangParser parser) {
 		parser.register(new GeckoVariable("query.anim_time", 0));
 		parser.register(new GeckoVariable("query.actor_count", 0));

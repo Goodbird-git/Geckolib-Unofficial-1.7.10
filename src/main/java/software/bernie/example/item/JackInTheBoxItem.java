@@ -1,7 +1,5 @@
 package software.bernie.example.item;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -46,14 +44,15 @@ public class JackInTheBoxItem extends Item implements IAnimatable {
 		data.addAnimationController(controller);
 	}
 
+
 	private <ENTITY extends IAnimatable> void soundListener(SoundKeyframeEvent<ENTITY> event) {
 		// The animation for the jackinthebox has a sound keyframe at time 0:00.
 		// As soon as that keyframe gets hit this method fires and it starts playing the
 		// sound to the current player.
 		// The music is synced with the animation so the box opens as soon as the music
 		// plays the box opening sound
-		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
-		player.playSound("jack_music", 1, 1);
+		//EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+		//player.playSound("jack_music", 1, 1);
 	}
 
 	@Override

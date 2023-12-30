@@ -21,13 +21,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import net.minecraft.client.util.JsonException;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
 import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
+import software.bernie.geckolib3.file.GeckoJsonException;
 import software.bernie.geckolib3.util.AnimationUtils;
 
 /**
@@ -168,9 +168,9 @@ public class JsonAnimationUtils {
 	}
 
 	private static JsonElement getObjectByKey(Set<Map.Entry<String, JsonElement>> json, String key)
-			throws JsonException {
+			throws GeckoJsonException {
 		return json.stream().filter(x -> x.getKey().equals(key)).findFirst()
-				.orElseThrow(() -> new JsonException("Could not find key: " + key)).getValue();
+				.orElseThrow(() -> new GeckoJsonException("Could not find key: " + key)).getValue();
 	}
 
 	/**
@@ -179,10 +179,10 @@ public class JsonAnimationUtils {
 	 * @param animationFile the animation file
 	 * @param animationName the animation name
 	 * @return the animation
-	 * @throws JsonException the json exception
+	 * @throws GeckoJsonException the json exception
 	 */
 	public static Map.Entry<String, JsonElement> getAnimation(JsonObject animationFile, String animationName)
-			throws JsonException {
+			throws GeckoJsonException {
 		return new AbstractMap.SimpleEntry(animationName, getObjectByKey(getAnimations(animationFile), animationName));
 	}
 

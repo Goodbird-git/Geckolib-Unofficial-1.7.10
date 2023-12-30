@@ -15,7 +15,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.util.JsonException;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -43,7 +42,7 @@ public class AnimationFileLoader {
 				animation = JsonAnimationUtils.deserializeJsonToAnimation(
 						JsonAnimationUtils.getAnimation(jsonRepresentation, animationName), parser);
 				animationFile.putAnimation(animationName, animation);
-			} catch (JsonException e) {
+			} catch (GeckoJsonException e) {
 				GeckoLib.LOGGER.error("Could not load animation: {}", animationName, e);
 				throw new RuntimeException(e);
 			}
@@ -62,7 +61,7 @@ public class AnimationFileLoader {
 				animation = JsonAnimationUtils.deserializeJsonToAnimation(
 						JsonAnimationUtils.getAnimation(jsonRepresentation, animationName), parser);
 				animationFile.putAnimation(animationName, animation);
-			} catch (JsonException e) {
+			} catch (GeckoJsonException e) {
 				GeckoLib.LOGGER.error("Could not load animation: {}", animationName, e);
 				throw new RuntimeException(e);
 			}

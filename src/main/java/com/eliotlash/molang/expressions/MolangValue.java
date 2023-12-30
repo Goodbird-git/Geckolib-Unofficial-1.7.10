@@ -9,6 +9,7 @@ import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangParser;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import software.bernie.geckolib3.molang.MolangRegistrar;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import com.eliotlash.mclib.math.Constant;
 
@@ -50,6 +51,6 @@ public class MolangValue extends MolangExpression {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException{
         value = (IValue) in.readObject();
         returns = in.readBoolean();
-        context = GeckoLibCache.getInstance().parser;
+        context = MolangRegistrar.getParser();
     }
 }

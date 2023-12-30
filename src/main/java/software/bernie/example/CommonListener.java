@@ -9,7 +9,6 @@ import software.bernie.example.block.BotariumBlock;
 import software.bernie.example.block.DiagonalBlock;
 import software.bernie.example.block.FertilizerBlock;
 import software.bernie.example.block.tile.BotariumTileEntity;
-import software.bernie.example.block.tile.DiagonalTileEntity;
 import software.bernie.example.block.tile.FertilizerTileEntity;
 import software.bernie.example.entity.BikeEntity;
 import software.bernie.example.entity.GeoExampleEntity;

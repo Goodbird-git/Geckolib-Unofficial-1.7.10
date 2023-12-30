@@ -1,5 +1,6 @@
 package com.eliotlash.mclib.math;
 
+import software.bernie.geckolib3.molang.MolangRegistrar;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
 public class GeckoVariable extends Variable{
@@ -8,8 +9,8 @@ public class GeckoVariable extends Variable{
     }
 
     public double get() {
-        if(this!= GeckoLibCache.getInstance().parser.getVariable(getName())){
-            return GeckoLibCache.getInstance().parser.getVariable(getName()).get();
+        if(this!= MolangRegistrar.getParser().getVariable(getName())){
+            return MolangRegistrar.getParser().getVariable(getName()).get();
         }
         return super.get();
     }

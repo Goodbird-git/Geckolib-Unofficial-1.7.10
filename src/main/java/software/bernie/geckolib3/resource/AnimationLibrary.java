@@ -5,6 +5,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.file.AnimationFile;
 import software.bernie.geckolib3.file.AnimationFileLoader;
+import software.bernie.geckolib3.molang.MolangRegistrar;
 import software.bernie.geckolib3.network.NetworkHandler;
 import software.bernie.geckolib3.network.PacketRemoveAnimation;
 import software.bernie.geckolib3.network.PacketSendAnimation;
@@ -95,7 +96,7 @@ public class AnimationLibrary  {
     public AnimationFile loadModel(File file) {
         ResourceLocation location = new ResourceLocation("custom", getNameFromFile(file));
         try {
-            return AnimationFileLoader.getInstance().loadAllAnimations(GeckoLibCache.getInstance().parser, file, location);
+            return AnimationFileLoader.getInstance().loadAllAnimations(MolangRegistrar.getParser(), file, location);
         } catch (Exception e) {
             return null;
         }

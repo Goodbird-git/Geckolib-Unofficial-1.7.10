@@ -29,7 +29,6 @@ import software.bernie.geckolib3.molang.MolangRegistrar;
 public class GeckoLibCache implements IResourceManagerReloadListener {
 	private static GeckoLibCache INSTANCE;
 
-	public final MolangParser parser = new MolangParser();
 
 	public HashMap<ResourceLocation, AnimationFile> getAnimations() {
 		if (!GeckoLib.hasInitialized) {
@@ -50,7 +49,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 
 
 	protected GeckoLibCache() {
-		MolangRegistrar.registerVars(parser);
+
 	}
 
 	public static GeckoLibCache getInstance() {
@@ -75,7 +74,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 			for (ResourceLocation location : this.getLocations(pack, "animations",
 					fileName -> fileName.endsWith(".json"))) {
 				try {
-					tempAnimations.put(location, AnimationFileLoader.getInstance().loadAllAnimations(parser, location, resourceManager));
+					tempAnimations.put(location, AnimationFileLoader.getInstance().loadAllAnimations(MolangRegistrar.getParser(), location, resourceManager));
 				} catch (Exception e) {
 					e.printStackTrace();
 					GeckoLib.LOGGER.error("Error loading animation file \"" + location + "\"!", e);

@@ -9,6 +9,7 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.molang.MolangRegistrar;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -48,7 +49,7 @@ public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimation
 		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
 		if (!this.getAnimationProcessor().getModelRendererList().isEmpty()) {
 			getAnimationProcessor().tickAnimation(entity, uniqueID, seekTime, predicate,
-					GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
+                MolangRegistrar.getParser(), shouldCrashOnMissing);
 		}
 
 		if (!Minecraft.getMinecraft().isGamePaused() || manager.shouldPlayWhilePaused) {
