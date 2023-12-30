@@ -99,7 +99,7 @@ public class AnimationController<T extends IAnimatable> {
 	public static void addModelFetcher(ModelFetcher<?> fetcher) {
 		modelFetchers.add(fetcher);
 	}
-	
+
 	public static void removeModelFetcher(ModelFetcher<?> fetcher) {
 		Objects.requireNonNull(fetcher);
 		modelFetchers.remove(fetcher);
@@ -168,8 +168,8 @@ public class AnimationController<T extends IAnimatable> {
 	private final HashMap<String, BoneAnimationQueue> boneAnimationQueues = new HashMap<>();
 	public double tickOffset;
 	protected Queue<Animation> animationQueue = new LinkedList<>();
-	protected Animation currentAnimation;
-	protected AnimationBuilder currentAnimationBuilder = new AnimationBuilder();
+	public Animation currentAnimation;
+	public AnimationBuilder currentAnimationBuilder = new AnimationBuilder();
 	protected boolean shouldResetTick = false;
 	private final HashMap<String, BoneSnapshot> boneSnapshots = new HashMap<>();
 	private boolean justStopped = false;
