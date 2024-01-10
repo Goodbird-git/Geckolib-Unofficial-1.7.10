@@ -5,6 +5,7 @@
 
 package software.bernie.geckolib3.util.json;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -117,16 +118,20 @@ public class JsonKeyFrameUtils {
 		}
 	}
 
-	private static boolean hasEasingType(JsonElement element) {
-		return element.getAsJsonObject().has("easing");
-	}
+    private static boolean hasEasingType(JsonElement element) {
+        return element.getAsJsonObject().has("easing") || element.getAsJsonObject().has("lerp_mode");
+    }
 
 	private static boolean hasEasingArgs(JsonElement element) {
 		return element.getAsJsonObject().has("easingArgs");
 	}
 
 	private static EasingType getEasingType(JsonElement element) {
-		final String easingString = element.getAsJsonObject().get("easing").getAsString();
+        final String easingString;
+        if(element.getAsJsonObject().has("easing"))
+            easingString = element.getAsJsonObject().get("easing").getAsString();
+        else
+            easingString = element.getAsJsonObject().get("lerp_mode").getAsString();
 		try {
 			final String uppercaseEasingString = Character.toUpperCase(easingString.charAt(0))
 					+ easingString.substring(1);
@@ -157,7 +162,33 @@ public class JsonKeyFrameUtils {
 	public static VectorKeyFrameList<KeyFrame<IValue>> convertJsonToKeyFrames(
 			List<Map.Entry<String, JsonElement>> element, MolangParser parser)
 			throws NumberFormatException, MolangException {
-		return convertJson(element, false, parser);
+        List<Map.Entry<String, JsonElement>> list = new ArrayList<>();
+        for (Map.Entry<String, JsonElement> entry : element) {
+            if (entry.getValue() instanceof JsonObject && !((JsonObject)entry.getValue()).has("vector")) {
+                JsonObject entryObj = ((JsonObject)entry.getValue());
+                String timestamp = entry.getKey();
+                double time = NumberUtils.isCreatable(timestamp) ? Double.parseDouble(timestamp) : 0;
+
+                if (entryObj.has("pre")) {
+                    JsonElement postElement = entryObj.get("pre");
+                    JsonArray array = postElement.isJsonArray() ? postElement.getAsJsonArray() : postElement.getAsJsonObject().getAsJsonArray("vector");
+
+                    list.add(new AbstractMap.SimpleEntry<>(timestamp, array));
+                }
+
+                if (entryObj.has("post")) {
+                    JsonElement postElement = entryObj.get("post");
+                    JsonArray array = postElement.isJsonArray() ? postElement.getAsJsonArray() : postElement.getAsJsonObject().getAsJsonArray("vector");
+
+                    list.add(new AbstractMap.SimpleEntry<>(String.valueOf(time + 0.0000001), array));
+                }
+
+                continue;
+            }
+
+            list.add(new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()));
+        }
+        return convertJson(list, false, parser);
 	}
 
 	/**
@@ -171,7 +202,33 @@ public class JsonKeyFrameUtils {
 	public static VectorKeyFrameList<KeyFrame<IValue>> convertJsonToRotationKeyFrames(
 			List<Map.Entry<String, JsonElement>> element, MolangParser parser)
 			throws NumberFormatException, MolangException {
-		VectorKeyFrameList<KeyFrame<IValue>> frameList = convertJson(element, true, parser);
+        List<Map.Entry<String, JsonElement>> list = new ArrayList<>();
+        for (Map.Entry<String, JsonElement> entry : element) {
+            if (entry.getValue() instanceof JsonObject && !((JsonObject)entry.getValue()).has("vector")) {
+                JsonObject entryObj = ((JsonObject)entry.getValue());
+                String timestamp = entry.getKey();
+                double time = NumberUtils.isCreatable(timestamp) ? Double.parseDouble(timestamp) : 0;
+
+                if (entryObj.has("pre")) {
+                    JsonElement postElement = entryObj.get("pre");
+                    JsonArray array = postElement.isJsonArray() ? postElement.getAsJsonArray() : postElement.getAsJsonObject().getAsJsonArray("vector");
+
+                    list.add(new AbstractMap.SimpleEntry<>(timestamp, array));
+                }
+
+                if (entryObj.has("post")) {
+                    JsonElement postElement = entryObj.get("post");
+                    JsonArray array = postElement.isJsonArray() ? postElement.getAsJsonArray() : postElement.getAsJsonObject().getAsJsonArray("vector");
+
+                    list.add(new AbstractMap.SimpleEntry<>(String.valueOf(time + 0.0000001), array));
+                }
+
+                continue;
+            }
+
+            list.add(new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()));
+        }
+        VectorKeyFrameList<KeyFrame<IValue>>frameList = convertJson(list, true, parser);
 		return new VectorKeyFrameList(frameList.xKeyFrames, frameList.yKeyFrames, frameList.zKeyFrames);
 	}
 

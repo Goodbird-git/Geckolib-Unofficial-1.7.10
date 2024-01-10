@@ -115,6 +115,8 @@ public class EasingManager {
 			return out(bounce(args.arg0));
 		case EaseInOutBounce:
 			return inOut(bounce(args.arg0));
+        case Catmullrom:
+            return in(EasingManager::catmullRom);
 		}
 	}
 
@@ -177,7 +179,15 @@ public class EasingManager {
 	static double linear(double t) {
 		return t;
 	}
-
+    /**
+     * Performs a Catmull-Rom interpolation, used to get smooth interpolated motion between keyframes.<br>
+     * <a href="https://pub.dev/documentation/latlong2/latest/spline/CatmullRom-class.html">CatmullRom#position</a>
+     */
+    static double catmullRom(double n) {
+        return (0.5f * (2.0f * (n + 1) + ((n + 2) - n) * 1
+            + (2.0f * n - 5.0f * (n + 1) + 4.0f * (n + 2) - (n + 3)) * 1
+            + (3.0f * (n + 1) - n - 3.0f * (n + 2) + (n + 3)) * 1));
+    }
 	/**
 	 * A simple inertial interaction, similar to an object slowly accelerating to
 	 * speed.
@@ -303,19 +313,19 @@ public class EasingManager {
 	// The MIT license notice below applies to the function findIntervalBorderIndex
 	/*
 	 * The MIT License (MIT)
-	 * 
+	 *
 	 * Copyright (c) 2015 Boris Chumichev
-	 * 
+	 *
 	 * Permission is hereby granted, free of charge, to any person obtaining a copy
 	 * of this software and associated documentation files (the "Software"), to deal
 	 * in the Software without restriction, including without limitation the rights
 	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 	 * copies of the Software, and to permit persons to whom the Software is
 	 * furnished to do so, subject to the following conditions:
-	 * 
+	 *
 	 * The above copyright notice and this permission notice shall be included in
 	 * all copies or substantial portions of the Software.
-	 * 
+	 *
 	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -323,18 +333,18 @@ public class EasingManager {
 	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	 * SOFTWARE.
-	 * 
+	 *
 	 * /**
 	 *
 	 * Utilizes bisection method to search an interval to which point belongs to,
 	 * then returns an index of left or right border of the interval
 	 *
 	 * @param {Number} point
-	 * 
+	 *
 	 * @param {Array} intervals
-	 * 
+	 *
 	 * @param {Boolean} useRightBorder
-	 * 
+	 *
 	 * @returns {Number}
 	 */
 	static int findIntervalBorderIndex(double point, double[] intervals, boolean useRightBorder) {

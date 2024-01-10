@@ -182,7 +182,8 @@ public class AnimationController<T extends IAnimatable> {
     protected boolean needsAnimationReload = false;
     public double animationSpeed = 1D;
     private final Set<EventKeyFrame<?>> executedKeyFrames = new HashSet<>();
-    public final List<BedrockEmitter> emitters = new ArrayList<BedrockEmitter>();
+    public List emitters = new ArrayList<BedrockEmitter>();
+    public int particleUpdatesPerSecond = 20;
     public long lastTick;
 
     /**
@@ -401,8 +402,8 @@ public class AnimationController<T extends IAnimatable> {
         tick = adjustTick(tick);
 
         if(Minecraft.getMinecraft().theWorld!=null){
-            long time = Minecraft.getMinecraft().theWorld.getTotalWorldTime();
-            if(time>lastTick){
+            long time = System.currentTimeMillis();
+            if(time>(lastTick+1000/particleUpdatesPerSecond)){
                 lastTick=time;
                 updateEmitters();
             }
@@ -695,7 +696,7 @@ public class AnimationController<T extends IAnimatable> {
 
     public void removeAllStopped() {
         for (int i = 0; i < emitters.size(); i++) {
-            if (!emitters.get(i).playing && emitters.get(i).particles.size()==0) {
+            if (!((BedrockEmitter)emitters.get(i)).playing && ((BedrockEmitter)emitters.get(i)).particles.size()==0) {
                 emitters.remove(i);
                 i--;
             }
@@ -704,17 +705,17 @@ public class AnimationController<T extends IAnimatable> {
 
     public void setAllStopping() {
         for (int i = 0; i < emitters.size(); i++) {
-            emitters.get(i).setLastLoop();
+            ((BedrockEmitter)emitters.get(i)).setLastLoop();
         }
     }
 
     public void updateEmitters() {
         for (int i = 0; i < emitters.size(); i++) {
-            BedrockEmitter emitter = emitters.get(i);
+            BedrockEmitter emitter = (BedrockEmitter) emitters.get(i);
             String name = emitter.scheme.name;
             String loc = emitter.locator;
             if(!emitter.scheme.toReload){
-                emitters.get(i).update();
+                ((BedrockEmitter)emitters.get(i)).update();
             }else{
                 emitter.stop();
                 emitter = new BedrockEmitter();
@@ -728,7 +729,8 @@ public class AnimationController<T extends IAnimatable> {
     }
 
     public boolean hasParticleOnLoc(String effect, String locator) {
-        for (BedrockEmitter emitter : emitters) {
+        for (Object obj : emitters) {
+            BedrockEmitter emitter = (BedrockEmitter) obj;
             if (emitter.scheme != null && emitter.scheme.name != null && emitter.scheme.name.equals(effect) &&
                     emitter.locator != null && emitter.locator.equals(locator) && emitter.isLooping()) {
                 return true;

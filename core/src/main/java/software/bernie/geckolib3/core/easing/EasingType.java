@@ -5,7 +5,7 @@ public enum EasingType {
 	EaseInCubic, EaseOutCubic, EaseInOutCubic, EaseInQuart, EaseOutQuart, EaseInOutQuart, EaseInQuint, EaseOutQuint,
 	EaseInOutQuint, EaseInExpo, EaseOutExpo, EaseInOutExpo, EaseInCirc, EaseOutCirc, EaseInOutCirc, EaseInBack,
 	EaseOutBack, EaseInOutBack, EaseInElastic, EaseOutElastic, EaseInOutElastic, EaseInBounce, EaseOutBounce,
-	EaseInOutBounce;
+	EaseInOutBounce, Catmullrom;
 
 	public static EasingType getEasingTypeFromString(String search) {
 		for (EasingType each : EasingType.values()) {

@@ -93,8 +93,9 @@ public class AnimationController<T extends IAnimatable> {
 	 * keyframe is encountered (i.e. every frame)
 	 */
 	private ICustomInstructionListener<T> customInstructionListener;
-
+    public List emitters;
 	public boolean isJustStarting = false;
+    public int particleUpdatesPerSecond = 20;
 
 	public static void addModelFetcher(ModelFetcher<?> fetcher) {
 		modelFetchers.add(fetcher);

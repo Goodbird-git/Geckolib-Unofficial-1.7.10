@@ -15,6 +15,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -79,6 +80,7 @@ public abstract class GeoArmorRenderer<T extends ItemArmor & IAnimatable> extend
 	public void render(float partialTicks) {
 		GlStateManager.translate(0.0D, 1.501F, 0.0D);
 		GlStateManager.scale(-1.0F, -1.0F, 1.0F);
+        GlStateManager.color(1,1,1,1);
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
 		AnimationEvent itemEvent = new AnimationEvent(this.currentArmorItem, 0, 0, 0, false,

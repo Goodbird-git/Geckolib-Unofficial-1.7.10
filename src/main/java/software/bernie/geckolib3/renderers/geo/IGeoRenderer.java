@@ -35,6 +35,7 @@ public interface IGeoRenderer<T> {
         GlStateManager.enableRescaleNormal();
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.enableBlend();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
         renderEarly(model, animatable, partialTicks, red, green, blue, alpha);
 
         renderLate(model, animatable, partialTicks, red, green, blue, alpha);
