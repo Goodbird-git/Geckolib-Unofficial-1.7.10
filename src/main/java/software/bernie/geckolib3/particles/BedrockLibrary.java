@@ -36,12 +36,6 @@ public class BedrockLibrary {
         this.folder.mkdirs();
         updateController = new ParticleDirWatcher(folder);
         updateController.start();
-        /* Load factory (default) presets */
-        this.storeFactory(new ResourceLocation("geckolib3", "default_fire"));
-        this.storeFactory(new ResourceLocation("geckolib3","default_magic"));
-        this.storeFactory(new ResourceLocation("geckolib3","default_rain"));
-        this.storeFactory(new ResourceLocation("geckolib3","default_snow"));
-        this.storeFactory(new ResourceLocation("geckolib3","default_single"));
     }
 
     public File file(String name) {
@@ -134,7 +128,7 @@ public class BedrockLibrary {
      */
     public BedrockScheme loadFactory(ResourceLocation resLoc) {
         try {
-            return BedrockScheme.parse(IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("assets/"+resLoc.getResourceDomain()+"/" + resLoc.getResourcePath() + ".json"), StandardCharsets.UTF_8)).factory(true);
+            return BedrockScheme.parse(IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("assets/"+resLoc.getResourceDomain()+"/" + resLoc.getResourcePath()), StandardCharsets.UTF_8)).factory(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
