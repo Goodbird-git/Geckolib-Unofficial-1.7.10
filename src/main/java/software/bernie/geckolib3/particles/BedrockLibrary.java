@@ -138,7 +138,8 @@ public class BedrockLibrary {
 
     public String getName(ResourceLocation resLoc){
         String[] parts = resLoc.getResourcePath().split("/");
-        return parts[parts.length-1];
+        String name = parts[parts.length-1];
+        return name.substring(0, name.indexOf(".json"));
     }
 
     public void save(String filename, BedrockScheme scheme) {
