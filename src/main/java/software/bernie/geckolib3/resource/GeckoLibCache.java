@@ -93,7 +93,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 
             for (ResourceLocation location : this.getLocations(pack, "particles", fileName -> fileName.endsWith(".json"))) {
                 try {
-                    BedrockLibrary.instance.loadFactory(location);
+                    BedrockLibrary.instance.storeFactory(location);
                 } catch (Exception e) {
                     e.printStackTrace();
                     GeckoLib.LOGGER.error("Error loading model file \"" + location + "\"!", e);

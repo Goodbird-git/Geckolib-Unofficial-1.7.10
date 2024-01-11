@@ -114,7 +114,7 @@ public class BedrockLibrary {
         return null;
     }
 
-    private void storeFactory(ResourceLocation name) {
+    public void storeFactory(ResourceLocation name) {
         BedrockScheme scheme = this.loadFactory(name);
 
         if (scheme != null) {
