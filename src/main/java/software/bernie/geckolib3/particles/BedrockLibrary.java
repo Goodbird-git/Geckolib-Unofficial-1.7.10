@@ -1,5 +1,15 @@
 package software.bernie.geckolib3.particles;
 
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.util.ResourceLocation;
+import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib3.file.AnimationFile;
+import software.bernie.geckolib3.file.AnimationFileLoader;
+import software.bernie.geckolib3.file.GeoModelLoader;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.molang.MolangRegistrar;
 import software.bernie.geckolib3.watchers.ParticleDirWatcher;
 import com.eliotlash.mclib.utils.JsonUtils;
 import org.apache.commons.io.FileUtils;
@@ -8,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BedrockLibrary {
@@ -26,11 +37,11 @@ public class BedrockLibrary {
         updateController = new ParticleDirWatcher(folder);
         updateController.start();
         /* Load factory (default) presets */
-        this.storeFactory("default_fire");
-        this.storeFactory("default_magic");
-        this.storeFactory("default_rain");
-        this.storeFactory("default_snow");
-        this.storeFactory("default_single");
+        this.storeFactory(new ResourceLocation("geckolib3", "default_fire"));
+        this.storeFactory(new ResourceLocation("geckolib3","default_magic"));
+        this.storeFactory(new ResourceLocation("geckolib3","default_rain"));
+        this.storeFactory(new ResourceLocation("geckolib3","default_snow"));
+        this.storeFactory(new ResourceLocation("geckolib3","default_single"));
     }
 
     public File file(String name) {
@@ -64,16 +75,6 @@ public class BedrockLibrary {
             }
         }
         return null;
-    }
-
-    public BedrockScheme load(String name) {
-        BedrockScheme scheme = this.loadScheme(this.file(name));
-
-        if (scheme != null) {
-            return scheme;
-        }
-
-        return this.loadFactory(name);
     }
 
     public void remove(String name) {
@@ -119,26 +120,31 @@ public class BedrockLibrary {
         return null;
     }
 
-    private void storeFactory(String name) {
+    private void storeFactory(ResourceLocation name) {
         BedrockScheme scheme = this.loadFactory(name);
 
         if (scheme != null) {
-            scheme.name=name;
-            this.factory.put(name, scheme);
+            scheme.name=getName(name);
+            this.factory.put(getName(name), scheme);
         }
     }
 
     /**
      * Load a scheme from Blockbuster's zip
      */
-    public BedrockScheme loadFactory(String name) {
+    public BedrockScheme loadFactory(ResourceLocation resLoc) {
         try {
-            return BedrockScheme.parse(IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("assets/geckolib3/particles/" + name + ".json"), StandardCharsets.UTF_8)).factory(true);
+            return BedrockScheme.parse(IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("assets/"+resLoc.getResourceDomain()+"/" + resLoc.getResourcePath() + ".json"), StandardCharsets.UTF_8)).factory(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return null;
+    }
+
+    public String getName(ResourceLocation resLoc){
+        String[] parts = resLoc.getResourcePath().split("/");
+        return parts[parts.length-1];
     }
 
     public void save(String filename, BedrockScheme scheme) {

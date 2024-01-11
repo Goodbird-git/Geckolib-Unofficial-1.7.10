@@ -24,6 +24,7 @@ import software.bernie.geckolib3.file.AnimationFileLoader;
 import software.bernie.geckolib3.file.GeoModelLoader;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.molang.MolangRegistrar;
+import software.bernie.geckolib3.particles.BedrockLibrary;
 
 @SuppressWarnings("deprecation")
 public class GeckoLibCache implements IResourceManagerReloadListener {
@@ -89,9 +90,19 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 					GeckoLib.LOGGER.error("Error loading model file \"" + location + "\"!", e);
 				}
 			}
+
+            for (ResourceLocation location : this.getLocations(pack, "particles", fileName -> fileName.endsWith(".json"))) {
+                try {
+                    BedrockLibrary.instance.loadFactory(location);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    GeckoLib.LOGGER.error("Error loading model file \"" + location + "\"!", e);
+                }
+            }
 		}
 		animations = tempAnimations;
 		geoModels = tempModels;
+        BedrockLibrary.instance.reload();
 	}
 
 	@SuppressWarnings("unchecked")
