@@ -14,6 +14,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
+import software.bernie.example.config.ConfigHandler;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.handler.PlayerLoginHandler;
@@ -28,13 +29,13 @@ import java.io.File;
 public class GeckoLibMod {
 	public static boolean DISABLE_IN_DEV = false;
 	private static CreativeTabs geckolibItemGroup;
-	private boolean deobfuscatedEnvironment = true;
+
 	public static GeckoLibMod instance;
 	public static BedrockLibrary particleLibraryInstance;
 	public static ModelLibrary modelLibraryInstance;
 	public static AnimationLibrary animationLibraryInstance;
 	public static CreativeTabs getGeckolibItemGroup() {
-		if (geckolibItemGroup == null) {
+		if (ConfigHandler.enableExamples && geckolibItemGroup == null) {
 			geckolibItemGroup = new CreativeTabs(CreativeTabs.getNextID(), "geckolib_examples") {
 				@Override
 				public Item getTabIconItem() {
@@ -48,18 +49,21 @@ public class GeckoLibMod {
 
 	public GeckoLibMod() {
 		instance = this;
-		if (!DISABLE_IN_DEV) {
-			MinecraftForge.EVENT_BUS.register(new CommonListener());
-			FMLCommonHandler.instance().bus().register(new PlayerLoginHandler());
-			MinecraftForge.EVENT_BUS.register(new PlayerLoginHandler());
-		}
+        if(ConfigHandler.enableExamples) {
+            MinecraftForge.EVENT_BUS.register(new CommonListener());
+        }
+        FMLCommonHandler.instance().bus().register(new PlayerLoginHandler());
+		MinecraftForge.EVENT_BUS.register(new PlayerLoginHandler());
 	}
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		CommonListener.onRegisterBlocks();
-		CommonListener.onRegisterItems();
-		CommonListener.onRegisterEntities();
+        ConfigHandler.init(event.getSuggestedConfigurationFile());
+        if(ConfigHandler.enableExamples) {
+            CommonListener.onRegisterBlocks();
+            CommonListener.onRegisterItems();
+            CommonListener.onRegisterEntities();
+        }
 		particleLibraryInstance = new BedrockLibrary(new File("./particle"));
 		particleLibraryInstance.reload();
 		modelLibraryInstance = new ModelLibrary(new File("./models"));
@@ -72,7 +76,7 @@ public class GeckoLibMod {
 	@SideOnly(Side.CLIENT)
 	@Mod.EventHandler
 	public void registerRenderers(FMLInitializationEvent event) {
-        if(event.getSide()==Side.CLIENT){
+        if(event.getSide()==Side.CLIENT && ConfigHandler.enableExamples){
             ClientListener.registerReplacedRenderers(event);
             ClientListener.registerRenderers(event);
         }
