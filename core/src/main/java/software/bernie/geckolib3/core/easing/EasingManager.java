@@ -184,16 +184,24 @@ public class EasingManager {
      * <a href="https://pub.dev/documentation/latlong2/latest/spline/CatmullRom-class.html">CatmullRom#position</a>
      */
     static double catmullRom(double n) {
-        return (0.5f * (2.0f * (n + 1) + ((n + 2) - n) * 1
-            + (2.0f * n - 5.0f * (n + 1) + 4.0f * (n + 2) - (n + 3)) * 1
-            + (3.0f * (n + 1) - n - 3.0f * (n + 2) + (n + 3)) * 1));
+        return n;
+//        return (0.5 * (2.0 * (n + 1) +
+//                      ((n + 2) - n) * 1 +
+//                      (2.0 * n - 5.0 * (n + 1) + 4.0 * (n + 2) - (n + 3)) * 1 +
+//                      (3.0 * (n + 1) - n - 3.0 * (n + 2) + (n + 3)) * 1));
     }
-	/**
-	 * A simple inertial interaction, similar to an object slowly accelerating to
-	 * speed.
-	 *
-	 * http://cubic-bezier.com/#.42,0,1,1
-	 */
+
+    public float q(float t) {
+        return 0.5f * (4 + t - t * t);
+    }
+
+
+    /**
+     * A simple inertial interaction, similar to an object slowly accelerating to
+     * speed.
+     *
+     * http://cubic-bezier.com/#.42,0,1,1
+     */
 	// static ease(t) {
 	// if (!ease) {
 	// ease = Easing.bezier(0.42, 0, 1, 1);

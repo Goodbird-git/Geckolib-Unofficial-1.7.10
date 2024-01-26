@@ -172,15 +172,23 @@ public class JsonKeyFrameUtils {
                 if (entryObj.has("pre")) {
                     JsonElement postElement = entryObj.get("pre");
                     JsonArray array = postElement.isJsonArray() ? postElement.getAsJsonArray() : postElement.getAsJsonObject().getAsJsonArray("vector");
-
-                    list.add(new AbstractMap.SimpleEntry<>(timestamp, array));
+                    JsonObject object = new JsonObject();
+                    object.add("vector",array);
+                    if(entryObj.has("lerp_mode")){
+                        object.add("lerp_mode",entryObj.get("lerp_mode"));
+                    }
+                    list.add(new AbstractMap.SimpleEntry<>(timestamp, object));
                 }
 
                 if (entryObj.has("post")) {
                     JsonElement postElement = entryObj.get("post");
                     JsonArray array = postElement.isJsonArray() ? postElement.getAsJsonArray() : postElement.getAsJsonObject().getAsJsonArray("vector");
-
-                    list.add(new AbstractMap.SimpleEntry<>(String.valueOf(time + 0.0000001), array));
+                    JsonObject object = new JsonObject();
+                    object.add("vector",array);
+                    if(entryObj.has("lerp_mode")){
+                        object.add("lerp_mode",entryObj.get("lerp_mode"));
+                    }
+                    list.add(new AbstractMap.SimpleEntry<>(String.valueOf(time + 0.0000001), object));
                 }
 
                 continue;
@@ -212,15 +220,23 @@ public class JsonKeyFrameUtils {
                 if (entryObj.has("pre")) {
                     JsonElement postElement = entryObj.get("pre");
                     JsonArray array = postElement.isJsonArray() ? postElement.getAsJsonArray() : postElement.getAsJsonObject().getAsJsonArray("vector");
-
-                    list.add(new AbstractMap.SimpleEntry<>(timestamp, array));
+                    JsonObject object = new JsonObject();
+                    object.add("vector",array);
+                    if(entryObj.has("lerp_mode")){
+                        object.add("lerp_mode",entryObj.get("lerp_mode"));
+                    }
+                    list.add(new AbstractMap.SimpleEntry<>(timestamp, object));
                 }
 
                 if (entryObj.has("post")) {
                     JsonElement postElement = entryObj.get("post");
                     JsonArray array = postElement.isJsonArray() ? postElement.getAsJsonArray() : postElement.getAsJsonObject().getAsJsonArray("vector");
-
-                    list.add(new AbstractMap.SimpleEntry<>(String.valueOf(time + 0.0000001), array));
+                    JsonObject object = new JsonObject();
+                    object.add("vector",array);
+                    if(entryObj.has("lerp_mode")){
+                        object.add("lerp_mode",entryObj.get("lerp_mode"));
+                    }
+                    list.add(new AbstractMap.SimpleEntry<>(String.valueOf(time + 0.0000001), object));
                 }
 
                 continue;

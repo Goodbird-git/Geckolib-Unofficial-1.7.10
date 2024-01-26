@@ -183,7 +183,6 @@ public class AnimationController<T extends IAnimatable> {
     public double animationSpeed = 1D;
     private final Set<EventKeyFrame<?>> executedKeyFrames = new HashSet<>();
     public List emitters = new ArrayList<BedrockEmitter>();
-    public int particleUpdatesPerSecond = 20;
     public long lastTick;
 
     /**
@@ -402,8 +401,8 @@ public class AnimationController<T extends IAnimatable> {
         tick = adjustTick(tick);
 
         if(Minecraft.getMinecraft().theWorld!=null){
-            long time = System.currentTimeMillis();
-            if(time>(lastTick+1000/particleUpdatesPerSecond)){
+            long time = Minecraft.getMinecraft().theWorld.getTotalWorldTime();
+            if(time>lastTick){
                 lastTick=time;
                 updateEmitters();
             }
