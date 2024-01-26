@@ -20,7 +20,7 @@ public class ConfigHandler {
     }
     public static void syncConfig() {
         config.addCustomCategoryComment("general","General Settings");
-        enableExamples = config.getBoolean("tablename","general",false,"Database table name");
+        enableExamples = config.getBoolean("enableexamples","general",false,"Enable Geckolib Examples");
         config.save();
     }
 }
