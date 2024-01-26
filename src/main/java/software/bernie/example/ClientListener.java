@@ -56,8 +56,6 @@ public class ClientListener {
 
     @SideOnly(Side.CLIENT)
     public static void registerReplacedRenderers(FMLInitializationEvent event) {
-        GeckoLib.initialize();
-
         ReplacedCreeperRenderer creeperRenderer = new ReplacedCreeperRenderer();
         RenderManager.instance.entityRenderMap.put(EntityCreeper.class, creeperRenderer);
         GeoReplacedEntityRenderer.registerReplacedEntity(ReplacedCreeperEntity.class, creeperRenderer);

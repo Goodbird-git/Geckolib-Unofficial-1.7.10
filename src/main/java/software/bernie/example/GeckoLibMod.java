@@ -80,6 +80,7 @@ public class GeckoLibMod {
             ClientListener.registerReplacedRenderers(event);
             ClientListener.registerRenderers(event);
         }
+        GeckoLib.initialize();
 	}
 
 
