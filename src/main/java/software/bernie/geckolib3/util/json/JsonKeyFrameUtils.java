@@ -167,7 +167,7 @@ public class JsonKeyFrameUtils {
             if (entry.getValue() instanceof JsonObject && !((JsonObject)entry.getValue()).has("vector")) {
                 JsonObject entryObj = ((JsonObject)entry.getValue());
                 String timestamp = entry.getKey();
-                double time = NumberUtils.isCreatable(timestamp) ? Double.parseDouble(timestamp) : 0;
+                double time = NumberUtils.isNumber(timestamp) ? Double.parseDouble(timestamp) : 0;
 
                 if (entryObj.has("pre")) {
                     JsonElement postElement = entryObj.get("pre");
@@ -215,7 +215,7 @@ public class JsonKeyFrameUtils {
             if (entry.getValue() instanceof JsonObject && !((JsonObject)entry.getValue()).has("vector")) {
                 JsonObject entryObj = ((JsonObject)entry.getValue());
                 String timestamp = entry.getKey();
-                double time = NumberUtils.isCreatable(timestamp) ? Double.parseDouble(timestamp) : 0;
+                double time = NumberUtils.isNumber(timestamp) ? Double.parseDouble(timestamp) : 0;
 
                 if (entryObj.has("pre")) {
                     JsonElement postElement = entryObj.get("pre");
