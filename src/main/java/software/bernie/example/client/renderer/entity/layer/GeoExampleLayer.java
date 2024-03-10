@@ -29,8 +29,8 @@ public class GeoExampleLayer extends GeoLayerRenderer {
 	public void render(EntityLivingBase entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks,
 			float ageInTicks, float netHeadYaw, float headPitch, Color renderColor) {
 		Minecraft.getMinecraft().renderEngine.bindTexture(LAYER);
-		entityRenderer.render(entityRenderer.getGeoModelProvider().getModel(MODEL), entitylivingbaseIn, partialTicks, (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f,
-				(float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
+		entityRenderer.render(entityRenderer.getGeoModelProvider().getModel(MODEL), entitylivingbaseIn, partialTicks, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
+				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 	}
 
 	@Override

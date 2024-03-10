@@ -63,7 +63,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Rend
 
 		if (!entity.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer))
 			render(model, (T)entity, partialTicks, (float) renderColor.getRed() / 255f,
-					(float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f,
+					(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
 					(float) renderColor.getAlpha() / 255);
 		GlStateManager.popMatrix();
 		GlStateManager.popMatrix();
