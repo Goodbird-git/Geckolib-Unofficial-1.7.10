@@ -52,11 +52,6 @@ public class GeoNpcEntity extends EntityCreature implements IAnimatable, IAnimat
     }
 
     @Override
-    public void tick() {
-        super.onUpdate();
-    }
-
-    @Override
     public void onLivingUpdate() {
 
     }

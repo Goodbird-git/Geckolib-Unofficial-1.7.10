@@ -44,8 +44,4 @@ public class GeoExampleEntityLayer extends EntityCreature implements IAnimatable
 		return ticksExisted;
 	}
 
-	@Override
-	public void tick() {
-		super.onUpdate();
-	}
 }
