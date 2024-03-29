@@ -6,6 +6,7 @@ import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 
 public class NetworkHandler {
     private static final SimpleNetworkWrapper wrapper = new SimpleNetworkWrapper("geckolib3");
@@ -21,12 +22,18 @@ public class NetworkHandler {
     public static void sendToPlayer(IMessage message, EntityPlayer player) {
         if(side.isClient())
             return;
+        if(player==null){
+            return;
+        }
         wrapper.sendTo(message, (EntityPlayerMP) player);
     }
 
     public static void sendToAll(IMessage message) {
         if(side.isClient())
             return;
+        if(MinecraftServer.getServer()==null || MinecraftServer.getServer().getConfigurationManager()==null || MinecraftServer.getServer().getConfigurationManager().playerEntityList.isEmpty()){
+            return;
+        }
         wrapper.sendToAll(message);
     }
 

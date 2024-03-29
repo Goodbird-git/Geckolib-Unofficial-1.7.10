@@ -58,6 +58,7 @@ public class GeckoLibMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+        NetworkHandler.init();
         ConfigHandler.init(event.getSuggestedConfigurationFile());
         if(ConfigHandler.enableExamples) {
             CommonListener.onRegisterBlocks();
@@ -70,7 +71,7 @@ public class GeckoLibMod {
 		modelLibraryInstance.reload(false);
 		animationLibraryInstance = new AnimationLibrary(new File("./animations"));
 		animationLibraryInstance.reload(false);
-		NetworkHandler.init();
+
 	}
 
 	@SideOnly(Side.CLIENT)
