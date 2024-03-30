@@ -10,7 +10,6 @@ import net.minecraft.server.MinecraftServer;
 
 public class NetworkHandler {
     private static final SimpleNetworkWrapper wrapper = new SimpleNetworkWrapper("geckolib3");
-    private static final Side side = FMLCommonHandler.instance().getSide();
 
     public static void init() {
         wrapper.registerMessage(PacketSendModel.class, PacketSendModel.class, 0, Side.CLIENT);
@@ -20,8 +19,6 @@ public class NetworkHandler {
     }
 
     public static void sendToPlayer(IMessage message, EntityPlayer player) {
-        if(side.isClient())
-            return;
         if(player==null){
             return;
         }
@@ -29,8 +26,6 @@ public class NetworkHandler {
     }
 
     public static void sendToAll(IMessage message) {
-        if(side.isClient())
-            return;
         if(MinecraftServer.getServer()==null || MinecraftServer.getServer().getConfigurationManager()==null || MinecraftServer.getServer().getConfigurationManager().playerEntityList.isEmpty()){
             return;
         }
@@ -38,8 +33,6 @@ public class NetworkHandler {
     }
 
     public static void sendToServer(IMessage message) {
-        if(side.isServer())
-            return;
         wrapper.sendToServer(message);
     }
 }
