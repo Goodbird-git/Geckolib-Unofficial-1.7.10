@@ -1,11 +1,14 @@
 package software.bernie.example.registry;
 
 import net.minecraft.item.Item;
+import software.bernie.example.item.GoldCoinItem;
 import software.bernie.example.item.JackInTheBoxItem;
 import software.bernie.example.item.PotatoArmorItem;
 
 public class ItemRegistry {
 	public static JackInTheBoxItem JACK_IN_THE_BOX;
+
+    public static GoldCoinItem GOLD_COIN;
 
 	public static PotatoArmorItem POTATO_HEAD;
 	public static PotatoArmorItem POTATO_CHEST;

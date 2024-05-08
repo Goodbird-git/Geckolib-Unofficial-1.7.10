@@ -16,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.MinecraftForgeClient;
 import software.bernie.example.block.tile.BotariumTileEntity;
 import software.bernie.example.block.tile.FertilizerTileEntity;
+import software.bernie.example.client.model.item.GoldCoinModel;
 import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
 import software.bernie.example.client.renderer.entity.*;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
@@ -27,6 +28,7 @@ import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
+import software.bernie.geckolib3.renderers.geo.GeoItemStackRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoReplacedEntityRenderer;
 import software.bernie.geckolib3.renderers.geo.RenderBlockItem;
 
@@ -46,6 +48,7 @@ public class ClientListener {
         //bindRender(BlockRegistry.DIAGONAL_BLOCK, new DiagonalTileEntity(), new DiagonalTileRenderer());
 
         MinecraftForgeClient.registerItemRenderer(ItemRegistry.JACK_IN_THE_BOX, new JackInTheBoxRenderer());
+        MinecraftForgeClient.registerItemRenderer(ItemRegistry.GOLD_COIN, new GeoItemStackRenderer(new GoldCoinModel()));
     }
 
     public static void bindRender(Block block, TileEntity tile, TileEntitySpecialRenderer tesr){
