@@ -25,8 +25,7 @@ import software.bernie.geckolib3.core.util.MathUtil;
 public class AnimationProcessor<T extends IAnimatable> {
 	public boolean reloadAnimations = false;
 	private List<IBone> modelRendererList = new ArrayList();
-	private double lastTickValue = -1;
-	private Set<Integer> animatedEntities = new HashSet<>();
+    private Map<Integer, Double> animatedEntities = new HashMap<>();
 	private final IAnimatableModel animatedModel;
 
 	public AnimationProcessor(IAnimatableModel animatedModel) {
@@ -35,14 +34,11 @@ public class AnimationProcessor<T extends IAnimatable> {
 
 	public void tickAnimation(IAnimatable entity, Integer uniqueID, double seekTime, AnimationEvent event,
 			MolangParser parser, boolean crashWhenCantFindBone) {
-		if (seekTime != lastTickValue) {
-			animatedEntities.clear();
-		} else if (animatedEntities.contains(uniqueID)) { // Entity already animated on this tick
-			return;
-		}
-
-		lastTickValue = seekTime;
-		animatedEntities.add(uniqueID);
+        if(seekTime!=animatedEntities.getOrDefault(uniqueID, 0.0)){
+            animatedEntities.put(uniqueID, seekTime);
+        }else {
+            return;
+        }
 
 		// Each animation has it's own collection of animations (called the
 		// EntityAnimationManager), which allows for multiple independent animations

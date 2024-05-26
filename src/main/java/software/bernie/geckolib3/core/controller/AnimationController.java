@@ -192,6 +192,15 @@ public class AnimationController<T extends IAnimatable> {
      * animation states.
      */
     public void setAnimation(AnimationBuilder builder) {
+        ///ADDED
+        if(builder!=null && !builder.getRawAnimationList().isEmpty()){
+            if(builder.getRawAnimationList().equals(this.currentAnimationBuilder.getRawAnimationList()) && !this.needsAnimationReload){
+                if(builder.getRawAnimationList().get(builder.getRawAnimationList().size()-1).loopType == ILoopType.EDefaultLoopTypes.LOOP && currentAnimation==null){
+                    needsAnimationReload = true;
+                }
+            }
+        }
+        ///END ADDED
         IAnimatableModel<T> model = getModel(this.animatable);
         if (model != null) {
             if (builder == null || builder.getRawAnimationList().size() == 0) {
