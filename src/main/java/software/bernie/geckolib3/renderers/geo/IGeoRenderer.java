@@ -105,6 +105,7 @@ public interface IGeoRenderer<T> {
         MATRIX_STACK.moveBackFromPivot(cube);
 
         for (GeoQuad quad : cube.quads) {
+            if (quad == null) continue;
             Vector3f normal = new Vector3f(quad.normal.getX(), quad.normal.getY(), quad.normal.getZ());
 
             MATRIX_STACK.getNormalMatrix().transform(normal);
