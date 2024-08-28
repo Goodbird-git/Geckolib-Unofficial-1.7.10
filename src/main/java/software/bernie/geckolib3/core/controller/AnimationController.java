@@ -212,11 +212,12 @@ public class AnimationController<T extends IAnimatable> {
                     // Convert the list of animation names to the actual list, keeping track of the
                     // loop boolean along the way
                     LinkedList<Animation> animations = builder.getRawAnimationList().stream().map((rawAnimation) -> {
-                        Animation animation = model.getAnimation(rawAnimation.animationName, animatable);
-                        if (animation == null) {
+                        Animation originalAnimation = model.getAnimation(rawAnimation.animationName, animatable);
+                        if (originalAnimation == null) {
                             System.out.printf("Could not load animation: %s. Is it missing?", rawAnimation.animationName);
                             encounteredError.set(true);
                         }
+                        Animation animation = Animation.copy(originalAnimation);
                         if (animation != null && rawAnimation.loopType != null) {
                             animation.loop = rawAnimation.loopType;
                         }
@@ -392,17 +393,17 @@ public class AnimationController<T extends IAnimatable> {
                         HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, MolangParser parser,
                         boolean crashWhenCantFindBone) {
         parser.setValue("query.life_time", tick / 20);
-        if (currentAnimation != null) {
-            IAnimatableModel<T> model = getModel(this.animatable);
-            if (model != null) {
-                Animation animation = model.getAnimation(currentAnimation.animationName, this.animatable);
-                if (animation != null) {
-                    ILoopType loop = currentAnimation.loop;
-                    currentAnimation = animation;
-                    currentAnimation.loop = loop;
-                }
-            }
-        }
+//        if (currentAnimation != null) {
+//            IAnimatableModel<T> model = getModel(this.animatable);
+//            if (model != null) {
+//                Animation animation = Animation.copy(model.getAnimation(currentAnimation.animationName, this.animatable));
+//                if (animation != null) {
+//                    ILoopType loop = currentAnimation.loop;
+//                    currentAnimation = animation;
+//                    currentAnimation.loop = loop;
+//                }
+//            }
+//        }
 
         createInitialQueues(modelRendererList);
 
