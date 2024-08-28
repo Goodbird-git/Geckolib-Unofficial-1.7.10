@@ -222,8 +222,16 @@ public class JsonAnimationUtils {
 		animation.animationLength = animation_length == null ? null
 				: AnimationUtils.convertSecondsToTicks(animation_length.getAsDouble());
 		animation.boneAnimations = new ArrayList();
-		JsonElement loop = animationJsonObject.get("loop");
-		animation.loop = (loop != null && loop.getAsString() == "true") ? EDefaultLoopTypes.LOOP : EDefaultLoopTypes.PLAY_ONCE;
+        JsonElement loop = animationJsonObject.get("loop");
+        if (loop != null) {
+            if (loop.getAsString().equals("true")) {
+                animation.loop = EDefaultLoopTypes.LOOP;
+            } else if (loop.getAsString().equals("hold_on_last_frame")) {
+                animation.loop = EDefaultLoopTypes.HOLD_ON_LAST_FRAME;
+            } else {
+                animation.loop = EDefaultLoopTypes.PLAY_ONCE;
+            }
+        }
 
 		// Handle parsing sound effect keyframes
 		ArrayList<Map.Entry<String, JsonElement>> soundEffectFrames = getSoundEffectFrames(animationJsonObject);
