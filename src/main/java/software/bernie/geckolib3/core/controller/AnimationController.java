@@ -574,17 +574,18 @@ public class AnimationController<T extends IAnimatable> {
             if (!currentAnimation.loop.isRepeatingAfterEnd()) {
                 // Pull the next animation from the queue
                 setAllStopping();
-                Animation peek = animationQueue.peek();
-                if (peek == null) {
+                Animation poll = animationQueue.poll();
+                if (poll == null) {
                     // No more animations left, stop the animation controller
                     this.animationState = AnimationState.Stopped;
                     return;
                 } else {
                     // Otherwise, set the state to transitioning and start transitioning to the next
                     // animation next frame
-                    this.animationState = AnimationState.Transitioning;
+//                    this.animationState = AnimationState.Transitioning;
+                    this.currentAnimation = poll;
                     shouldResetTick = true;
-                    currentAnimation = this.animationQueue.peek();
+                    tick = adjustTick(actualTick) + 0.001F;
                 }
             } else {
                 if (currentAnimation.loop == ILoopType.EDefaultLoopTypes.LOOP) {
@@ -680,10 +681,6 @@ public class AnimationController<T extends IAnimatable> {
             }
         }
         //}
-
-        if (this.transitionLengthTicks == 0 && shouldResetTick && this.animationState == AnimationState.Transitioning) {
-            this.currentAnimation = animationQueue.poll();
-        }
     }
 
     private void processBedrockParticleEvent(ParticleKeyFrameEvent<T> event) {
