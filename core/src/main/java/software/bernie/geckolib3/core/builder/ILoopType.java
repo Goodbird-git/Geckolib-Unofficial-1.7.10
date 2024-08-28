@@ -13,7 +13,7 @@ public interface ILoopType extends Serializable {
     enum EDefaultLoopTypes implements ILoopType {
         LOOP(true),
         PLAY_ONCE,
-        HOLD_ON_LAST_FRAME;
+        HOLD_ON_LAST_FRAME(true);
 
         private final boolean looping;
 

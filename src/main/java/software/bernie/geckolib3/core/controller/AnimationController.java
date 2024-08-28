@@ -587,9 +587,13 @@ public class AnimationController<T extends IAnimatable> {
                     currentAnimation = this.animationQueue.peek();
                 }
             } else {
-                // Reset the adjusted tick so the next animation starts at tick 0
-                shouldResetTick = true;
-                tick = adjustTick(actualTick);
+                if (currentAnimation.loop == ILoopType.EDefaultLoopTypes.LOOP) {
+                    // Reset the adjusted tick so the next animation starts at tick 0
+                    shouldResetTick = true;
+                    tick = adjustTick(actualTick);
+                } else {
+                    tick = this.currentAnimation.animationLength;
+                }
             }
         }
         setAnimTime(parser, tick);
