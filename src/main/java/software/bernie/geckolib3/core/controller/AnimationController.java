@@ -453,7 +453,7 @@ public class AnimationController<T extends IAnimatable> {
         // Handle transitioning to a different animation (or just starting one)
         if (animationState == AnimationState.Transitioning) {
             // Just started transitioning, so set the current animation to the first one
-            if (tick == 0 || isJustStarting) {
+            if (this.justStartedTransition) {
                 justStartedTransition = false;
                 this.currentAnimation = animationQueue.poll();
                 resetEventKeyFrames();
@@ -526,6 +526,10 @@ public class AnimationController<T extends IAnimatable> {
         } else if (getAnimationState() == AnimationState.Running) {
             // Actually run the animation
             processCurrentAnimation(tick, actualTick, parser, crashWhenCantFindBone);
+            if (getAnimationState() == AnimationState.Transitioning) {
+                saveSnapshotsForAnimation(this.currentAnimation, boneSnapshotCollection);
+                this.currentAnimation = this.animationQueue.poll();
+            }
         }
     }
 
@@ -575,18 +579,11 @@ public class AnimationController<T extends IAnimatable> {
             if (!currentAnimation.loop.isRepeatingAfterEnd()) {
                 // Pull the next animation from the queue
                 setAllStopping();
-                Animation poll = animationQueue.poll();
-                if (poll == null) {
+                Animation nextAnimation = animationQueue.peek();
+                if (nextAnimation == null) {
                     // No more animations left, stop the animation controller
                     this.animationState = AnimationState.Stopped;
                     return;
-                } else {
-                    // Otherwise, set the state to transitioning and start transitioning to the next
-                    // animation next frame
-//                    this.animationState = AnimationState.Transitioning;
-                    this.currentAnimation = poll;
-                    shouldResetTick = true;
-                    tick = adjustTick(actualTick) + 0.001F;
                 }
             } else {
                 if (currentAnimation.loop == ILoopType.EDefaultLoopTypes.LOOP) {
@@ -682,6 +679,15 @@ public class AnimationController<T extends IAnimatable> {
             }
         }
         //}
+
+        if (tick >= currentAnimation.animationLength && !currentAnimation.loop.isRepeatingAfterEnd()) {
+            Animation nextAnimation = animationQueue.peek();
+            if (nextAnimation != null) {
+                this.animationState = AnimationState.Transitioning;
+                shouldResetTick = true;
+                adjustTick(actualTick);
+            }
+        }
     }
 
     private void processBedrockParticleEvent(ParticleKeyFrameEvent<T> event) {
