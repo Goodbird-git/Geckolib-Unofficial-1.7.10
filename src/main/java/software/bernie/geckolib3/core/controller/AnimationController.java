@@ -212,11 +212,12 @@ public class AnimationController<T extends IAnimatable> {
                     // Convert the list of animation names to the actual list, keeping track of the
                     // loop boolean along the way
                     LinkedList<Animation> animations = builder.getRawAnimationList().stream().map((rawAnimation) -> {
-                        Animation animation = model.getAnimation(rawAnimation.animationName, animatable);
-                        if (animation == null) {
+                        Animation originalAnimation = model.getAnimation(rawAnimation.animationName, animatable);
+                        if (originalAnimation == null) {
                             System.out.printf("Could not load animation: %s. Is it missing?", rawAnimation.animationName);
                             encounteredError.set(true);
                         }
+                        Animation animation = Animation.copy(originalAnimation);
                         if (animation != null && rawAnimation.loopType != null) {
                             animation.loop = rawAnimation.loopType;
                         }
@@ -392,17 +393,17 @@ public class AnimationController<T extends IAnimatable> {
                         HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, MolangParser parser,
                         boolean crashWhenCantFindBone) {
         parser.setValue("query.life_time", tick / 20);
-        if (currentAnimation != null) {
-            IAnimatableModel<T> model = getModel(this.animatable);
-            if (model != null) {
-                Animation animation = model.getAnimation(currentAnimation.animationName, this.animatable);
-                if (animation != null) {
-                    ILoopType loop = currentAnimation.loop;
-                    currentAnimation = animation;
-                    currentAnimation.loop = loop;
-                }
-            }
-        }
+//        if (currentAnimation != null) {
+//            IAnimatableModel<T> model = getModel(this.animatable);
+//            if (model != null) {
+//                Animation animation = Animation.copy(model.getAnimation(currentAnimation.animationName, this.animatable));
+//                if (animation != null) {
+//                    ILoopType loop = currentAnimation.loop;
+//                    currentAnimation = animation;
+//                    currentAnimation.loop = loop;
+//                }
+//            }
+//        }
 
         createInitialQueues(modelRendererList);
 
@@ -452,7 +453,7 @@ public class AnimationController<T extends IAnimatable> {
         // Handle transitioning to a different animation (or just starting one)
         if (animationState == AnimationState.Transitioning) {
             // Just started transitioning, so set the current animation to the first one
-            if (tick == 0 || isJustStarting) {
+            if (this.justStartedTransition) {
                 justStartedTransition = false;
                 this.currentAnimation = animationQueue.poll();
                 resetEventKeyFrames();
@@ -525,6 +526,10 @@ public class AnimationController<T extends IAnimatable> {
         } else if (getAnimationState() == AnimationState.Running) {
             // Actually run the animation
             processCurrentAnimation(tick, actualTick, parser, crashWhenCantFindBone);
+            if (getAnimationState() == AnimationState.Transitioning) {
+                saveSnapshotsForAnimation(this.currentAnimation, boneSnapshotCollection);
+                this.currentAnimation = this.animationQueue.poll();
+            }
         }
     }
 
@@ -567,28 +572,21 @@ public class AnimationController<T extends IAnimatable> {
         assert currentAnimation != null;
         // Animation has ended
         if (tick >= currentAnimation.animationLength) {
-            resetEventKeyFrames();
-
             // If the current animation is set to loop, keep it as the current animation and
             // just start over
             if (!currentAnimation.loop.isRepeatingAfterEnd()) {
                 // Pull the next animation from the queue
                 setAllStopping();
-                Animation peek = animationQueue.peek();
-                if (peek == null) {
+                Animation nextAnimation = animationQueue.peek();
+                if (nextAnimation == null) {
                     // No more animations left, stop the animation controller
                     this.animationState = AnimationState.Stopped;
                     return;
-                } else {
-                    // Otherwise, set the state to transitioning and start transitioning to the next
-                    // animation next frame
-                    this.animationState = AnimationState.Transitioning;
-                    shouldResetTick = true;
-                    currentAnimation = this.animationQueue.peek();
                 }
             } else {
                 if (currentAnimation.loop == ILoopType.EDefaultLoopTypes.LOOP) {
                     // Reset the adjusted tick so the next animation starts at tick 0
+                    resetEventKeyFrames();
                     shouldResetTick = true;
                     tick = adjustTick(actualTick);
                 } else {
@@ -681,8 +679,13 @@ public class AnimationController<T extends IAnimatable> {
         }
         //}
 
-        if (this.transitionLengthTicks == 0 && shouldResetTick && this.animationState == AnimationState.Transitioning) {
-            this.currentAnimation = animationQueue.poll();
+        if (tick >= currentAnimation.animationLength && !currentAnimation.loop.isRepeatingAfterEnd()) {
+            Animation nextAnimation = animationQueue.peek();
+            if (nextAnimation != null) {
+                this.animationState = AnimationState.Transitioning;
+                shouldResetTick = true;
+                adjustTick(actualTick);
+            }
         }
     }
 
