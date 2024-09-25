@@ -18,6 +18,8 @@ import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 public class AnimationBuilder {
 	private List<RawAnimation> animationList = new ArrayList<>();
 
+    public boolean mirrored;
+
 	/**
 	 * Add a single animation to the queue and overrides the loop setting
 	 *
@@ -30,7 +32,7 @@ public class AnimationBuilder {
 		animationList.add(new RawAnimation(animationName, loopType));
 		return this;
 	}
-	
+
 	@Deprecated
 	public AnimationBuilder addAnimation(String animationName, Boolean shouldLoop) {
 		animationList.add(new RawAnimation(animationName, shouldLoop));
@@ -64,27 +66,27 @@ public class AnimationBuilder {
 		}
 		return this;
 	}
-	
+
 	public AnimationBuilder playOnce(String animationName) {
 		return this.addAnimation(animationName, EDefaultLoopTypes.PLAY_ONCE);
 	}
-	
+
 	public AnimationBuilder loop(String animationName) {
 		return this.addAnimation(animationName, EDefaultLoopTypes.LOOP);
 	}
-	
+
 	/*
 	 * Not implemented yet!
 	 */
 	public AnimationBuilder playAndHold(String animationName) {
 		return this.addAnimation(animationName, EDefaultLoopTypes.HOLD_ON_LAST_FRAME);
 	}
-	
+
 	//Below will use "Wait instructions", basically empty animations that do nothing, not sure if we really need those honestly
 	public AnimationBuilder delayNext(int waitTimeTicks) {
 		throw new UnsupportedOperationException("This isn't implemented yet, sorry!");
 	}
-	
+
 	public AnimationBuilder playAndHoldFor(String animationName, int waitTimeTicks) {
 		this.playAndHold(animationName);
 		return this.delayNext(waitTimeTicks);

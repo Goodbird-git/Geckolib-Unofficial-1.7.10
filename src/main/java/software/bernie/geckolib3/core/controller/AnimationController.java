@@ -463,17 +463,35 @@ public class AnimationController<T extends IAnimatable> {
             if (currentAnimation != null) {
                 setAnimTime(parser, 0);
                 for (BoneAnimation boneAnimation : currentAnimation.boneAnimations) {
-                    BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneAnimation.boneName);
-                    BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName);
-                    Optional<IBone> first = modelRendererList.stream()
-                            .filter(x -> x.getName().equals(boneAnimation.boneName)).findFirst();
+                    String changedBoneName = boneAnimation.boneName;
+                    boolean mirrored = this.currentAnimationBuilder.mirrored;
+                    if (mirrored) {
+                        String lowerBoneName = changedBoneName.toLowerCase();
+                        if (lowerBoneName.contains("left")) {
+                            changedBoneName = changedBoneName.replace("left", "right");
+                            changedBoneName = changedBoneName.replace("Left", "Right");
+                        }
+                        if (lowerBoneName.contains("right")) {
+                            changedBoneName = changedBoneName.replace("right", "left");
+                            changedBoneName = changedBoneName.replace("Right", "Left");
+                        }
+                    }
+
+                    String boneName = changedBoneName;
+                    Optional<IBone> first = this.getFirstBone(boneName, false, modelRendererList);
                     if (!first.isPresent()) {
-                        if (crashWhenCantFindBone) {
-                            throw new RuntimeException("Could not find bone: " + boneAnimation.boneName);
-                        } else {
+                        if (mirrored) {
+                            boneName = boneAnimation.boneName;
+                            first = this.getFirstBone(boneAnimation.boneName, crashWhenCantFindBone, modelRendererList);
+                        }
+                        if (!first.isPresent()) {
                             continue;
                         }
                     }
+
+                    BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneName);
+                    BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneName);
+
                     BoneSnapshot initialSnapshot = first.get().getInitialSnapshot();
                     assert boneSnapshot != null : "Bone snapshot was null";
 
@@ -485,8 +503,9 @@ public class AnimationController<T extends IAnimatable> {
                     // transitions to the initial state of the new animation
                     if (!rotationKeyFrames.xKeyFrames.isEmpty()) {
                         AnimationPoint xPoint = getAnimationPointAtTick(rotationKeyFrames.xKeyFrames, 0, true, Axis.X);
-                        AnimationPoint yPoint = getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, 0, true, Axis.Y);
-                        AnimationPoint zPoint = getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, 0, true, Axis.Z);
+                        AnimationPoint yPoint = getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, 0, true, mirrored, Axis.Y);
+                        AnimationPoint zPoint = getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, 0, true, mirrored, Axis.Z);
+
                         boneAnimationQueue.rotationXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
                                 boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
                                 xPoint.animationStartValue));
@@ -499,7 +518,7 @@ public class AnimationController<T extends IAnimatable> {
                     }
 
                     if (!positionKeyFrames.xKeyFrames.isEmpty()) {
-                        AnimationPoint xPoint = getAnimationPointAtTick(positionKeyFrames.xKeyFrames, 0, false, Axis.X);
+                        AnimationPoint xPoint = getAnimationPointAtTick(positionKeyFrames.xKeyFrames, 0, false, mirrored, Axis.X);
                         AnimationPoint yPoint = getAnimationPointAtTick(positionKeyFrames.yKeyFrames, 0, false, Axis.Y);
                         AnimationPoint zPoint = getAnimationPointAtTick(positionKeyFrames.zKeyFrames, 0, false, Axis.Z);
                         boneAnimationQueue.positionXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
@@ -531,6 +550,19 @@ public class AnimationController<T extends IAnimatable> {
                 this.currentAnimation = this.animationQueue.poll();
             }
         }
+    }
+
+    private Optional<IBone> getFirstBone(String boneName, boolean crashWhenCantFindBone, List<IBone> modelRendererList) {
+        Optional<IBone> first = modelRendererList.stream()
+            .filter(x -> x.getName().equals(boneName)).findFirst();
+        if (!first.isPresent()) {
+            if (crashWhenCantFindBone) {
+                throw new RuntimeException("Could not find bone: " + boneName);
+            } else {
+                return Optional.empty();
+            }
+        }
+        return first;
     }
 
     private void setAnimTime(MolangParser parser, double tick) {
@@ -602,11 +634,29 @@ public class AnimationController<T extends IAnimatable> {
         removeAllStopped();
         List<BoneAnimation> boneAnimations = currentAnimation.boneAnimations;
         for (BoneAnimation boneAnimation : boneAnimations) {
-            BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneAnimation.boneName);
+            String changedBoneName = boneAnimation.boneName;
+            boolean mirrored = this.currentAnimationBuilder.mirrored;
+            if (mirrored) {
+                String lowerBoneName = changedBoneName.toLowerCase();
+                if (lowerBoneName.contains("left")) {
+                    changedBoneName = changedBoneName.replace("left", "right");
+                    changedBoneName = changedBoneName.replace("Left", "Right");
+                }
+                if (lowerBoneName.contains("right")) {
+                    changedBoneName = changedBoneName.replace("right", "left");
+                    changedBoneName = changedBoneName.replace("Right", "Left");
+                }
+            }
+            String boneName = changedBoneName;
+
+            BoneAnimationQueue boneAnimationQueue = this.getBoneAnimationQueue(boneName, crashWhenCantFindBone);
+
             if (boneAnimationQueue == null) {
-                if (crashWhenCantFindBone) {
-                    throw new RuntimeException("Could not find bone: " + boneAnimation.boneName);
-                } else {
+                if (mirrored) {
+                    boneName = boneAnimation.boneName;
+                    boneAnimationQueue = this.getBoneAnimationQueue(boneName, crashWhenCantFindBone);
+                }
+                if (boneAnimationQueue == null) {
                     continue;
                 }
             }
@@ -619,14 +669,14 @@ public class AnimationController<T extends IAnimatable> {
                 boneAnimationQueue.rotationXQueue
                         .add(getAnimationPointAtTick(rotationKeyFrames.xKeyFrames, tick, true, Axis.X));
                 boneAnimationQueue.rotationYQueue
-                        .add(getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, tick, true, Axis.Y));
+                        .add(getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, tick, true, mirrored, Axis.Y));
                 boneAnimationQueue.rotationZQueue
-                        .add(getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, tick, true, Axis.Z));
+                        .add(getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, tick, true, mirrored, Axis.Z));
             }
 
             if (!positionKeyFrames.xKeyFrames.isEmpty()) {
                 boneAnimationQueue.positionXQueue
-                        .add(getAnimationPointAtTick(positionKeyFrames.xKeyFrames, tick, false, Axis.X));
+                        .add(getAnimationPointAtTick(positionKeyFrames.xKeyFrames, tick, false, mirrored, Axis.X));
                 boneAnimationQueue.positionYQueue
                         .add(getAnimationPointAtTick(positionKeyFrames.yKeyFrames, tick, false, Axis.Y));
                 boneAnimationQueue.positionZQueue
@@ -688,6 +738,18 @@ public class AnimationController<T extends IAnimatable> {
                 adjustTick(actualTick);
             }
         }
+    }
+
+    private BoneAnimationQueue getBoneAnimationQueue(String boneName, boolean crashWhenCantFindBone) {
+        BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneName);
+        if (boneAnimationQueue == null) {
+            if (crashWhenCantFindBone) {
+                throw new RuntimeException("Could not find bone: " + boneName);
+            } else {
+                return null;
+            }
+        }
+        return boneAnimationQueue;
     }
 
     private void processBedrockParticleEvent(ParticleKeyFrameEvent<T> event) {
@@ -780,8 +842,13 @@ public class AnimationController<T extends IAnimatable> {
         }
     }
 
-    // Helper method to transform a KeyFrameLocation to an AnimationPoint
     private AnimationPoint getAnimationPointAtTick(List<KeyFrame<IValue>> frames, double tick, boolean isRotation,
+                                                   Axis axis) {
+        return this.getAnimationPointAtTick(frames, tick, isRotation, false, axis);
+    }
+
+        // Helper method to transform a KeyFrameLocation to an AnimationPoint
+    private AnimationPoint getAnimationPointAtTick(List<KeyFrame<IValue>> frames, double tick, boolean isRotation, boolean mirrored,
                                                    Axis axis) {
         KeyFrameLocation<KeyFrame<IValue>> location = getCurrentKeyFrameLocation(frames, tick);
         KeyFrame<IValue> currentFrame = location.currentFrame;
@@ -801,6 +868,11 @@ public class AnimationController<T extends IAnimatable> {
                     endValue *= -1;
                 }
             }
+        }
+
+        if (mirrored) {
+            startValue *= -1;
+            endValue *= -1;
         }
 
         return new AnimationPoint(currentFrame, location.currentTick, currentFrame.getLength(), startValue, endValue);
