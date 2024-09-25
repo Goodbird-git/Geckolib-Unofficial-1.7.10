@@ -604,8 +604,6 @@ public class AnimationController<T extends IAnimatable> {
         assert currentAnimation != null;
         // Animation has ended
         if (tick >= currentAnimation.animationLength) {
-            resetEventKeyFrames();
-
             // If the current animation is set to loop, keep it as the current animation and
             // just start over
             if (!currentAnimation.loop.isRepeatingAfterEnd()) {
@@ -620,6 +618,7 @@ public class AnimationController<T extends IAnimatable> {
             } else {
                 if (currentAnimation.loop == ILoopType.EDefaultLoopTypes.LOOP) {
                     // Reset the adjusted tick so the next animation starts at tick 0
+                    resetEventKeyFrames();
                     shouldResetTick = true;
                     tick = adjustTick(actualTick);
                 } else {
