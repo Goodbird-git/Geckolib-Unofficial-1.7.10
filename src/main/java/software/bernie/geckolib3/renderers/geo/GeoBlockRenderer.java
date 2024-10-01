@@ -98,9 +98,10 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
         }
     }
 
-    private EnumFacing getFacing(TileEntity tile) {
+    protected EnumFacing getFacing(TileEntity tile) {
+        EnumFacing[] faces = {EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH, EnumFacing.WEST, };
         if (tile.blockType instanceof BlockDirectional) {
-            return EnumFacing.values()[2 + BlockDirectional.getDirection(tile.blockMetadata)];
+            return faces[BlockDirectional.getDirection(tile.getBlockMetadata())];
         }
         return EnumFacing.NORTH; //TODO
     }
