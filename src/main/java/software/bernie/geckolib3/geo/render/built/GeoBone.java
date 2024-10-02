@@ -6,217 +6,486 @@ import java.util.List;
 
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
+import software.bernie.geckolib3.util.VectorUtils;
+
+import javax.vecmath.Matrix3f;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector4f;
 
 public class GeoBone implements IBone, Serializable {
-	private static final long serialVersionUID = 42L;
-	public GeoBone parent;
+    private static final long serialVersionUID = 42L;
+    public GeoBone parent;
 
-	public List<GeoBone> childBones = new ArrayList<>();
-	public List<GeoCube> childCubes = new ArrayList<>();
+    public List<GeoBone> childBones = new ArrayList<>();
+    public List<GeoCube> childCubes = new ArrayList<>();
 
-	public String name;
-	private BoneSnapshot initialSnapshot;
+    public String name;
+    private BoneSnapshot initialSnapshot;
 
-	public Boolean mirror;
-	public Double inflate;
-	public Boolean dontRender;
-	public boolean isHidden;
-	public boolean areCubesHidden = false;
-	public boolean hideChildBonesToo;
-	// I still have no idea what this field does, but its in the json file so
-	// ¯\_(ツ)_/¯
-	public Boolean reset;
+    public Boolean mirror;
+    public Double inflate;
+    public Boolean dontRender;
+    public boolean isHidden;
+    public boolean areCubesHidden = false;
+    public boolean hideChildBonesToo;
+    // I still have no idea what this field does, but its in the json file so
+    // ¯\_(ツ)_/¯
+    public Boolean reset;
 
-	private float scaleX = 1;
-	private float scaleY = 1;
-	private float scaleZ = 1;
+    private float scaleX = 1;
+    private float scaleY = 1;
+    private float scaleZ = 1;
 
-	private float positionX;
-	private float positionY;
-	private float positionZ;
+    private float positionX;
+    private float positionY;
+    private float positionZ;
 
-	public float rotationPointX;
-	public float rotationPointY;
-	public float rotationPointZ;
+    public float rotationPointX;
+    public float rotationPointY;
+    public float rotationPointZ;
 
-	private float rotateX;
-	private float rotateY;
-	private float rotateZ;
+    private float rotateX;
+    private float rotateY;
+    private float rotateZ;
 
-	public transient Object extraData;
+    private Matrix4f modelSpaceXform;
+    private Matrix4f localSpaceXform;
+    private Matrix4f worldSpaceXform;
+    private Matrix3f worldSpaceNormal;
 
-	@Override
-	public void setModelRendererName(String modelRendererName) {
-		this.name = modelRendererName;
-	}
+    private boolean trackXform;
+    public Matrix4f rotMat;
 
-	@Override
-	public void saveInitialSnapshot() {
-		if (this.initialSnapshot == null) {
-			this.initialSnapshot = new BoneSnapshot(this, true);
-		}
-	}
+    public transient Object extraData;
 
-	@Override
-	public BoneSnapshot getInitialSnapshot() {
-		return this.initialSnapshot;
-	}
+    public GeoBone() {
+        modelSpaceXform = new Matrix4f();
+        modelSpaceXform.setIdentity();
+        localSpaceXform = new Matrix4f();
+        localSpaceXform.setIdentity();
+        worldSpaceXform = new Matrix4f();
+        worldSpaceXform.setIdentity();
+        worldSpaceNormal = new Matrix3f();
+        worldSpaceNormal.setIdentity();
+        trackXform = false;
+        rotMat = null;
+    }
 
-	@Override
-	public String getName() {
-		return this.name;
-	}
+    @Override
+    public void setModelRendererName(String modelRendererName) {
+        this.name = modelRendererName;
+    }
 
-	// Boilerplate code incoming
+    @Override
+    public void saveInitialSnapshot() {
+        if (this.initialSnapshot == null) {
+            this.initialSnapshot = new BoneSnapshot(this, true);
+        }
+    }
 
-	@Override
-	public float getRotationX() {
-		return rotateX;
-	}
+    @Override
+    public BoneSnapshot getInitialSnapshot() {
+        return this.initialSnapshot;
+    }
 
-	@Override
-	public float getRotationY() {
-		return rotateY;
-	}
+    @Override
+    public String getName() {
+        return this.name;
+    }
 
-	@Override
-	public float getRotationZ() {
-		return rotateZ;
-	}
+    // Boilerplate code incoming
 
-	@Override
-	public float getPositionX() {
-		return positionX;
-	}
+    @Override
+    public float getRotationX() {
+        return rotateX;
+    }
 
-	@Override
-	public float getPositionY() {
-		return positionY;
-	}
+    @Override
+    public float getRotationY() {
+        return rotateY;
+    }
 
-	@Override
-	public float getPositionZ() {
-		return positionZ;
-	}
+    @Override
+    public float getRotationZ() {
+        return rotateZ;
+    }
 
-	@Override
-	public float getScaleX() {
-		return scaleX;
-	}
+    @Override
+    public float getPositionX() {
+        return positionX;
+    }
 
-	@Override
-	public float getScaleY() {
-		return scaleY;
-	}
+    @Override
+    public float getPositionY() {
+        return positionY;
+    }
 
-	@Override
-	public float getScaleZ() {
-		return scaleZ;
-	}
+    @Override
+    public float getPositionZ() {
+        return positionZ;
+    }
 
-	@Override
-	public void setRotationX(float value) {
-		this.rotateX = value;
-	}
+    @Override
+    public float getScaleX() {
+        return scaleX;
+    }
 
-	@Override
-	public void setRotationY(float value) {
-		this.rotateY = value;
-	}
+    @Override
+    public float getScaleY() {
+        return scaleY;
+    }
 
-	@Override
-	public void setRotationZ(float value) {
-		this.rotateZ = value;
-	}
+    @Override
+    public float getScaleZ() {
+        return scaleZ;
+    }
 
-	@Override
-	public void setPositionX(float value) {
-		this.positionX = value;
-	}
+    @Override
+    public void setRotationX(float value) {
+        this.rotateX = value;
+    }
 
-	@Override
-	public void setPositionY(float value) {
-		this.positionY = value;
-	}
+    @Override
+    public void setRotationY(float value) {
+        this.rotateY = value;
+    }
 
-	@Override
-	public void setPositionZ(float value) {
-		this.positionZ = value;
-	}
+    @Override
+    public void setRotationZ(float value) {
+        this.rotateZ = value;
+    }
 
-	@Override
-	public void setScaleX(float value) {
-		this.scaleX = value;
-	}
+    @Override
+    public void setPositionX(float value) {
+        this.positionX = value;
+    }
 
-	@Override
-	public void setScaleY(float value) {
-		this.scaleY = value;
-	}
+    @Override
+    public void setPositionY(float value) {
+        this.positionY = value;
+    }
 
-	@Override
-	public void setScaleZ(float value) {
-		this.scaleZ = value;
-	}
+    @Override
+    public void setPositionZ(float value) {
+        this.positionZ = value;
+    }
 
-	@Override
-	public boolean isHidden() {
-		return this.isHidden;
-	}
+    @Override
+    public void setScaleX(float value) {
+        this.scaleX = value;
+    }
 
-	@Override
-	public void setHidden(boolean hidden) {
-		this.setHidden(hidden, hidden);
-	}
+    @Override
+    public void setScaleY(float value) {
+        this.scaleY = value;
+    }
 
-	@Override
-	public void setPivotX(float value) {
-		this.rotationPointX = value;
-	}
+    @Override
+    public void setScaleZ(float value) {
+        this.scaleZ = value;
+    }
 
-	@Override
-	public void setPivotY(float value) {
-		this.rotationPointY = value;
-	}
+    @Override
+    public boolean isHidden() {
+        return this.isHidden;
+    }
 
-	@Override
-	public void setPivotZ(float value) {
-		this.rotationPointZ = value;
-	}
+    @Override
+    public void setHidden(boolean hidden) {
+        this.setHidden(hidden, hidden);
+    }
 
-	@Override
-	public float getPivotX() {
-		return this.rotationPointX;
-	}
+    @Override
+    public void setPivotX(float value) {
+        this.rotationPointX = value;
+    }
 
-	@Override
-	public float getPivotY() {
-		return this.rotationPointY;
-	}
+    @Override
+    public void setPivotY(float value) {
+        this.rotationPointY = value;
+    }
 
-	@Override
-	public float getPivotZ() {
-		return this.rotationPointZ;
-	}
+    @Override
+    public void setPivotZ(float value) {
+        this.rotationPointZ = value;
+    }
 
-	@Override
-	public boolean cubesAreHidden() {
-		return areCubesHidden;
-	}
+    @Override
+    public float getPivotX() {
+        return this.rotationPointX;
+    }
 
-	@Override
-	public boolean childBonesAreHiddenToo() {
-		return hideChildBonesToo;
-	}
+    @Override
+    public float getPivotY() {
+        return this.rotationPointY;
+    }
 
-	@Override
-	public void setCubesHidden(boolean hidden) {
-		this.areCubesHidden = hidden;
-	}
+    @Override
+    public float getPivotZ() {
+        return this.rotationPointZ;
+    }
 
-	@Override
-	public void setHidden(boolean selfHidden, boolean skipChildRendering) {
-		this.isHidden = selfHidden;
-		this.hideChildBonesToo = skipChildRendering;
-	}
+    @Override
+    public boolean cubesAreHidden() {
+        return areCubesHidden;
+    }
+
+    @Override
+    public boolean childBonesAreHiddenToo() {
+        return hideChildBonesToo;
+    }
+
+    @Override
+    public void setCubesHidden(boolean hidden) {
+        this.areCubesHidden = hidden;
+    }
+
+    @Override
+    public void setHidden(boolean selfHidden, boolean skipChildRendering) {
+        this.isHidden = selfHidden;
+        this.hideChildBonesToo = skipChildRendering;
+    }
+
+    public GeoBone getParent() {
+        return (GeoBone) parent;
+    }
+
+    public boolean isTrackingXform() {
+        return trackXform;
+    }
+
+    public void setTrackXform(boolean trackXform) {
+        this.trackXform = trackXform;
+    }
+
+    public Matrix4f getModelSpaceXform() {
+        setTrackXform(true);
+        return modelSpaceXform;
+    }
+
+    public void setModelSpaceXform(Matrix4f modelSpaceXform) {
+        this.modelSpaceXform.set(modelSpaceXform);
+    }
+
+    public Vector3d getModelPosition() {
+        Matrix4f matrix = getModelSpaceXform();
+        Vector4f vec = new Vector4f(0, 0, 0, 1);
+        VectorUtils.transform(vec, matrix);
+        return new Vector3d(-vec.x * 16f, vec.y * 16f, vec.z * 16f);
+    }
+
+    public Matrix4f getLocalSpaceXform() {
+        setTrackXform(true);
+        return localSpaceXform;
+    }
+
+    @Deprecated
+    public void setLocalSpaceXform(Matrix4f localSpaceXform) {
+        localload(localSpaceXform);
+    }
+
+    @Deprecated
+    public void setWorldSpaceNormal(Matrix3f worldSpaceNormal) {
+        this.worldSpaceNormal = worldSpaceNormal;
+    }
+
+    public Matrix3f getWorldSpaceNormal() {
+        return worldSpaceNormal;
+    }
+
+    public Vector3d getLocalPosition() {
+        Matrix4f matrix = getLocalSpaceXform();
+        Vector4f vec = new Vector4f(0, 0, 0, 1);
+        VectorUtils.transform(vec, matrix);
+        return new Vector3d(vec.x, vec.y, vec.z);
+    }
+
+    public Matrix4f getWorldSpaceXform() {
+        setTrackXform(true);
+        return worldSpaceXform;
+    }
+
+    public void setWorldSpaceXform(Matrix4f worldSpaceXform) {
+        worldload(worldSpaceXform);
+    }
+
+    public void worldload(Matrix4f pOther) {
+        this.worldSpaceXform.m00 = pOther.m00;
+        this.worldSpaceXform.m01 = pOther.m01;
+        this.worldSpaceXform.m02 = pOther.m02;
+        this.worldSpaceXform.m03 = pOther.m03;
+        this.worldSpaceXform.m10 = pOther.m10;
+        this.worldSpaceXform.m11 = pOther.m11;
+        this.worldSpaceXform.m12 = pOther.m12;
+        this.worldSpaceXform.m13 = pOther.m13;
+        this.worldSpaceXform.m20 = pOther.m20;
+        this.worldSpaceXform.m21 = pOther.m21;
+        this.worldSpaceXform.m22 = pOther.m22;
+        this.worldSpaceXform.m23 = pOther.m23;
+        this.worldSpaceXform.m30 = pOther.m30;
+        this.worldSpaceXform.m31 = pOther.m31;
+        this.worldSpaceXform.m32 = pOther.m32;
+        this.worldSpaceXform.m33 = pOther.m33;
+    }
+
+    public void localload(Matrix4f pOther) {
+        this.localSpaceXform.m00 = pOther.m00;
+        this.localSpaceXform.m01 = pOther.m01;
+        this.localSpaceXform.m02 = pOther.m02;
+        this.localSpaceXform.m03 = pOther.m03;
+        this.localSpaceXform.m10 = pOther.m10;
+        this.localSpaceXform.m11 = pOther.m11;
+        this.localSpaceXform.m12 = pOther.m12;
+        this.localSpaceXform.m13 = pOther.m13;
+        this.localSpaceXform.m20 = pOther.m20;
+        this.localSpaceXform.m21 = pOther.m21;
+        this.localSpaceXform.m22 = pOther.m22;
+        this.localSpaceXform.m23 = pOther.m23;
+        this.localSpaceXform.m30 = pOther.m30;
+        this.localSpaceXform.m31 = pOther.m31;
+        this.localSpaceXform.m32 = pOther.m32;
+        this.localSpaceXform.m33 = pOther.m33;
+    }
+
+    /* Gets the postion of a bone relative to the world */
+    public Vector3d getWorldPosition() {
+        Matrix4f matrix = getWorldSpaceXform();
+        Vector4f vec = new Vector4f(0, 0, 0, 1);
+        VectorUtils.transform(vec, matrix);
+        return new Vector3d(vec.x, vec.y, vec.z);
+    }
+
+    public void setModelPosition(Vector3d pos) {
+        /* Doesn't work on bones with parent transforms */
+        GeoBone parent = getParent();
+        Matrix4f identity = new Matrix4f();
+        identity.setIdentity();
+        Matrix4f matrix = parent == null ? identity : (Matrix4f) parent.getModelSpaceXform().clone();
+        matrix.invert();
+        Vector4f vec = new Vector4f(-(float) pos.x / 16f, (float) pos.y / 16f, (float) pos.z / 16f, 1);
+        VectorUtils.transform(vec, matrix);
+        setPosition(-vec.x * 16f, vec.y * 16f, vec.z * 16f);
+    }
+
+    public Matrix4f getModelRotationMat() {
+        Matrix4f matrix = (Matrix4f) getModelSpaceXform().clone();
+        removeMatrixTranslation(matrix);
+        return matrix;
+    }
+
+    public static void removeMatrixTranslation(Matrix4f matrix) {
+        matrix.m03 = 0;
+        matrix.m13 = 0;
+        matrix.m23 = 0;
+    }
+
+    public void setModelRotationMat(Matrix4f mat) {
+        rotMat = mat;
+    }
+
+    // Position utils
+    public void addPosition(Vector3d vec) {
+        addPosition((float) vec.x, (float) vec.y, (float) vec.z);
+    }
+
+    public void addPosition(float x, float y, float z) {
+        addPositionX(x);
+        addPositionY(y);
+        addPositionZ(z);
+    }
+
+    public void addPositionX(float x) {
+        setPositionX(getPositionX() + x);
+    }
+
+    public void addPositionY(float y) {
+        setPositionY(getPositionY() + y);
+    }
+
+    public void addPositionZ(float z) {
+        setPositionZ(getPositionZ() + z);
+    }
+
+    public void setPosition(Vector3d vec) {
+        setPosition((float) vec.x, (float) vec.y, (float) vec.z);
+    }
+
+    public void setPosition(float x, float y, float z) {
+        setPositionX(x);
+        setPositionY(y);
+        setPositionZ(z);
+    }
+
+    public Vector3d getPosition() {
+        return new Vector3d(getPositionX(), getPositionY(), getPositionZ());
+    }
+
+    // Rotation utils
+    public void addRotation(Vector3d vec) {
+        addRotation((float) vec.x, (float) vec.y, (float) vec.z);
+    }
+
+    public void addRotation(float x, float y, float z) {
+        addRotationX(x);
+        addRotationY(y);
+        addRotationZ(z);
+    }
+
+    public void addRotationX(float x) {
+        setRotationX(getRotationX() + x);
+    }
+
+    public void addRotationY(float y) {
+        setRotationY(getRotationY() + y);
+    }
+
+    public void addRotationZ(float z) {
+        setRotationZ(getRotationZ() + z);
+    }
+
+    public void setRotation(Vector3d vec) {
+        setRotation((float) vec.x, (float) vec.y, (float) vec.z);
+    }
+
+    public void setRotation(float x, float y, float z) {
+        setRotationX(x);
+        setRotationY(y);
+        setRotationZ(z);
+    }
+
+    public Vector3d getRotation() {
+        return new Vector3d(getRotationX(), getRotationY(), getRotationZ());
+    }
+
+    // Scale utils
+    public void multiplyScale(Vector3d vec) {
+        multiplyScale((float) vec.x, (float) vec.y, (float) vec.z);
+    }
+
+    public void multiplyScale(float x, float y, float z) {
+        setScaleX(getScaleX() * x);
+        setScaleY(getScaleY() * y);
+        setScaleZ(getScaleZ() * z);
+    }
+
+    public void setScale(Vector3d vec) {
+        setScale((float) vec.x, (float) vec.y, (float) vec.z);
+    }
+
+    public void setScale(float x, float y, float z) {
+        setScaleX(x);
+        setScaleY(y);
+        setScaleZ(z);
+    }
+
+    public Vector3d getScale() {
+        return new Vector3d(getScaleX(), getScaleY(), getScaleZ());
+    }
+
+    public void addRotationOffsetFromBone(GeoBone source) {
+        setRotationX(getRotationX() + source.getRotationX() - source.getInitialSnapshot().rotationValueX);
+        setRotationY(getRotationY() + source.getRotationY() - source.getInitialSnapshot().rotationValueY);
+        setRotationZ(getRotationZ() + source.getRotationZ() - source.getInitialSnapshot().rotationValueZ);
+    }
 }
