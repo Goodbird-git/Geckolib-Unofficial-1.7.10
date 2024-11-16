@@ -246,7 +246,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 	 * Returns where in the swing animation the living entity is (from 0 to 1). Args
 	 * : entity, partialTickTime
 	 */
-	protected float getSwingProgress(EntityLivingBase livingBase, float partialTickTime) {
+	protected float getSwingProgressForGeo(EntityLivingBase livingBase, float partialTickTime) {
 		return livingBase.getSwingProgress(partialTickTime);
 	}
 
