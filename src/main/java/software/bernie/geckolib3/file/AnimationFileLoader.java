@@ -43,7 +43,7 @@ public class AnimationFileLoader {
 						JsonAnimationUtils.getAnimation(jsonRepresentation, animationName), parser);
 				animationFile.putAnimation(animationName, animation);
 			} catch (GeckoJsonException e) {
-				GeckoLib.LOGGER.error("Could not load animation: {}", animationName, e);
+                System.err.println("[GeckoLib] Could not load animation: {}" + animationName + e);
 				throw new RuntimeException(e);
 			}
 		}
@@ -62,7 +62,7 @@ public class AnimationFileLoader {
 						JsonAnimationUtils.getAnimation(jsonRepresentation, animationName), parser);
 				animationFile.putAnimation(animationName, animation);
 			} catch (GeckoJsonException e) {
-				GeckoLib.LOGGER.error("Could not load animation: {}", animationName, e);
+                System.err.println("[GeckoLib] Could not load animation: {}" + animationName + e);
 				throw new RuntimeException(e);
 			}
 		}
@@ -104,7 +104,7 @@ public class AnimationFileLoader {
 			return IOUtils.toString(inputStream, Charset.defaultCharset());
 		} catch (Exception e) {
 			String message = "Couldn't load " + location;
-			GeckoLib.LOGGER.error(message, e);
+            System.err.println("[GeckoLib] " + message + e);
 			throw new RuntimeException(new FileNotFoundException(location.toString()));
 		}
 	}
@@ -114,7 +114,7 @@ public class AnimationFileLoader {
 			return IOUtils.toString(inputStream, Charset.defaultCharset());
 		} catch (Exception e) {
 			String message = "Couldn't load " + location;
-			GeckoLib.LOGGER.error(message, e);
+            System.err.println("[GeckoLib] " + message + e);
 			throw new RuntimeException(new FileNotFoundException(location.toString()));
 		}
 	}
