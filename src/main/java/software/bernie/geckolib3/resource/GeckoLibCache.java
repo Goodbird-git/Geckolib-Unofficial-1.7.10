@@ -155,6 +155,60 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 
 	/* Folder handling */
 
+	private void handleFolderResourcePack(FolderResourcePack folderPack, String folder, Predicate<String> predicate,
+			List<ResourceLocation> locations) {
+		Field fileField = null;
+
+		for (Field field : AbstractResourcePack.class.getDeclaredFields()) {
+			if (field.getType() == File.class) {
+				fileField = field;
+
+				break;
+			}
+		}
+
+		if (fileField != null) {
+			fileField.setAccessible(true);
+
+			try {
+				File file = (File) fileField.get(folderPack);
+				Set<String> domains = folderPack.getResourceDomains();
+
+				if (folderPack instanceof FMLFolderResourcePack) {
+					domains.add(((FMLFolderResourcePack) folderPack).getFMLContainer().getModId());
+				}
+
+				for (String domain : domains) {
+					String prefix = "assets/" + domain + "/" + folder;
+					File pathFile = new File(file, prefix);
+
+					this.enumerateFiles(folderPack, pathFile, predicate, locations, domain, folder);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println(e.toString());
+			}
+		}
+	}
+
+	private void enumerateFiles(FolderResourcePack folderPack, File parent, Predicate<String> predicate,
+			List<ResourceLocation> locations, String domain, String prefix) {
+		File[] files = parent.listFiles();
+
+		if (files == null) {
+			return;
+		}
+
+		for (File file : files) {
+			if (file.isFile() && predicate.test(file.getName())) {
+				locations.add(new ResourceLocation(domain, prefix + "/" + file.getName()));
+			} else if (file.isDirectory()) {
+				this.enumerateFiles(folderPack, file, predicate, locations, domain, prefix + "/" + file.getName());
+			}
+		}
+	}
+
+	/* Zip handling */
+
 	private void handleZipResourcePack(FileResourcePack filePack, String folder, Predicate<String> predicate,
 		List<ResourceLocation> locations) {
 		Field zipField = null;
@@ -186,49 +240,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 
 			this.enumerateZipFile(filePack, folder, zip, predicate, locations);
 		} catch (IllegalAccessException e) {
-			System.err.println(("[GeckoLib] Error accessing zip file: {}" + e);
-		}
-	}
-
-	private void enumerateFiles(FolderResourcePack folderPack, File parent, Predicate<String> predicate,
-			List<ResourceLocation> locations, String domain, String prefix) {
-		File[] files = parent.listFiles();
-
-		if (files == null) {
-			return;
-		}
-
-		for (File file : files) {
-			if (file.isFile() && predicate.test(file.getName())) {
-				locations.add(new ResourceLocation(domain, prefix + "/" + file.getName()));
-			} else if (file.isDirectory()) {
-				this.enumerateFiles(folderPack, file, predicate, locations, domain, prefix + "/" + file.getName());
-			}
-		}
-	}
-
-	/* Zip handling */
-
-	private void handleZipResourcePack(FileResourcePack filePack, String folder, Predicate<String> predicate,
-			List<ResourceLocation> locations) {
-		Field zipField = null;
-
-		for (Field field : FileResourcePack.class.getDeclaredFields()) {
-			if (field.getType() == ZipFile.class) {
-				zipField = field;
-
-				break;
-			}
-		}
-
-		if (zipField != null) {
-			zipField.setAccessible(true);
-
-			try {
-				this.enumerateZipFile(filePack, folder, (ZipFile) zipField.get(filePack), predicate, locations);
-			} catch (IllegalAccessException e) {
-				System.err.println("[GeckoLib] " + "GeckoLibCache error during zip handling" + e);
-			}
+			System.err.println("[GeckoLib] Error accessing zip file: {}" + e.toString() + e);
 		}
 	}
 
