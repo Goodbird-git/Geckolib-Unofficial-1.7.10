@@ -173,20 +173,20 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 		try {
 			ZipFile zip = (ZipFile) zipField.get(filePack);
 			if (zip == null) {
-				GeckoLib.LOGGER.warn("handleZipResourcePack: zipField is null for {}", filePack);
+				System.out.println("[GeckoLib] handleZipResourcePack: zipField is null for {}" + filePack);
 				return;
 			}
 
 			String zipFileName = new File(zip.getName()).getName();
 
 			if ("CarpentersBlocksCachedResources.zip".equalsIgnoreCase(zipFileName)) {
-				GeckoLib.LOGGER.info("Skipping Carpenter's Blocks cached zip: {}", zipFileName);
+				System.out.println("[GeckoLib] Skipping Carpenter's Blocks cached zip: {}" + zipFileName);
 				return;
 			}
 
 			this.enumerateZipFile(filePack, folder, zip, predicate, locations);
 		} catch (IllegalAccessException e) {
-			GeckoLib.LOGGER.error("Error accessing zip file", e);
+			System.err.println(("[GeckoLib] Error accessing zip file: {}" + e);
 		}
 	}
 
