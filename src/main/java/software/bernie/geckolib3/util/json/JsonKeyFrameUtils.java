@@ -138,7 +138,7 @@ public class JsonKeyFrameUtils {
 			EasingType easing = EasingType.valueOf(uppercaseEasingString);
 			return easing;
 		} catch (Exception e) {
-			GeckoLib.LOGGER.fatal("Unknown easing type: {}", easingString);
+            System.err.println("[GeckoLib] " + "Unknown easing type: {}" + easingString);
 			throw new RuntimeException(e);
 		}
 	}

@@ -78,7 +78,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 					tempAnimations.put(location, AnimationFileLoader.getInstance().loadAllAnimations(MolangRegistrar.getParser(), location, resourceManager));
 				} catch (Exception e) {
 					e.printStackTrace();
-					GeckoLib.LOGGER.error("Error loading animation file \"" + location + "\"!", e);
+                    System.err.println("[GeckoLib] " + "Error loading animation file \"" + location + "\"!" + e);
 				}
 			}
 
@@ -87,7 +87,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 					tempModels.put(location, GeoModelLoader.getInstance().loadModel(resourceManager, location));
 				} catch (Exception e) {
 					e.printStackTrace();
-					GeckoLib.LOGGER.error("Error loading model file \"" + location + "\"!", e);
+                    System.err.println("[GeckoLib] " + "Error loading model file \"" + location + "\"!" + e);
 				}
 			}
 
@@ -96,7 +96,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
                     BedrockLibrary.instance.storeFactory(location);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    GeckoLib.LOGGER.error("Error loading model file \"" + location + "\"!", e);
+                    System.err.println("[GeckoLib] " + "Error loading model file \"" + location + "\"!" + e);
                 }
             }
 		}
@@ -113,7 +113,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 
 			return (List<IResourcePack>) field.get(FMLClientHandler.instance());
 		} catch (Exception e) {
-			GeckoLib.LOGGER.error("Error accessing resource pack list!", e);
+            System.err.println("[GeckoLib] " + "Error accessing resource pack list!" + e);
 		}
 
 		return null;
@@ -185,7 +185,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 					this.enumerateFiles(folderPack, pathFile, predicate, locations, domain, folder);
 				}
 			} catch (IllegalAccessException e) {
-				GeckoLib.LOGGER.error(e);
+                System.err.println("[GeckoLib] " + "GeckoLibCache error during folder handling" + e);
 			}
 		}
 	}
@@ -227,7 +227,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 			try {
 				this.enumerateZipFile(filePack, folder, (ZipFile) zipField.get(filePack), predicate, locations);
 			} catch (IllegalAccessException e) {
-				GeckoLib.LOGGER.error(e);
+                System.err.println("[GeckoLib] " + "GeckoLibCache error during zip handling" + e);
 			}
 		}
 	}

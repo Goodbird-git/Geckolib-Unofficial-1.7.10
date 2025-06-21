@@ -32,8 +32,8 @@ public class RawGeometryTree
 			loopsWithoutChange++;
 			if(loopsWithoutChange > 10000)
 			{
-				GeckoLib.LOGGER.warn("Some bones in " + location.toString() + " do not have existing parents: ");
-				GeckoLib.LOGGER.warn(bones.stream().map(x -> x.getName()).collect(Collectors.joining(", ")));
+                System.out.println("[GeckoLib] " + "Some bones in " + location.toString() + " do not have existing parents: ");
+                System.out.println("[GeckoLib] " + bones.stream().map(x -> x.getName()).collect(Collectors.joining(", ")));
 				break;
 			}
 			Bone bone = bones.get(index);

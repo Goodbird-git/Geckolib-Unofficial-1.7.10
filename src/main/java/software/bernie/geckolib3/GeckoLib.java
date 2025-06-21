@@ -4,18 +4,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import software.bernie.example.GeckoLibMod;
-import software.bernie.geckolib3.particles.BedrockLibrary;
 import software.bernie.geckolib3.resource.ResourceListener;
 
 public class GeckoLib {
-	public static final Logger LOGGER = LogManager.getLogger();
 	public static final String ModID = "geckolib3";
 	public static boolean hasInitialized;
 	public static final String VERSION = "3.0.30";
@@ -45,7 +39,7 @@ public class GeckoLib {
 		}
 		catch (InterruptedException | ExecutionException e)
 		{
-			FMLLog.getLogger().fatal("Exception caught executing FutureTask: {}", e.toString(), e);
+            System.err.println("[GeckoLib] Exception caught executing FutureTask: {}" + e.toString() + e);
 		}
 	}
 
