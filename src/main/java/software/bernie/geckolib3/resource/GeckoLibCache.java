@@ -155,38 +155,38 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 
 	/* Folder handling */
 
-	private void handleZipResourcePack(FileResourcePack filePack, String folder, Predicate<String> predicate,
-		List<ResourceLocation> locations) {
-		Field zipField = null;
+	private void handleFolderResourcePack(FolderResourcePack folderPack, String folder, Predicate<String> predicate,
+			List<ResourceLocation> locations) {
+		Field fileField = null;
 
-		for (Field field : FileResourcePack.class.getDeclaredFields()) {
-			if (field.getType() == ZipFile.class) {
-				zipField = field;
+		for (Field field : AbstractResourcePack.class.getDeclaredFields()) {
+			if (field.getType() == File.class) {
+				fileField = field;
+
 				break;
 			}
 		}
 
-		if (zipField == null) return;
+		if (fileField != null) {
+			fileField.setAccessible(true);
 
-		zipField.setAccessible(true);
+			try {
+				File file = (File) fileField.get(folderPack);
+				Set<String> domains = folderPack.getResourceDomains();
 
-		try {
-			ZipFile zip = (ZipFile) zipField.get(filePack);
-			if (zip == null) {
-				GeckoLib.LOGGER.warn("handleZipResourcePack: zipField is null for {}", filePack);
-				return;
+				if (folderPack instanceof FMLFolderResourcePack) {
+					domains.add(((FMLFolderResourcePack) folderPack).getFMLContainer().getModId());
+				}
+
+				for (String domain : domains) {
+					String prefix = "assets/" + domain + "/" + folder;
+					File pathFile = new File(file, prefix);
+
+					this.enumerateFiles(folderPack, pathFile, predicate, locations, domain, folder);
+				}
+			} catch (IllegalAccessException e) {
+				System.err.println(e.toString());
 			}
-
-			String zipFileName = new File(zip.getName()).getName();
-
-			if ("CarpentersBlocksCachedResources.zip".equalsIgnoreCase(zipFileName)) {
-				GeckoLib.LOGGER.info("Skipping Carpenter's Blocks cached zip: {}", zipFileName);
-				return;
-			}
-
-			this.enumerateZipFile(filePack, folder, zip, predicate, locations);
-		} catch (IllegalAccessException e) {
-			GeckoLib.LOGGER.error("Error accessing zip file", e);
 		}
 	}
 
@@ -210,25 +210,37 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 	/* Zip handling */
 
 	private void handleZipResourcePack(FileResourcePack filePack, String folder, Predicate<String> predicate,
-			List<ResourceLocation> locations) {
+		List<ResourceLocation> locations) {
 		Field zipField = null;
 
 		for (Field field : FileResourcePack.class.getDeclaredFields()) {
 			if (field.getType() == ZipFile.class) {
 				zipField = field;
-
 				break;
 			}
 		}
 
-		if (zipField != null) {
-			zipField.setAccessible(true);
+		if (zipField == null) return;
 
-			try {
-				this.enumerateZipFile(filePack, folder, (ZipFile) zipField.get(filePack), predicate, locations);
-			} catch (IllegalAccessException e) {
-				System.err.println("[GeckoLib] " + "GeckoLibCache error during zip handling" + e);
+		zipField.setAccessible(true);
+
+		try {
+			ZipFile zip = (ZipFile) zipField.get(filePack);
+			if (zip == null) {
+				System.out.println("[GeckoLib] handleZipResourcePack: zipField is null for {}" + filePack);
+				return;
 			}
+
+			String zipFileName = new File(zip.getName()).getName();
+
+			if ("CarpentersBlocksCachedResources.zip".equalsIgnoreCase(zipFileName)) {
+				System.out.println("[GeckoLib] Skipping Carpenter's Blocks cached zip: {}" + zipFileName);
+				return;
+			}
+
+			this.enumerateZipFile(filePack, folder, zip, predicate, locations);
+		} catch (IllegalAccessException e) {
+			System.err.println("[GeckoLib] Error accessing zip file: {}" + e.toString() + e);
 		}
 	}
 
