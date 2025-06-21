@@ -78,7 +78,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 					tempAnimations.put(location, AnimationFileLoader.getInstance().loadAllAnimations(MolangRegistrar.getParser(), location, resourceManager));
 				} catch (Exception e) {
 					e.printStackTrace();
-                    System.err.println("[GeckoLib] " + "Error loading animation file \"" + location + "\"!" + e);
+					System.err.println("[GeckoLib] " + "Error loading animation file \"" + location + "\"!" + e);
 				}
 			}
 
@@ -87,22 +87,22 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 					tempModels.put(location, GeoModelLoader.getInstance().loadModel(resourceManager, location));
 				} catch (Exception e) {
 					e.printStackTrace();
-                    System.err.println("[GeckoLib] " + "Error loading model file \"" + location + "\"!" + e);
+					System.err.println("[GeckoLib] " + "Error loading model file \"" + location + "\"!" + e);
 				}
 			}
 
-            for (ResourceLocation location : this.getLocations(pack, "particles", fileName -> fileName.endsWith(".json"))) {
-                try {
-                    BedrockLibrary.instance.storeFactory(location);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.err.println("[GeckoLib] " + "Error loading model file \"" + location + "\"!" + e);
-                }
-            }
+			for (ResourceLocation location : this.getLocations(pack, "particles", fileName -> fileName.endsWith(".json"))) {
+				try {
+					BedrockLibrary.instance.storeFactory(location);
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.err.println("[GeckoLib] " + "Error loading model file \"" + location + "\"!" + e);
+				}
+			}
 		}
 		animations = tempAnimations;
 		geoModels = tempModels;
-        BedrockLibrary.instance.reload();
+		BedrockLibrary.instance.reload();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -113,7 +113,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 
 			return (List<IResourcePack>) field.get(FMLClientHandler.instance());
 		} catch (Exception e) {
-            System.err.println("[GeckoLib] " + "Error accessing resource pack list!" + e);
+			System.err.println("[GeckoLib] " + "Error accessing resource pack list!" + e);
 		}
 
 		return null;
@@ -155,38 +155,38 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 
 	/* Folder handling */
 
-	private void handleFolderResourcePack(FolderResourcePack folderPack, String folder, Predicate<String> predicate,
-			List<ResourceLocation> locations) {
-		Field fileField = null;
+	private void handleZipResourcePack(FileResourcePack filePack, String folder, Predicate<String> predicate,
+		List<ResourceLocation> locations) {
+		Field zipField = null;
 
-		for (Field field : AbstractResourcePack.class.getDeclaredFields()) {
-			if (field.getType() == File.class) {
-				fileField = field;
-
+		for (Field field : FileResourcePack.class.getDeclaredFields()) {
+			if (field.getType() == ZipFile.class) {
+				zipField = field;
 				break;
 			}
 		}
 
-		if (fileField != null) {
-			fileField.setAccessible(true);
+		if (zipField == null) return;
 
-			try {
-				File file = (File) fileField.get(folderPack);
-				Set<String> domains = folderPack.getResourceDomains();
+		zipField.setAccessible(true);
 
-				if (folderPack instanceof FMLFolderResourcePack) {
-					domains.add(((FMLFolderResourcePack) folderPack).getFMLContainer().getModId());
-				}
-
-				for (String domain : domains) {
-					String prefix = "assets/" + domain + "/" + folder;
-					File pathFile = new File(file, prefix);
-
-					this.enumerateFiles(folderPack, pathFile, predicate, locations, domain, folder);
-				}
-			} catch (IllegalAccessException e) {
-                System.err.println("[GeckoLib] " + "GeckoLibCache error during folder handling" + e);
+		try {
+			ZipFile zip = (ZipFile) zipField.get(filePack);
+			if (zip == null) {
+				GeckoLib.LOGGER.warn("handleZipResourcePack: zipField is null for {}", filePack);
+				return;
 			}
+
+			String zipFileName = new File(zip.getName()).getName();
+
+			if ("CarpentersBlocksCachedResources.zip".equalsIgnoreCase(zipFileName)) {
+				GeckoLib.LOGGER.info("Skipping Carpenter's Blocks cached zip: {}", zipFileName);
+				return;
+			}
+
+			this.enumerateZipFile(filePack, folder, zip, predicate, locations);
+		} catch (IllegalAccessException e) {
+			GeckoLib.LOGGER.error("Error accessing zip file", e);
 		}
 	}
 
@@ -227,7 +227,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
 			try {
 				this.enumerateZipFile(filePack, folder, (ZipFile) zipField.get(filePack), predicate, locations);
 			} catch (IllegalAccessException e) {
-                System.err.println("[GeckoLib] " + "GeckoLibCache error during zip handling" + e);
+				System.err.println("[GeckoLib] " + "GeckoLibCache error during zip handling" + e);
 			}
 		}
 	}
