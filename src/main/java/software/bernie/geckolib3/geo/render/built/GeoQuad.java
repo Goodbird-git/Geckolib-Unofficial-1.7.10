@@ -2,6 +2,7 @@ package software.bernie.geckolib3.geo.render.built;
 
 import net.geckominecraft.util.math.Vec3i;
 import net.minecraft.util.EnumFacing;
+import software.bernie.geckolib3.geo.raw.pojo.FaceUv;
 
 import java.io.Serializable;
 
@@ -10,11 +11,13 @@ public class GeoQuad implements Serializable {
     public GeoVertex[] vertices;
     public final Vec3i normal;
     public EnumFacing direction;
+    public int uvRotation;
 
-    public GeoQuad(GeoVertex[] verticesIn, float u1, float v1, float uSize, float vSize, float texWidth,
+    public GeoQuad(GeoVertex[] verticesIn, float u1, float v1, float uSize, float vSize, int uvRotation, float texWidth,
                    float texHeight, Boolean mirrorIn, EnumFacing directionIn) {
         this.direction = directionIn;
         this.vertices = verticesIn;
+        this.uvRotation = uvRotation;
 
         /*
          * u1 is the distance from the very left of the texture to where the uv region
@@ -26,40 +29,47 @@ public class GeoQuad implements Serializable {
         float u2 = u1 + uSize;
         float v2 = v1 + vSize;
 
-        // Normalize the coordinates to be relative (between 0 and 1)
+        float uWidth = u2 / texWidth;
+        float vHeight = v2 / texHeight;
         u1 /= texWidth;
-        u2 /= texWidth;
         v1 /= texHeight;
-        v2 /= texHeight;
 
-        // u1, v1 - Top left corner of uv region
-        // u2, v1 - Top right corner of uv region
-        // u1, v2 - Bottom left corner of uv region
-        // u2, v2 - Bottom right corner of uv region
+        int nx = directionIn.getFrontOffsetX();
+        int ny = directionIn.getFrontOffsetY();
+        int nz = directionIn.getFrontOffsetZ();
 
-        // Sets the new normalized texture coordinates of each vertex using the
-        // positions described above
-        if (mirrorIn != null && mirrorIn) {
-            vertices[0] = verticesIn[0].setTextureUV(u1, v1); // Top left corner
-            vertices[1] = verticesIn[1].setTextureUV(u2, v1); // Top right corner
-            vertices[2] = verticesIn[2].setTextureUV(u2, v2); // Bottom left corner
-            vertices[3] = verticesIn[3].setTextureUV(u1, v2); // Bottom right corner
+        boolean mirror = mirrorIn != null && mirrorIn;
+
+        if (!mirror) {
+            float temp = uWidth;
+            uWidth = u1;
+            u1 = temp;
         } else {
-            vertices[0] = verticesIn[0].setTextureUV(u2, v1); // Top left corner
-            vertices[1] = verticesIn[1].setTextureUV(u1, v1); // Top right corner
-            vertices[2] = verticesIn[2].setTextureUV(u1, v2); // Bottom left corner
-            vertices[3] = verticesIn[3].setTextureUV(u2, v2); // Bottom right corner
+            nx *= -1;
         }
 
-        // only god knows what this does, but eliot told me it generates a normal vector
-        // which helps the game do lighting properly or something idk i didnt pay
-        // attention in physics we were in remote learning gimme a break
-        this.normal = new Vec3i(directionIn.getFrontOffsetX(), directionIn.getFrontOffsetY(), directionIn.getFrontOffsetZ());
+        float[] uvs = FaceUv.Rotation.fromValue(uvRotation).rotateUvs(u1, v1, uWidth, vHeight);
+        vertices[0] = verticesIn[0].setTextureUV(uvs[0], uvs[1]);
+        vertices[1] = verticesIn[1].setTextureUV(uvs[2], uvs[3]);
+        vertices[2] = verticesIn[2].setTextureUV(uvs[4], uvs[5]);
+        vertices[3] = verticesIn[3].setTextureUV(uvs[6], uvs[7]);
+        this.normal = new Vec3i(nx, ny, nz);
+    }
+
+    public GeoQuad(GeoVertex[] verticesIn, double[] uvCoords, double[] uvSize, int uvRotation, float texWidth, float texHeight,
+                   Boolean mirrorIn, EnumFacing directionIn) {
+        this(verticesIn, (float) uvCoords[0], (float) uvCoords[1], (float) uvSize[0], (float) uvSize[1], uvRotation, texWidth,
+            texHeight, mirrorIn, directionIn);
+    }
+
+    public GeoQuad(GeoVertex[] verticesIn, float u1, float v1, float uSize, float vSize, float texWidth,
+                   float texHeight, Boolean mirrorIn, EnumFacing directionIn) {
+        this(verticesIn, u1, v1, uSize, vSize, 0, texWidth, texHeight, mirrorIn, directionIn);
     }
 
     public GeoQuad(GeoVertex[] verticesIn, double[] uvCoords, double[] uvSize, float texWidth, float texHeight,
                    Boolean mirrorIn, EnumFacing directionIn) {
-        this(verticesIn, (float) uvCoords[0], (float) uvCoords[1], (float) uvSize[0], (float) uvSize[1], texWidth,
+        this(verticesIn, (float) uvCoords[0], (float) uvCoords[1], (float) uvSize[0], (float) uvSize[1], 0, texWidth,
             texHeight, mirrorIn, directionIn);
     }
 }

@@ -25,6 +25,7 @@ public class FaceUv {
     private String materialInstance;
     private double[] uv;
     private double[] uvSize;
+    private Integer uvRotation;
 
     @JsonProperty("material_instance")
     public String getMaterialInstance() {
@@ -62,5 +63,53 @@ public class FaceUv {
     @JsonProperty("uv_size")
     public void setUvSize(double[] value) {
         this.uvSize = value;
+    }
+
+    @JsonProperty("uv_rotation")
+    public Integer getUvRotation() {
+        return uvRotation;
+    }
+
+    @JsonProperty("uv_rotation")
+    public void setUvRotation(Integer value) {
+        this.uvRotation = value;
+    }
+
+    public Rotation getRotationEnum() {
+        return Rotation.fromValue(this.uvRotation == null ? 0 : this.uvRotation);
+    }
+
+    public enum Rotation {
+        NONE,
+        CLOCKWISE_90,
+        CLOCKWISE_180,
+        CLOCKWISE_270;
+
+        public static Rotation fromValue(int value) {
+            int index = ((value % 360) + 360) % 360 / 90;
+            switch (index) {
+                case 1:
+                    return CLOCKWISE_90;
+                case 2:
+                    return CLOCKWISE_180;
+                case 3:
+                    return CLOCKWISE_270;
+                default:
+                    return NONE;
+            }
+        }
+
+        public float[] rotateUvs(float u, float v, float u2, float v2) {
+            switch (this) {
+                case CLOCKWISE_90:
+                    return new float[] {u2, v, u2, v2, u, v2, u, v};
+                case CLOCKWISE_180:
+                    return new float[] {u2, v2, u, v2, u, v, u2, v};
+                case CLOCKWISE_270:
+                    return new float[] {u, v2, u, v, u2, v, u2, v2};
+                default:
+                    return new float[] {u, v, u2, v, u2, v2, u, v2};
+            }
+        }
     }
 }
