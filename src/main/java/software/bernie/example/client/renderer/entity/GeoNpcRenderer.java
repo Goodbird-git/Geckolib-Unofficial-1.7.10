@@ -11,7 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
-import net.geckominecraft.client.renderer.GlStateManager;
 import software.bernie.example.client.model.entity.BikeModel;
 import software.bernie.example.client.model.entity.GeoNpcModel;
 import software.bernie.example.entity.BikeEntity;
@@ -55,34 +54,29 @@ public class GeoNpcRenderer extends GeoEntityRenderer<GeoNpcEntity> {
 
     public void renderItem(GeoNpcEntity animatable, GeoBone locator, float ticks) {
 
-        GlStateManager.pushAttrib();
         GL11.glPushMatrix();
-        try {
-            float scale = 0.5f;
-            GL11.glScaled(scale, scale, scale);
+        float scale = 0.5f;
+        GL11.glScaled(scale, scale, scale);
 
-            GeoBone[] bonePath = getPathFromRoot(locator);
-            for(int i=0;i< bonePath.length;i++) {
-                GeoBone b = bonePath[i];
-                GL11.glTranslatef(b.getPositionX()/(16*scale), b.getPositionY()/(16*scale), b.getPositionZ()/(16*scale));
-                GL11.glTranslatef(b.getPivotX()/(16*scale), b.getPivotY()/(16*scale), b.getPivotZ()/(16*scale));
+        GeoBone[] bonePath = getPathFromRoot(locator);
+        for(int i=0;i< bonePath.length;i++) {
+            GeoBone b = bonePath[i];
+            GL11.glTranslatef(b.getPositionX()/(16*scale), b.getPositionY()/(16*scale), b.getPositionZ()/(16*scale));
+            GL11.glTranslatef(b.getPivotX()/(16*scale), b.getPivotY()/(16*scale), b.getPivotZ()/(16*scale));
 
-                GL11.glRotated(b.getRotationZ() / Math.PI * 180, 0, 0, 1);
-                GL11.glRotated(b.getRotationY() / Math.PI * 180, 0, 1, 0);
-                GL11.glRotated(b.getRotationX() / Math.PI * 180, 1, 0, 0);
+            GL11.glRotated(b.getRotationZ() / Math.PI * 180, 0, 0, 1);
+            GL11.glRotated(b.getRotationY() / Math.PI * 180, 0, 1, 0);
+            GL11.glRotated(b.getRotationX() / Math.PI * 180, 1, 0, 0);
 
-                GL11.glScalef(b.getScaleX(), b.getScaleY(), b.getScaleZ());
-                GL11.glTranslatef(-b.getPivotX()/(16*scale), -b.getPivotY()/(16*scale), -b.getPivotZ()/(16*scale));
-            }
-            GL11.glRotatef(250, 1, 0, 0);
-            GL11.glRotatef(40, 0, 1, 0);
-            GL11.glTranslatef(-0.4f, -0.55f, 1.7f);
-            ItemStack stack = animatable.getHeldItem();
-            RenderManager.instance.itemRenderer.renderItem(animatable, stack, 0, IItemRenderer.ItemRenderType.INVENTORY);
-        } finally {
-            GL11.glPopMatrix();
-            GlStateManager.popAttrib();
+            GL11.glScalef(b.getScaleX(), b.getScaleY(), b.getScaleZ());
+            GL11.glTranslatef(-b.getPivotX()/(16*scale), -b.getPivotY()/(16*scale), -b.getPivotZ()/(16*scale));
         }
+        GL11.glRotatef(250, 1, 0, 0);
+        GL11.glRotatef(40, 0, 1, 0);
+        GL11.glTranslatef(-0.4f, -0.55f, 1.7f);
+        ItemStack stack = animatable.getHeldItem();
+        RenderManager.instance.itemRenderer.renderItem(animatable, stack, 0, IItemRenderer.ItemRenderType.INVENTORY);
+        GL11.glPopMatrix();
     }
 
 

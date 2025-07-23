@@ -87,10 +87,8 @@ public abstract class GeoArmorRenderer<T extends ItemArmor & IAnimatable> extend
 				Arrays.asList(this.itemStack, this.entityLiving, this.armorSlot));
 		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
 		this.fitToBiped();
-                GlStateManager.pushAttrib();
-                GlStateManager.pushMatrix();
-                try {
-                GlStateManager.translate(0, 0.01f, 0);
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(0, 0.01f, 0);
 		IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
 		IBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
 		if (entityLiving.swingProgress > 0.0F) {
@@ -127,18 +125,15 @@ public abstract class GeoArmorRenderer<T extends ItemArmor & IAnimatable> extend
 				throw new RuntimeException("Could not find an armor bone.", e);
 			}
 		}
-                Minecraft.getMinecraft().renderEngine.bindTexture(getTextureLocation(currentArmorItem));
-                Color renderColor = getRenderColor(currentArmorItem, partialTicks);
-                render(model, currentArmorItem, partialTicks, (float) renderColor.getRed() / 255f,
-                                (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
-                                (float) renderColor.getAlpha() / 255);
-                } finally {
-                        GlStateManager.popMatrix();
-                        GlStateManager.popAttrib();
-                }
-                GlStateManager.scale(-1.0F, -1.0F, 1.0F);
-                GlStateManager.translate(0.0D, -1.501F, 0.0D);
-        }
+		Minecraft.getMinecraft().renderEngine.bindTexture(getTextureLocation(currentArmorItem));
+		Color renderColor = getRenderColor(currentArmorItem, partialTicks);
+		render(model, currentArmorItem, partialTicks, (float) renderColor.getRed() / 255f,
+				(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
+				(float) renderColor.getAlpha() / 255);
+		GlStateManager.popMatrix();
+		GlStateManager.scale(-1.0F, -1.0F, 1.0F);
+		GlStateManager.translate(0.0D, -1.501F, 0.0D);
+	}
 
 	private void fitToBiped() {
 		IBone headBone = this.modelProvider.getBone(this.headBone);

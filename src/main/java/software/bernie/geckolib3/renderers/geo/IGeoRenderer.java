@@ -84,15 +84,10 @@ public interface IGeoRenderer<T> {
         if (!bone.isHidden()) {
             for (GeoCube cube : bone.childCubes) {
                 MATRIX_STACK.push();
-                GlStateManager.pushAttrib();
                 GlStateManager.pushMatrix();
-                try {
-                    renderCube(builder, cube, red, green, blue, alpha);
-                } finally {
-                    GlStateManager.popMatrix();
-                    GlStateManager.popAttrib();
-                    MATRIX_STACK.pop();
-                }
+                renderCube(builder, cube, red, green, blue, alpha);
+                GlStateManager.popMatrix();
+                MATRIX_STACK.pop();
             }
         }
         if (!bone.childBonesAreHiddenToo()) {
@@ -205,9 +200,7 @@ public interface IGeoRenderer<T> {
         emitter.lastGlobal.z = posZ; //TODO
         RenderHelper.disableStandardItemLighting();
 
-        GlStateManager.pushAttrib();
         GL11.glPushMatrix();
-        try {
 
         Matrix4f curRot = PositionUtils.getCurrentMatrix();
 
@@ -242,10 +235,7 @@ public interface IGeoRenderer<T> {
         MATRIX_STACK.pop();
         emitter.render(Minecraft.getMinecraft().timer.renderPartialTicks);
         RenderHelper.enableStandardItemLighting();
-        } finally {
-            GL11.glPopMatrix();
-            GlStateManager.popAttrib();
-        }
+        GL11.glPopMatrix();
     }
 
     default GeoBone[] getPathFromRoot(GeoBone bone) {

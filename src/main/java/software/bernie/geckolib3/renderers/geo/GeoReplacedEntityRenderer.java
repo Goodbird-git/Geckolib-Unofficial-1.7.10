@@ -70,10 +70,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 	public void doRender(Entity entityObj, double x, double y, double z, float entityYaw, float partialTicks) {
 		if(!(entityObj instanceof EntityLivingBase)) return;
 		EntityLivingBase entity = (EntityLivingBase)entityObj;
-                GlStateManager.pushAttrib();
-                GlStateManager.pushMatrix();
-                try {
-                GlStateManager.translate(x, y, z);
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x, y, z);
 
 		// TODO: entity.isPassenger() looks redundant here
 		boolean shouldSit = /* entity.isPassenger() && */ (entity.ridingEntity != null
@@ -141,12 +139,10 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 			((IAnimatableModel<T>) modelProvider).setLivingAnimations(animatable, this.getUniqueID(entity), predicate);
 		}
 
-                GlStateManager.pushAttrib();
-                GlStateManager.pushMatrix();
-                try {
-                GlStateManager.translate(0, 0.01f, 0);
-                Minecraft.getMinecraft().renderEngine.bindTexture(getEntityTexture(entity));
-                Color renderColor = getRenderColor(entity, partialTicks);
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(0, 0.01f, 0);
+		Minecraft.getMinecraft().renderEngine.bindTexture(getEntityTexture(entity));
+		Color renderColor = getRenderColor(entity, partialTicks);
 
 		if (!entity.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer))
 			render(model, entity, partialTicks, (float) renderColor.getRed() / 255f,
@@ -165,12 +161,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 				this.renderLeash((EntityLiving) entity, x, y, z, entityYaw, partialTicks);
 			}
 		}
-                GlStateManager.popMatrix();
-                GlStateManager.popAttrib();
-                } finally {
-                    GlStateManager.popMatrix();
-                    GlStateManager.popAttrib();
-                }
+		GlStateManager.popMatrix();
+		GlStateManager.popMatrix();
 
 		// super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
