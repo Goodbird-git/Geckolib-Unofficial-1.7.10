@@ -5,6 +5,7 @@ import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import software.bernie.geckolib3.watchers.ParticleDirWatcher;
+import software.bernie.example.config.ConfigHandler;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -99,7 +100,9 @@ public class BedrockLibrary {
             }
             return BedrockScheme.parse(contents);
         } catch (Exception e) {
-            e.printStackTrace();
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
         }
 
         return null;
@@ -121,7 +124,9 @@ public class BedrockLibrary {
         try {
             return BedrockScheme.parse(IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("assets/" + resLoc.getResourceDomain() + "/" + resLoc.getResourcePath()), StandardCharsets.UTF_8)).factory(true);
         } catch (Exception e) {
-            e.printStackTrace();
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
         }
 
         return null;

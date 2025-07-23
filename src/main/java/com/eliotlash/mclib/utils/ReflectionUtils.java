@@ -10,6 +10,7 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
+import software.bernie.example.config.ConfigHandler;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -72,7 +73,9 @@ public class ReflectionUtils {
                     break;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                if (ConfigHandler.debugPrintStacktraces) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -93,7 +96,9 @@ public class ReflectionUtils {
 
             return false;
         } catch (Exception e) {
-            e.printStackTrace();
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
         }
 
         return false;

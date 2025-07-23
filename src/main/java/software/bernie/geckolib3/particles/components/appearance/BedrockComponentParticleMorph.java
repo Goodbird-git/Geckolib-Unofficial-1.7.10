@@ -18,6 +18,7 @@ import software.bernie.geckolib3.particles.components.BedrockComponentBase;
 import software.bernie.geckolib3.particles.components.GuiModelRenderer;
 import software.bernie.geckolib3.particles.components.IComponentParticleInitialize;
 import software.bernie.geckolib3.particles.components.IComponentParticleMorphRender;
+import software.bernie.example.config.ConfigHandler;
 import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
 import software.bernie.geckolib3.particles.emitter.BedrockParticle;
 
@@ -106,7 +107,8 @@ public class BedrockComponentParticleMorph extends BedrockComponentBase implemen
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightnessX, brightnessY);
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, z);
+        try {
+            GlStateManager.translate(x, y, z);
 
         if (particle.relativeScaleBillboard) {
             GlStateManager.scale(emitter.scale[0], emitter.scale[1], emitter.scale[2]);
@@ -114,8 +116,14 @@ public class BedrockComponentParticleMorph extends BedrockComponentBase implemen
 
         //MorphUtils.render(this.morph.get(), dummy, 0, 0, 0, 0, partialTicks);
 
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.popMatrix();
+            RenderHelper.disableStandardItemLighting();
+        } catch (Exception e) {
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
+        } finally {
+            GlStateManager.popMatrix();
+        }
     }
 
     protected Vector3d calculatePosition(BedrockEmitter emitter, BedrockParticle particle, double px, double py, double pz) {

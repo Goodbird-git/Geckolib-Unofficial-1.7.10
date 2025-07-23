@@ -18,6 +18,7 @@ import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.GeoUtils;
+import software.bernie.example.config.ConfigHandler;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -87,7 +88,8 @@ public abstract class GeoArmorRenderer<T extends ItemArmor & IAnimatable> extend
         modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
         this.fitToBiped();
         GlStateManager.pushMatrix();
-        GlStateManager.translate(0, 0.01f, 0);
+        try {
+            GlStateManager.translate(0, 0.01f, 0);
         IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
         IBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
         if (entityLiving.swingProgress > 0.0F) {
@@ -129,7 +131,13 @@ public abstract class GeoArmorRenderer<T extends ItemArmor & IAnimatable> extend
         render(model, currentArmorItem, partialTicks, (float) renderColor.getRed() / 255f,
             (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
             (float) renderColor.getAlpha() / 255);
-        GlStateManager.popMatrix();
+        } catch (Exception e) {
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
+        } finally {
+            GlStateManager.popMatrix();
+        }
         GlStateManager.scale(-1.0F, -1.0F, 1.0F);
         GlStateManager.translate(0.0D, -1.501F, 0.0D);
     }

@@ -18,6 +18,7 @@ import software.bernie.geckolib3.geo.render.built.GeoVertex;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
 import software.bernie.geckolib3.util.MatrixStack;
+import software.bernie.example.config.ConfigHandler;
 import software.bernie.geckolib3.util.PositionUtils;
 
 import javax.vecmath.Matrix3f;
@@ -88,9 +89,16 @@ public interface IGeoRenderer<T> {
             for (GeoCube cube : bone.childCubes) {
                 MATRIX_STACK.push();
                 GlStateManager.pushMatrix();
-                renderCube(builder, cube, red, green, blue, alpha);
-                GlStateManager.popMatrix();
-                MATRIX_STACK.pop();
+                try {
+                    renderCube(builder, cube, red, green, blue, alpha);
+                } catch (Exception e) {
+                    if (ConfigHandler.debugPrintStacktraces) {
+                        e.printStackTrace();
+                    }
+                } finally {
+                    GlStateManager.popMatrix();
+                    MATRIX_STACK.pop();
+                }
             }
         }
         if (!bone.childBonesAreHiddenToo()) {

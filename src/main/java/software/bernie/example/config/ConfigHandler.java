@@ -7,6 +7,7 @@ import java.io.File;
 public class ConfigHandler {
     public static Configuration config;
     public static boolean enableExamples;
+    public static boolean debugPrintStacktraces;
 
     public ConfigHandler() {
     }
@@ -23,6 +24,7 @@ public class ConfigHandler {
     public static void syncConfig() {
         config.addCustomCategoryComment("general", "General Settings");
         enableExamples = config.getBoolean("enableexamples", "general", false, "Enable Geckolib Examples");
+        debugPrintStacktraces = config.getBoolean("debugStacktraces", "general", false, "Print stacktraces for debugging");
         config.save();
     }
 }

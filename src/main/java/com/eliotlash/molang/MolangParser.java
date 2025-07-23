@@ -18,6 +18,7 @@ import com.eliotlash.molang.functions.AsinDegrees;
 import com.eliotlash.molang.functions.Atan2Degrees;
 import com.eliotlash.molang.functions.AtanDegrees;
 import com.eliotlash.molang.functions.CosDegrees;
+import software.bernie.example.config.ConfigHandler;
 import com.eliotlash.molang.functions.SinDegrees;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
@@ -232,8 +233,9 @@ public class MolangParser extends MathBuilder implements Serializable {
         try {
             return this.parseSymbols(symbols);
         } catch (Exception e) {
-            e.printStackTrace();
-
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
             throw new MolangException("Couldn't parse an expression!");
         }
     }
