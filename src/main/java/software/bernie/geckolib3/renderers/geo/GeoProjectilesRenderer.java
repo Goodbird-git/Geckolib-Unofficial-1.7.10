@@ -40,14 +40,16 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Rend
 
 	@Override
 	public void doRender(Entity entity, double x, double y, double z, float entityYaw, float partialTicks) {
-		GlStateManager.pushMatrix();
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation((T)entity));
-		GlStateManager.rotate(
-				entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks - 90.0F, 0.0F,
-				1.0F, 0.0F);
-		GlStateManager.rotate(
-				entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 0.0F, 0.0F,
-				1.0F);
+                GlStateManager.pushAttrib();
+                GlStateManager.pushMatrix();
+                try {
+                GeoModel model = modelProvider.getModel(modelProvider.getModelLocation((T)entity));
+                GlStateManager.rotate(
+                                entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks - 90.0F, 0.0F,
+                                1.0F, 0.0F);
+                GlStateManager.rotate(
+                                entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 0.0F, 0.0F,
+                                1.0F);
 
 		float lastLimbDistance = 0.0F;
 		float limbSwing = 0.0F;
@@ -57,17 +59,25 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Rend
 		if (modelProvider instanceof IAnimatableModel) {
 			((IAnimatableModel<T>) modelProvider).setLivingAnimations((T)entity, this.getUniqueID(entity), predicate);
 		}
-		GlStateManager.pushMatrix();
-		Minecraft.getMinecraft().renderEngine.bindTexture(getTextureLocation(entity));
-		Color renderColor = getRenderColor((T)entity, partialTicks);
+                GlStateManager.pushAttrib();
+                GlStateManager.pushMatrix();
+                try {
+                    Minecraft.getMinecraft().renderEngine.bindTexture(getTextureLocation(entity));
+                    Color renderColor = getRenderColor((T)entity, partialTicks);
 
-		if (!entity.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer))
-			render(model, (T)entity, partialTicks, (float) renderColor.getRed() / 255f,
-					(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
-					(float) renderColor.getAlpha() / 255);
-		GlStateManager.popMatrix();
-		GlStateManager.popMatrix();
-	}
+                    if (!entity.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer))
+                            render(model, (T)entity, partialTicks, (float) renderColor.getRed() / 255f,
+                                            (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
+                                            (float) renderColor.getAlpha() / 255);
+                } finally {
+                    GlStateManager.popMatrix();
+                    GlStateManager.popAttrib();
+                }
+                } finally {
+                    GlStateManager.popMatrix();
+                    GlStateManager.popAttrib();
+                }
+        }
 
 	@Override
 	public GeoModelProvider<T> getGeoModelProvider() {

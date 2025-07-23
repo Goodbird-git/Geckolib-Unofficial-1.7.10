@@ -58,7 +58,9 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
     public void doRender(Entity entityObj, double x, double y, double z, float entityYaw, float partialTicks) {
         if (!(entityObj instanceof EntityLivingBase)) return;
         EntityLivingBase entity = (EntityLivingBase) entityObj;
+        GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
+        try {
         GlStateManager.translate(x, y, z);
         // TODO: entity.isPassenger() looks redundant here
         boolean shouldSit = /* entity.isPassenger() && */ (entity.ridingEntity != null
@@ -104,7 +106,9 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
             ((IAnimatableModel<T>) modelProvider).setLivingAnimations((T)entity, this.getUniqueID((T)entity), predicate);
         }
 
+        GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
+        try {
         GlStateManager.translate(0, 0.01f, 0);
         Minecraft.getMinecraft().renderEngine.bindTexture(getEntityTexture(entity));
         Color renderColor = getRenderColor((T) entity, partialTicks);
@@ -134,7 +138,11 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
         }
 
         GlStateManager.popMatrix();
-        GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
+        } finally {
+            GlStateManager.popMatrix();
+            GlStateManager.popAttrib();
+        }
     }
 
     public Pair<Float,Float> calculateRotations(EntityLivingBase entity, float partialTicks, boolean shouldSit){

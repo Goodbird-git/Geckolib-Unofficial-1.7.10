@@ -57,7 +57,9 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> implements I
 
     @Override
     public void renderItem(ItemRenderType var1, ItemStack itemStack, Object... var3) {
+        GlStateManager.pushAttrib();
         GL11.glPushMatrix();
+        try {
 
         if (var1 == ItemRenderType.INVENTORY) {
             GL11.glTranslated(-1, -1, 0);
@@ -75,7 +77,10 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> implements I
 //            double out=0;
         }
         this.render((T) itemStack.getItem(), itemStack);
-        GL11.glPopMatrix();
+        } finally {
+            GL11.glPopMatrix();
+            GlStateManager.popAttrib();
+        }
     }
     public Vector3d getCurrentRenderPos(){
         Entity camera = Minecraft.getMinecraft().renderViewEntity;
@@ -132,16 +137,21 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> implements I
         AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0,
                 Minecraft.getMinecraft().timer.renderPartialTicks, false, Collections.singletonList(itemStack));
         modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
+        GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
-        GlStateManager.translate(0, 0.01f, 0);
-        GlStateManager.translate(0.5, 0.5, 0.5);
+        try {
+            GlStateManager.translate(0, 0.01f, 0);
+            GlStateManager.translate(0.5, 0.5, 0.5);
 
-        Minecraft.getMinecraft().renderEngine.bindTexture(getTextureLocation(animatable));
-        Color renderColor = getRenderColor(animatable, 0f);
-        GL11.glRotatef(90, 0, 1, 0);
-        render(model, animatable, 0, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
-                (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
-        GlStateManager.popMatrix();
+            Minecraft.getMinecraft().renderEngine.bindTexture(getTextureLocation(animatable));
+            Color renderColor = getRenderColor(animatable, 0f);
+            GL11.glRotatef(90, 0, 1, 0);
+            render(model, animatable, 0, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
+                    (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
+        } finally {
+            GlStateManager.popMatrix();
+            GlStateManager.popAttrib();
+        }
     }
 
     @Override
