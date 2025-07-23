@@ -56,18 +56,23 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lx, ly);
         }
 
+        GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, z);
-        GlStateManager.translate(0, 0.01f, 0);
-        GlStateManager.translate(0.5, 0, 0.5);
+        try {
+            GlStateManager.translate(x, y, z);
+            GlStateManager.translate(0, 0.01f, 0);
+            GlStateManager.translate(0.5, 0, 0.5);
 
-        rotateBlock(getFacing(tile));
+            rotateBlock(getFacing(tile));
 
-        Minecraft.getMinecraft().renderEngine.bindTexture(getTextureLocation((T) tile));
-        Color renderColor = getRenderColor((T) tile, partialTicks);
-        render(model, (T) tile, partialTicks, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
-                (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
-        GlStateManager.popMatrix();
+            Minecraft.getMinecraft().renderEngine.bindTexture(getTextureLocation((T) tile));
+            Color renderColor = getRenderColor((T) tile, partialTicks);
+            render(model, (T) tile, partialTicks, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
+                    (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
+        } finally {
+            GlStateManager.popMatrix();
+            GlStateManager.popAttrib();
+        }
     }
 
     @Override

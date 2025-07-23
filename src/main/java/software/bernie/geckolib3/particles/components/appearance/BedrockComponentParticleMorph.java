@@ -115,7 +115,9 @@ public class BedrockComponentParticleMorph extends BedrockComponentBase implemen
         RenderHelper.enableStandardItemLighting();
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightnessX, brightnessY);
 
+        GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
+        try {
         GlStateManager.translate(x, y, z);
 
         if (particle.relativeScaleBillboard)
@@ -126,7 +128,10 @@ public class BedrockComponentParticleMorph extends BedrockComponentBase implemen
         //MorphUtils.render(this.morph.get(), dummy, 0, 0, 0, 0, partialTicks);
 
         RenderHelper.disableStandardItemLighting();
-        GlStateManager.popMatrix();
+        } finally {
+            GlStateManager.popMatrix();
+            GlStateManager.popAttrib();
+        }
     }
 
     protected Vector3d calculatePosition(BedrockEmitter emitter, BedrockParticle particle, double px, double py, double pz)
