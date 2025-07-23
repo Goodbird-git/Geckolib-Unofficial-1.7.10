@@ -1,6 +1,7 @@
 package com.eliotlash.mclib.utils.resources;
 
 import net.minecraft.util.ResourceLocation;
+import software.bernie.example.config.ConfigHandler;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -40,7 +41,9 @@ public class TextureLocation extends ResourceLocation {
             try {
                 this.unlockField(field);
             } catch (Exception e) {
-                e.printStackTrace();
+                if (ConfigHandler.debugPrintStacktraces) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -48,7 +51,9 @@ public class TextureLocation extends ResourceLocation {
             fields[0].set(this, domain);
             fields[1].set(this, path);
         } catch (Exception e) {
-            e.printStackTrace();
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
         }
     }
 

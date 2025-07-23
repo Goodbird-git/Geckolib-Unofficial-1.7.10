@@ -17,6 +17,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.example.config.ConfigHandler;
 
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Matrix4f;
@@ -59,24 +60,31 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> implements I
     @Override
     public void renderItem(ItemRenderType var1, ItemStack itemStack, Object... var3) {
         GL11.glPushMatrix();
+        try {
 
-        if (var1 == ItemRenderType.INVENTORY) {
-            GL11.glTranslated(-1, -1, 0);
-            GL11.glRotatef(90, 0, 1, 0);
+            if (var1 == ItemRenderType.INVENTORY) {
+                GL11.glTranslated(-1, -1, 0);
+                GL11.glRotatef(90, 0, 1, 0);
 
-        }
-        if (var1 != ItemRenderType.EQUIPPED_FIRST_PERSON) {
-            GL11.glTranslated(0, -0.5, 0);
-        }
-        if (var1 == ItemRenderType.ENTITY) {
+            }
+            if (var1 != ItemRenderType.EQUIPPED_FIRST_PERSON) {
+                GL11.glTranslated(0, -0.5, 0);
+            }
+            if (var1 == ItemRenderType.ENTITY) {
 //            Matrix4f matrix4f;
 //            PositionUtils.setInitialWorldPos();
 //            GL11.glTranslated(2,4.5,-4);
 //            Vector3d vec = PositionUtils.getCurrentRenderPos();
 //            double out=0;
+            }
+            this.render((T) itemStack.getItem(), itemStack);
+        } catch (Exception e) {
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
+        } finally {
+            GL11.glPopMatrix();
         }
-        this.render((T) itemStack.getItem(), itemStack);
-        GL11.glPopMatrix();
     }
 
     public Vector3d getCurrentRenderPos() {
@@ -135,15 +143,22 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> implements I
             Minecraft.getMinecraft().timer.renderPartialTicks, false, Collections.singletonList(itemStack));
         modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
         GlStateManager.pushMatrix();
-        GlStateManager.translate(0, 0.01f, 0);
-        GlStateManager.translate(0.5, 0.5, 0.5);
+        try {
+            GlStateManager.translate(0, 0.01f, 0);
+            GlStateManager.translate(0.5, 0.5, 0.5);
 
         Minecraft.getMinecraft().renderEngine.bindTexture(getTextureLocation(animatable));
         Color renderColor = getRenderColor(animatable, 0f);
         GL11.glRotatef(90, 0, 1, 0);
         render(model, animatable, 0, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
             (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
-        GlStateManager.popMatrix();
+        } catch (Exception e) {
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
+        } finally {
+            GlStateManager.popMatrix();
+        }
     }
 
     @Override
