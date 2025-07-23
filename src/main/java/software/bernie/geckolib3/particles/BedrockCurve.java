@@ -1,52 +1,43 @@
 package software.bernie.geckolib3.particles;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.eliotlash.mclib.math.Variable;
+import com.eliotlash.mclib.utils.Interpolations;
+import com.eliotlash.mclib.utils.MathUtils;
 import com.eliotlash.molang.MolangException;
 import com.eliotlash.molang.MolangParser;
 import com.eliotlash.molang.expressions.MolangExpression;
-import com.eliotlash.mclib.utils.Interpolations;
-import com.eliotlash.mclib.utils.MathUtils;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
-public class BedrockCurve
-{
+public class BedrockCurve {
     public BedrockCurveType type = BedrockCurveType.LINEAR;
     public MolangExpression[] nodes = {MolangParser.ZERO, MolangParser.ONE, MolangParser.ZERO};
     public MolangExpression input;
     public MolangExpression range;
     public Variable variable;
 
-    public double compute()
-    {
+    public double compute() {
         return this.computeCurve(this.input.get() / this.range.get());
     }
 
-    private double computeCurve(double factor)
-    {
+    private double computeCurve(double factor) {
         int length = this.nodes.length;
 
-        if (length == 0)
-        {
+        if (length == 0) {
             return 0;
-        }
-        else if (length == 1)
-        {
+        } else if (length == 1) {
             return this.nodes[0].get();
         }
 
-        if (factor < 0)
-        {
+        if (factor < 0) {
             factor = -(1 + factor);
         }
 
         factor = MathUtils.clamp(factor, 0, 1);
 
-        if (this.type == BedrockCurveType.HERMITE)
-        {
-            if (length <= 3)
-            {
+        if (this.type == BedrockCurveType.HERMITE) {
+            if (length <= 3) {
                 return this.nodes[length - 2].get();
             }
 
@@ -70,44 +61,34 @@ public class BedrockCurve
         return Interpolations.lerp(first.get(), next.get(), factor % 1);
     }
 
-    private MolangExpression getNode(int index)
-    {
-        if (index < 0)
-        {
+    private MolangExpression getNode(int index) {
+        if (index < 0) {
             return this.nodes[0];
-        }
-        else if (index >= this.nodes.length)
-        {
+        } else if (index >= this.nodes.length) {
             return this.nodes[this.nodes.length - 1];
         }
 
         return this.nodes[index];
     }
 
-    public void fromJson(JsonObject object, MolangParser parser) throws MolangException
-    {
-        if (object.has("type"))
-        {
+    public void fromJson(JsonObject object, MolangParser parser) throws MolangException {
+        if (object.has("type")) {
             this.type = BedrockCurveType.fromString(object.get("type").getAsString());
         }
 
-        if (object.has("input"))
-        {
+        if (object.has("input")) {
             this.input = parser.parseJson(object.get("input"));
         }
 
-        if (object.has("horizontal_range"))
-        {
+        if (object.has("horizontal_range")) {
             this.range = parser.parseJson(object.get("horizontal_range"));
         }
 
-        if (object.has("nodes"))
-        {
+        if (object.has("nodes")) {
             JsonArray nodes = object.getAsJsonArray("nodes");
             MolangExpression[] result = new MolangExpression[nodes.size()];
 
-            for (int i = 0, c = result.length; i < c; i ++)
-            {
+            for (int i = 0, c = result.length; i < c; i++) {
                 result[i] = parser.parseJson(nodes.get(i));
             }
 
@@ -115,8 +96,7 @@ public class BedrockCurve
         }
     }
 
-    public JsonElement toJson()
-    {
+    public JsonElement toJson() {
         JsonObject curve = new JsonObject();
         JsonArray nodes = new JsonArray();
 
@@ -125,8 +105,7 @@ public class BedrockCurve
         curve.add("input", this.input.toJson());
         curve.add("horizontal_range", this.range.toJson());
 
-        for (MolangExpression expression : this.nodes)
-        {
+        for (MolangExpression expression : this.nodes) {
             nodes.add(expression.toJson());
         }
 

@@ -1,6 +1,5 @@
 package software.bernie.geckolib3.network;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
@@ -19,14 +18,14 @@ public class NetworkHandler {
     }
 
     public static void sendToPlayer(IMessage message, EntityPlayer player) {
-        if(player==null){
+        if (player == null) {
             return;
         }
         wrapper.sendTo(message, (EntityPlayerMP) player);
     }
 
     public static void sendToAll(IMessage message) {
-        if(MinecraftServer.getServer()==null || MinecraftServer.getServer().getConfigurationManager()==null || MinecraftServer.getServer().getConfigurationManager().playerEntityList.isEmpty()){
+        if (MinecraftServer.getServer() == null || MinecraftServer.getServer().getConfigurationManager() == null || MinecraftServer.getServer().getConfigurationManager().playerEntityList.isEmpty()) {
             return;
         }
         wrapper.sendToAll(message);

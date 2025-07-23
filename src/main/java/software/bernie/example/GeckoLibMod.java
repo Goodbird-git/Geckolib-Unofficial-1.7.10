@@ -27,62 +27,63 @@ import java.io.File;
 
 @Mod(modid = GeckoLib.ModID, version = GeckoLib.VERSION)
 public class GeckoLibMod {
-	public static boolean DISABLE_IN_DEV = false;
-	private static CreativeTabs geckolibItemGroup;
+    public static boolean DISABLE_IN_DEV = false;
+    private static CreativeTabs geckolibItemGroup;
 
-	public static GeckoLibMod instance;
-	public static BedrockLibrary particleLibraryInstance;
-	public static ModelLibrary modelLibraryInstance;
-	public static AnimationLibrary animationLibraryInstance;
-	public static CreativeTabs getGeckolibItemGroup() {
-		if (ConfigHandler.enableExamples && geckolibItemGroup == null) {
-			geckolibItemGroup = new CreativeTabs(CreativeTabs.getNextID(), "geckolib_examples") {
-				@Override
-				public Item getTabIconItem() {
-					return (ItemRegistry.JACK_IN_THE_BOX);
-				}
-			};
-		}
+    public static GeckoLibMod instance;
+    public static BedrockLibrary particleLibraryInstance;
+    public static ModelLibrary modelLibraryInstance;
+    public static AnimationLibrary animationLibraryInstance;
 
-		return geckolibItemGroup;
-	}
+    public static CreativeTabs getGeckolibItemGroup() {
+        if (ConfigHandler.enableExamples && geckolibItemGroup == null) {
+            geckolibItemGroup = new CreativeTabs(CreativeTabs.getNextID(), "geckolib_examples") {
+                @Override
+                public Item getTabIconItem() {
+                    return (ItemRegistry.JACK_IN_THE_BOX);
+                }
+            };
+        }
 
-	public GeckoLibMod() {
-		instance = this;
-        if(ConfigHandler.enableExamples) {
+        return geckolibItemGroup;
+    }
+
+    public GeckoLibMod() {
+        instance = this;
+        if (ConfigHandler.enableExamples) {
             MinecraftForge.EVENT_BUS.register(new CommonListener());
         }
         FMLCommonHandler.instance().bus().register(new PlayerLoginHandler());
-		MinecraftForge.EVENT_BUS.register(new PlayerLoginHandler());
-	}
+        MinecraftForge.EVENT_BUS.register(new PlayerLoginHandler());
+    }
 
-	@Mod.EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
         NetworkHandler.init();
         ConfigHandler.init(event.getSuggestedConfigurationFile());
-        if(ConfigHandler.enableExamples) {
+        if (ConfigHandler.enableExamples) {
             CommonListener.onRegisterBlocks();
             CommonListener.onRegisterItems();
             CommonListener.onRegisterEntities();
         }
-		particleLibraryInstance = new BedrockLibrary(new File("./particle"));
-		particleLibraryInstance.reload();
-		modelLibraryInstance = new ModelLibrary(new File("./models"));
-		modelLibraryInstance.reload(false);
-		animationLibraryInstance = new AnimationLibrary(new File("./animations"));
-		animationLibraryInstance.reload(false);
+        particleLibraryInstance = new BedrockLibrary(new File("./particle"));
+        particleLibraryInstance.reload();
+        modelLibraryInstance = new ModelLibrary(new File("./models"));
+        modelLibraryInstance.reload(false);
+        animationLibraryInstance = new AnimationLibrary(new File("./animations"));
+        animationLibraryInstance.reload(false);
 
-	}
+    }
 
-	@SideOnly(Side.CLIENT)
-	@Mod.EventHandler
-	public void registerRenderers(FMLInitializationEvent event) {
-        if(event.getSide()==Side.CLIENT && ConfigHandler.enableExamples){
+    @SideOnly(Side.CLIENT)
+    @Mod.EventHandler
+    public void registerRenderers(FMLInitializationEvent event) {
+        if (event.getSide() == Side.CLIENT && ConfigHandler.enableExamples) {
             ClientListener.registerReplacedRenderers(event);
             ClientListener.registerRenderers(event);
         }
         GeckoLib.initialize();
-	}
+    }
 
 
 }

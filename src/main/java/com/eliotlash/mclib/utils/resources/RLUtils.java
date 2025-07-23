@@ -3,13 +3,13 @@ package com.eliotlash.mclib.utils.resources;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.SimpleResource;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
@@ -20,12 +20,11 @@ import java.util.List;
 
 /**
  * {@link ResourceLocation} utility methods
- *
+ * <p>
  * This class has utils for saving and reading {@link ResourceLocation} from
  * actor model and skin.
  */
-public class RLUtils
-{
+public class RLUtils {
     private static List<IResourceTransformer> transformers = new ArrayList<IResourceTransformer>();
     private static ResourceLocation pixel = new ResourceLocation("mclib:textures/pixel.png");
 
@@ -33,15 +32,12 @@ public class RLUtils
      * Get stream for multi resource location
      */
     @SideOnly(Side.CLIENT)
-    public static IResource getStreamForMultiskin(MultiResourceLocation multi) throws IOException
-    {
-        if (multi.children.isEmpty())
-        {
+    public static IResource getStreamForMultiskin(MultiResourceLocation multi) throws IOException {
+        if (multi.children.isEmpty()) {
             throw new IOException("Multi-skin is empty!");
         }
 
-        try
-        {
+        try {
 //            if (true)//TODO
 //            {
 //                MultiskinThread.add(multi);
@@ -50,42 +46,33 @@ public class RLUtils
 //            }
 //            else
 //            {
-                //MultiskinThread.clear();
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                ImageIO.write(TextureProcessor.postProcess(multi), "png", stream);
+            //MultiskinThread.clear();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            ImageIO.write(TextureProcessor.postProcess(multi), "png", stream);
 
-                return new SimpleResource(multi, new ByteArrayInputStream(stream.toByteArray()), null, null);
+            return new SimpleResource(multi, new ByteArrayInputStream(stream.toByteArray()), null, null);
             //}
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw e;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new IOException(e);
         }
     }
 
-    public static void register(IResourceTransformer transformer)
-    {
+    public static void register(IResourceTransformer transformer) {
         transformers.add(transformer);
     }
 
-    public static ResourceLocation create(String path)
-    {
-        for (IResourceTransformer transformer : transformers)
-        {
+    public static ResourceLocation create(String path) {
+        for (IResourceTransformer transformer : transformers) {
             path = transformer.transform(path);
         }
 
         return new TextureLocation(path);
     }
 
-    public static ResourceLocation create(String domain, String path)
-    {
-        for (IResourceTransformer transformer : transformers)
-        {
+    public static ResourceLocation create(String domain, String path) {
+        for (IResourceTransformer transformer : transformers) {
             String newDomain = transformer.transformDomain(domain, path);
             String newPath = transformer.transformPath(domain, path);
 
@@ -96,82 +83,64 @@ public class RLUtils
         return new TextureLocation(domain, path);
     }
 
-    public static ResourceLocation create(NBTBase base)
-    {
+    public static ResourceLocation create(NBTBase base) {
         ResourceLocation location = MultiResourceLocation.from(base);
 
-        if (location != null)
-        {
+        if (location != null) {
             return location;
         }
 
-        if (base instanceof NBTTagString)
-        {
+        if (base instanceof NBTTagString) {
             return create(((NBTTagString) base).func_150285_a_());
         }
 
         return null;
     }
 
-    public static ResourceLocation create(JsonElement element)
-    {
+    public static ResourceLocation create(JsonElement element) {
         ResourceLocation location = MultiResourceLocation.from(element);
 
-        if (location != null)
-        {
+        if (location != null) {
             return location;
         }
 
-        if (element.isJsonPrimitive())
-        {
+        if (element.isJsonPrimitive()) {
             return create(element.getAsString());
         }
 
         return null;
     }
 
-    public static NBTBase writeNbt(ResourceLocation location)
-    {
-        if (location instanceof IWritableLocation)
-        {
+    public static NBTBase writeNbt(ResourceLocation location) {
+        if (location instanceof IWritableLocation) {
             return ((IWritableLocation) location).writeNbt();
-        }
-        else if (location != null)
-        {
+        } else if (location != null) {
             return new NBTTagString(location.toString());
         }
 
         return null;
     }
 
-    public static JsonElement writeJson(ResourceLocation location)
-    {
-        if (location instanceof IWritableLocation)
-        {
+    public static JsonElement writeJson(ResourceLocation location) {
+        if (location instanceof IWritableLocation) {
             return ((IWritableLocation) location).writeJson();
-        }
-        else if (location != null)
-        {
+        } else if (location != null) {
             return new JsonPrimitive(location.toString());
         }
 
         return JsonNull.INSTANCE;
     }
 
-    public static ResourceLocation clone(ResourceLocation location)
-    {
-        if (location instanceof IWritableLocation)
-        {
+    public static ResourceLocation clone(ResourceLocation location) {
+        if (location instanceof IWritableLocation) {
             Object copy = ((IWritableLocation) location).copy();
 
-            if (copy instanceof ResourceLocation)
-            {
+            if (copy instanceof ResourceLocation) {
                 return (ResourceLocation) copy;
             }
         }
 
-        if (location != null)
-        {
+        if (location != null) {
             return create(location.toString());
         }
 

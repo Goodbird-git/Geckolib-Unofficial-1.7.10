@@ -1,11 +1,11 @@
 package software.bernie.geckolib3.util;
 
+import com.eliotlash.mclib.utils.MatrixUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
-import com.eliotlash.mclib.utils.MatrixUtils;
 
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4d;
@@ -18,7 +18,7 @@ public class PositionUtils {
         GL11.glLoadIdentity();
         if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
             GL11.glScaled(-1, 1, -1);
-        } else if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 1){
+        } else if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 1) {
             GL11.glScaled(-1, 1, -1);
         } else {
             GL11.glScaled(1, 1, 1);
@@ -27,21 +27,21 @@ public class PositionUtils {
         GL11.glRotatef(camera.rotationYaw, 0, 1, 0);
         GL11.glTranslated(-RenderManager.renderPosX, -RenderManager.renderPosY, -RenderManager.renderPosZ);
         Vector3d additional = getCameraShift();
-        GL11.glTranslated(additional.x,additional.y,additional.z);
+        GL11.glTranslated(additional.x, additional.y, additional.z);
     }
 
-    public static Vector3d getCameraShift(){
-        Vector3d res = new Vector3d(0,0,0);
+    public static Vector3d getCameraShift() {
+        Vector3d res = new Vector3d(0, 0, 0);
         if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0) {
             return res;
-        } else if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 1){
+        } else if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 1) {
             Vec3 look = Minecraft.getMinecraft().thePlayer.getLookVec();
-            res = new Vector3d(look.xCoord,look.yCoord,look.zCoord);
+            res = new Vector3d(look.xCoord, look.yCoord, look.zCoord);
             res.scale(4);
             return res;
         } else {
             Vec3 look = Minecraft.getMinecraft().thePlayer.getLookVec();
-            res = new Vector3d(look.xCoord,look.yCoord,look.zCoord);
+            res = new Vector3d(look.xCoord, look.yCoord, look.zCoord);
             res.scale(-4);
             return res;
         }
@@ -54,13 +54,13 @@ public class PositionUtils {
         double dl = matrix4f.m03;
         double du = matrix4f.m13;
         double dz = matrix4f.m23;
-        if(Minecraft.getMinecraft().gameSettings.thirdPersonView==1){
-            dz+=4;
+        if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 1) {
+            dz += 4;
         }
-        if(Minecraft.getMinecraft().gameSettings.thirdPersonView==2){
-            dz*=-1;
-            dl*=-1;
-            dz-=4;
+        if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 2) {
+            dz *= -1;
+            dl *= -1;
+            dz -= 4;
         }
         Matrix4d rotMatrixX = new Matrix4d();
         rotMatrixX.rotX((camera.rotationPitch) / 360 * Math.PI * 2);

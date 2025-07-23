@@ -1,56 +1,46 @@
 package software.bernie.geckolib3.particles.components.shape;
 
+import com.eliotlash.molang.MolangException;
+import com.eliotlash.molang.MolangParser;
+import com.eliotlash.molang.expressions.MolangExpression;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import software.bernie.geckolib3.particles.components.BedrockComponentBase;
 import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
 import software.bernie.geckolib3.particles.emitter.BedrockParticle;
-import com.eliotlash.molang.MolangException;
-import com.eliotlash.molang.MolangParser;
-import com.eliotlash.molang.expressions.MolangExpression;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
-public class BedrockComponentShapeDisc extends BedrockComponentShapeSphere
-{
+public class BedrockComponentShapeDisc extends BedrockComponentShapeSphere {
     public MolangExpression[] normal = {MolangParser.ZERO, MolangParser.ONE, MolangParser.ZERO};
 
     @Override
-    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException
-    {
+    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException {
         if (!elem.isJsonObject()) return super.fromJson(elem, parser);
 
         JsonObject element = elem.getAsJsonObject();
 
-        if (element.has("plane_normal"))
-        {
+        if (element.has("plane_normal")) {
             JsonElement normal = element.get("plane_normal");
 
-            if (normal.isJsonPrimitive())
-            {
+            if (normal.isJsonPrimitive()) {
                 String axis = normal.getAsString().toLowerCase();
 
-                if (axis.equals("x"))
-                {
+                if (axis.equals("x")) {
                     this.normal[0] = MolangParser.ONE;
                     this.normal[1] = MolangParser.ZERO;
-                }
-                else if (axis.equals("z"))
-                {
+                } else if (axis.equals("z")) {
                     this.normal[1] = MolangParser.ZERO;
                     this.normal[2] = MolangParser.ONE;
                 }
-            }
-            else
-            {
+            } else {
                 JsonArray array = element.getAsJsonArray("plane_normal");
 
-                if (array.size() >= 3)
-                {
+                if (array.size() >= 3) {
                     this.normal[0] = parser.parseJson(array.get(0));
                     this.normal[1] = parser.parseJson(array.get(1));
                     this.normal[2] = parser.parseJson(array.get(2));
@@ -62,13 +52,11 @@ public class BedrockComponentShapeDisc extends BedrockComponentShapeSphere
     }
 
     @Override
-    public JsonElement toJson()
-    {
+    public JsonElement toJson() {
         JsonObject object = (JsonObject) super.toJson();
         JsonArray array = new JsonArray();
 
-        for (MolangExpression expression : this.normal)
-        {
+        for (MolangExpression expression : this.normal) {
             array.add(expression.toJson());
         }
 
@@ -78,8 +66,7 @@ public class BedrockComponentShapeDisc extends BedrockComponentShapeSphere
     }
 
     @Override
-    public void apply(BedrockEmitter emitter, BedrockParticle particle)
-    {
+    public void apply(BedrockEmitter emitter, BedrockParticle particle) {
         float centerX = (float) this.offset[0].get();
         float centerY = (float) this.offset[1].get();
         float centerZ = (float) this.offset[2].get();

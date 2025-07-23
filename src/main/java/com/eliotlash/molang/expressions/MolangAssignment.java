@@ -6,10 +6,9 @@
 package com.eliotlash.molang.expressions;
 
 import com.eliotlash.mclib.math.IValue;
+import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
 import software.bernie.geckolib3.molang.MolangRegistrar;
-import software.bernie.geckolib3.resource.GeckoLibCache;
-import com.eliotlash.mclib.math.Variable;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -18,7 +17,10 @@ import java.io.ObjectOutput;
 public class MolangAssignment extends MolangExpression {
     public Variable variable;
     public IValue expression;
-    public MolangAssignment(){}
+
+    public MolangAssignment() {
+    }
+
     public MolangAssignment(MolangParser context, Variable variable, IValue expression) {
         super(context);
         this.variable = variable;
@@ -40,8 +42,8 @@ public class MolangAssignment extends MolangExpression {
         out.writeObject(expression);
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException{
-        variable= (Variable) in.readObject();
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        variable = (Variable) in.readObject();
         expression = (MolangExpression) in.readObject();
         context = MolangRegistrar.getParser();
     }

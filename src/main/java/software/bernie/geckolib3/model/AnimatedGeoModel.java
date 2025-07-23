@@ -1,13 +1,7 @@
 package software.bernie.geckolib3.model;
 
-import java.util.Collections;
-
-import javax.annotation.Nullable;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import software.bernie.geckolib3.file.AnimationFile;
 import com.eliotlash.molang.MolangParser;
-
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.Entity;
@@ -23,6 +17,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.processor.AnimationProcessor;
 import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib3.file.AnimationFile;
 import software.bernie.geckolib3.geo.exception.GeoModelException;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
@@ -32,9 +27,12 @@ import software.bernie.geckolib3.molang.MolangRegistrar;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.geckolib3.util.MolangUtils;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
+
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T>
-        implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
+    implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
     private final AnimationProcessor animationProcessor;
     private GeoModel currentModel;
 
@@ -77,7 +75,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
         animationProcessor.preAnimationSetup(predicate.getAnimatable(), seekTime);
         if (!this.animationProcessor.getModelRendererList().isEmpty()) {
             animationProcessor.tickAnimation(entity, uniqueID, seekTime, predicate, MolangRegistrar.getParser(),
-                    shouldCrashOnMissing);
+                shouldCrashOnMissing);
         }
     }
 
@@ -130,11 +128,11 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
             Entity camera = minecraftInstance.renderViewEntity;
 
             Vec3 entityCamera = Vec3.createVectorHelper(camera.prevPosX + (camera.posX - camera.prevPosX) * partialTick,
-                    camera.prevPosY + (camera.posY - camera.prevPosY) * partialTick,
-                    camera.prevPosZ + (camera.posZ - camera.prevPosZ) * partialTick);
+                camera.prevPosY + (camera.posY - camera.prevPosY) * partialTick,
+                camera.prevPosZ + (camera.posZ - camera.prevPosZ) * partialTick);
             Vec3 entityPosition = Vec3.createVectorHelper(entity.prevPosX + (entity.posX - entity.prevPosX) * partialTick,
-                    entity.prevPosY + (entity.posY - entity.prevPosY) * partialTick,
-                    entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTick);
+                entity.prevPosY + (entity.posY - entity.prevPosY) * partialTick,
+                entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTick);
             double distance = entityCamera.addVector(ActiveRenderInfo.objectX, ActiveRenderInfo.objectY, ActiveRenderInfo.objectZ).distanceTo(entityPosition);
 
             parser.setValue("query.distance_from_camera", distance);
@@ -155,7 +153,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
                 parser.setValue("query.ground_speed", groundSpeed);
 
                 float yawSpeed = this.getYaw(livingEntity, Minecraft.getMinecraft().timer.renderPartialTicks)
-                        - this.getYaw(livingEntity, (float) (Minecraft.getMinecraft().timer.renderPartialTicks - 0.1));
+                    - this.getYaw(livingEntity, (float) (Minecraft.getMinecraft().timer.renderPartialTicks - 0.1));
                 parser.setValue("query.yaw_speed", yawSpeed);
             }
         }

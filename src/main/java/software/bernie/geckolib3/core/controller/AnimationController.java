@@ -5,28 +5,11 @@
 
 package software.bernie.geckolib3.core.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import net.minecraft.client.Minecraft;
-import org.apache.commons.lang3.tuple.Pair;
-
-import software.bernie.example.GeckoLibMod;
-import software.bernie.geckolib3.particles.BedrockLibrary;
-import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangParser;
-
+import net.minecraft.client.Minecraft;
+import org.apache.commons.lang3.tuple.Pair;
+import software.bernie.example.GeckoLibMod;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.ConstantValue;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -51,6 +34,21 @@ import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 import software.bernie.geckolib3.core.util.Axis;
+import software.bernie.geckolib3.particles.BedrockLibrary;
+import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * The type Animation controller.
@@ -193,9 +191,9 @@ public class AnimationController<T extends IAnimatable> {
      */
     public void setAnimation(AnimationBuilder builder) {
         ///ADDED
-        if(builder!=null && !builder.getRawAnimationList().isEmpty()){
-            if(builder.getRawAnimationList().equals(this.currentAnimationBuilder.getRawAnimationList()) && !this.needsAnimationReload){
-                if(builder.getRawAnimationList().get(builder.getRawAnimationList().size()-1).loopType == ILoopType.EDefaultLoopTypes.LOOP && currentAnimation==null){
+        if (builder != null && !builder.getRawAnimationList().isEmpty()) {
+            if (builder.getRawAnimationList().equals(this.currentAnimationBuilder.getRawAnimationList()) && !this.needsAnimationReload) {
+                if (builder.getRawAnimationList().get(builder.getRawAnimationList().size() - 1).loopType == ILoopType.EDefaultLoopTypes.LOOP && currentAnimation == null) {
                     needsAnimationReload = true;
                 }
             }
@@ -207,7 +205,7 @@ public class AnimationController<T extends IAnimatable> {
                 animationState = AnimationState.Stopped;
             } else {
                 if (!builder.getRawAnimationList().equals(currentAnimationBuilder.getRawAnimationList())
-                        || needsAnimationReload) { //TODO if looping animation does not play
+                    || needsAnimationReload) { //TODO if looping animation does not play
                     AtomicBoolean encounteredError = new AtomicBoolean(false);
                     // Convert the list of animation names to the actual list, keeping track of the
                     // loop boolean along the way
@@ -410,10 +408,10 @@ public class AnimationController<T extends IAnimatable> {
         double actualTick = tick;
         tick = adjustTick(tick);
 
-        if(Minecraft.getMinecraft().theWorld!=null){
+        if (Minecraft.getMinecraft().theWorld != null) {
             long time = Minecraft.getMinecraft().theWorld.getTotalWorldTime();
-            if(time>lastTick){
-                lastTick=time;
+            if (time > lastTick) {
+                lastTick = time;
                 updateEmitters();
             }
         }
@@ -507,14 +505,14 @@ public class AnimationController<T extends IAnimatable> {
                         AnimationPoint zPoint = getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, 0, true, mirrored, Axis.Z);
 
                         boneAnimationQueue.rotationXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
-                                boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
-                                xPoint.animationStartValue));
+                            boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
+                            xPoint.animationStartValue));
                         boneAnimationQueue.rotationYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
-                                boneSnapshot.rotationValueY - initialSnapshot.rotationValueY,
-                                yPoint.animationStartValue));
+                            boneSnapshot.rotationValueY - initialSnapshot.rotationValueY,
+                            yPoint.animationStartValue));
                         boneAnimationQueue.rotationZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
-                                boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
-                                zPoint.animationStartValue));
+                            boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
+                            zPoint.animationStartValue));
                     }
 
                     if (!positionKeyFrames.xKeyFrames.isEmpty()) {
@@ -522,11 +520,11 @@ public class AnimationController<T extends IAnimatable> {
                         AnimationPoint yPoint = getAnimationPointAtTick(positionKeyFrames.yKeyFrames, 0, false, Axis.Y);
                         AnimationPoint zPoint = getAnimationPointAtTick(positionKeyFrames.zKeyFrames, 0, false, Axis.Z);
                         boneAnimationQueue.positionXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
-                                boneSnapshot.positionOffsetX, xPoint.animationStartValue));
+                            boneSnapshot.positionOffsetX, xPoint.animationStartValue));
                         boneAnimationQueue.positionYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
-                                boneSnapshot.positionOffsetY, yPoint.animationStartValue));
+                            boneSnapshot.positionOffsetY, yPoint.animationStartValue));
                         boneAnimationQueue.positionZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
-                                boneSnapshot.positionOffsetZ, zPoint.animationStartValue));
+                            boneSnapshot.positionOffsetZ, zPoint.animationStartValue));
                     }
 
                     if (!scaleKeyFrames.xKeyFrames.isEmpty()) {
@@ -534,11 +532,11 @@ public class AnimationController<T extends IAnimatable> {
                         AnimationPoint yPoint = getAnimationPointAtTick(scaleKeyFrames.yKeyFrames, 0, false, Axis.Y);
                         AnimationPoint zPoint = getAnimationPointAtTick(scaleKeyFrames.zKeyFrames, 0, false, Axis.Z);
                         boneAnimationQueue.scaleXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
-                                boneSnapshot.scaleValueX, xPoint.animationStartValue));
+                            boneSnapshot.scaleValueX, xPoint.animationStartValue));
                         boneAnimationQueue.scaleYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
-                                boneSnapshot.scaleValueY, yPoint.animationStartValue));
+                            boneSnapshot.scaleValueY, yPoint.animationStartValue));
                         boneAnimationQueue.scaleZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
-                                boneSnapshot.scaleValueZ, zPoint.animationStartValue));
+                            boneSnapshot.scaleValueZ, zPoint.animationStartValue));
                     }
                 }
             }
@@ -577,8 +575,8 @@ public class AnimationController<T extends IAnimatable> {
             }
         }
         System.out.printf(
-                "Could not find suitable model for animatable of type %s. Did you register a Model Fetcher?%n",
-                animatable.getClass());
+            "Could not find suitable model for animatable of type %s. Did you register a Model Fetcher?%n",
+            animatable.getClass());
         return null;
     }
 
@@ -666,29 +664,29 @@ public class AnimationController<T extends IAnimatable> {
 
             if (!rotationKeyFrames.xKeyFrames.isEmpty()) {
                 boneAnimationQueue.rotationXQueue
-                        .add(getAnimationPointAtTick(rotationKeyFrames.xKeyFrames, tick, true, Axis.X));
+                    .add(getAnimationPointAtTick(rotationKeyFrames.xKeyFrames, tick, true, Axis.X));
                 boneAnimationQueue.rotationYQueue
-                        .add(getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, tick, true, mirrored, Axis.Y));
+                    .add(getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, tick, true, mirrored, Axis.Y));
                 boneAnimationQueue.rotationZQueue
-                        .add(getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, tick, true, mirrored, Axis.Z));
+                    .add(getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, tick, true, mirrored, Axis.Z));
             }
 
             if (!positionKeyFrames.xKeyFrames.isEmpty()) {
                 boneAnimationQueue.positionXQueue
-                        .add(getAnimationPointAtTick(positionKeyFrames.xKeyFrames, tick, false, mirrored, Axis.X));
+                    .add(getAnimationPointAtTick(positionKeyFrames.xKeyFrames, tick, false, mirrored, Axis.X));
                 boneAnimationQueue.positionYQueue
-                        .add(getAnimationPointAtTick(positionKeyFrames.yKeyFrames, tick, false, Axis.Y));
+                    .add(getAnimationPointAtTick(positionKeyFrames.yKeyFrames, tick, false, Axis.Y));
                 boneAnimationQueue.positionZQueue
-                        .add(getAnimationPointAtTick(positionKeyFrames.zKeyFrames, tick, false, Axis.Z));
+                    .add(getAnimationPointAtTick(positionKeyFrames.zKeyFrames, tick, false, Axis.Z));
             }
 
             if (!scaleKeyFrames.xKeyFrames.isEmpty()) {
                 boneAnimationQueue.scaleXQueue
-                        .add(getAnimationPointAtTick(scaleKeyFrames.xKeyFrames, tick, false, Axis.X));
+                    .add(getAnimationPointAtTick(scaleKeyFrames.xKeyFrames, tick, false, Axis.X));
                 boneAnimationQueue.scaleYQueue
-                        .add(getAnimationPointAtTick(scaleKeyFrames.yKeyFrames, tick, false, Axis.Y));
+                    .add(getAnimationPointAtTick(scaleKeyFrames.yKeyFrames, tick, false, Axis.Y));
                 boneAnimationQueue.scaleZQueue
-                        .add(getAnimationPointAtTick(scaleKeyFrames.zKeyFrames, tick, false, Axis.Z));
+                    .add(getAnimationPointAtTick(scaleKeyFrames.zKeyFrames, tick, false, Axis.Z));
             }
         }
 
@@ -696,7 +694,7 @@ public class AnimationController<T extends IAnimatable> {
         for (EventKeyFrame<String> soundKeyFrame : currentAnimation.soundKeyFrames) {
             if (!this.executedKeyFrames.contains(soundKeyFrame) && tick >= soundKeyFrame.getStartTick()) {
                 SoundKeyframeEvent<T> event = new SoundKeyframeEvent<>(this.animatable, tick,
-                        soundKeyFrame.getEventData(), this);
+                    soundKeyFrame.getEventData(), this);
                 soundListener.playSound(event);
 
                 this.executedKeyFrames.add(soundKeyFrame);
@@ -704,11 +702,11 @@ public class AnimationController<T extends IAnimatable> {
         }
 
         for (ParticleEventKeyFrame particleEventKeyFrame : currentAnimation.particleKeyFrames) {
-            if (!hasParticleOnLoc(particleEventKeyFrame.effect,particleEventKeyFrame.locator)
-                    && tick >= particleEventKeyFrame.getStartTick() && !this.executedKeyFrames.contains(particleEventKeyFrame)) {
+            if (!hasParticleOnLoc(particleEventKeyFrame.effect, particleEventKeyFrame.locator)
+                && tick >= particleEventKeyFrame.getStartTick() && !this.executedKeyFrames.contains(particleEventKeyFrame)) {
                 ParticleKeyFrameEvent<T> event = new ParticleKeyFrameEvent<>(this.animatable, tick,
-                        particleEventKeyFrame.effect, particleEventKeyFrame.locator, particleEventKeyFrame.script,
-                        this);
+                    particleEventKeyFrame.effect, particleEventKeyFrame.locator, particleEventKeyFrame.script,
+                    this);
                 processBedrockParticleEvent(event);
                 if (particleListener != null)
                     particleListener.summonParticle(event);
@@ -719,9 +717,9 @@ public class AnimationController<T extends IAnimatable> {
 
         for (EventKeyFrame<String> customInstructionKeyFrame : currentAnimation.customInstructionKeyframes) {
             if (!this.executedKeyFrames.contains(customInstructionKeyFrame)
-                    && tick >= customInstructionKeyFrame.getStartTick()) {
+                && tick >= customInstructionKeyFrame.getStartTick()) {
                 CustomInstructionKeyframeEvent<T> event = new CustomInstructionKeyframeEvent<>(this.animatable,
-                        tick, customInstructionKeyFrame.getEventData(), this);
+                    tick, customInstructionKeyFrame.getEventData(), this);
                 customInstructionListener.executeInstruction(event);
 
                 this.executedKeyFrames.add(customInstructionKeyFrame);
@@ -773,7 +771,7 @@ public class AnimationController<T extends IAnimatable> {
 
     public void removeAllStopped() {
         for (int i = 0; i < emitters.size(); i++) {
-            if (!((BedrockEmitter)emitters.get(i)).playing && ((BedrockEmitter)emitters.get(i)).particles.size()==0) {
+            if (!((BedrockEmitter) emitters.get(i)).playing && ((BedrockEmitter) emitters.get(i)).particles.size() == 0) {
                 emitters.remove(i);
                 i--;
             }
@@ -782,7 +780,7 @@ public class AnimationController<T extends IAnimatable> {
 
     public void setAllStopping() {
         for (int i = 0; i < emitters.size(); i++) {
-            ((BedrockEmitter)emitters.get(i)).setLastLoop();
+            ((BedrockEmitter) emitters.get(i)).setLastLoop();
         }
     }
 
@@ -791,16 +789,16 @@ public class AnimationController<T extends IAnimatable> {
             BedrockEmitter emitter = (BedrockEmitter) emitters.get(i);
             String name = emitter.scheme.name;
             String loc = emitter.locator;
-            if(!emitter.scheme.toReload){
-                ((BedrockEmitter)emitters.get(i)).update();
-            }else{
+            if (!emitter.scheme.toReload) {
+                ((BedrockEmitter) emitters.get(i)).update();
+            } else {
                 emitter.stop();
                 emitter = new BedrockEmitter();
                 emitter.setScheme(BedrockLibrary.instance.presets.get(name));
                 emitter.setTarget(Minecraft.getMinecraft().thePlayer);
-                emitter.locator=loc;
+                emitter.locator = loc;
                 emitter.start();
-                emitters.set(i,emitter);
+                emitters.set(i, emitter);
             }
         }
     }
@@ -809,7 +807,7 @@ public class AnimationController<T extends IAnimatable> {
         for (Object obj : emitters) {
             BedrockEmitter emitter = (BedrockEmitter) obj;
             if (emitter.scheme != null && emitter.scheme.name != null && emitter.scheme.name.equals(effect) &&
-                    emitter.locator != null && emitter.locator.equals(locator) && emitter.isLooping()) {
+                emitter.locator != null && emitter.locator.equals(locator) && emitter.isLooping()) {
                 return true;
             }
         }
@@ -846,7 +844,7 @@ public class AnimationController<T extends IAnimatable> {
         return this.getAnimationPointAtTick(frames, tick, isRotation, false, axis);
     }
 
-        // Helper method to transform a KeyFrameLocation to an AnimationPoint
+    // Helper method to transform a KeyFrameLocation to an AnimationPoint
     private AnimationPoint getAnimationPointAtTick(List<KeyFrame<IValue>> frames, double tick, boolean isRotation, boolean mirrored,
                                                    Axis axis) {
         KeyFrameLocation<KeyFrame<IValue>> location = getCurrentKeyFrameLocation(frames, tick);

@@ -1,23 +1,24 @@
 package software.bernie.geckolib3.particles.emitter;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import software.bernie.geckolib3.particles.components.appearance.BedrockComponentCollisionAppearance;
-import software.bernie.geckolib3.particles.components.appearance.BedrockComponentCollisionTinting;
-import com.eliotlash.molang.expressions.MolangExpression;
 import com.eliotlash.mclib.utils.DummyEntity;
 import com.eliotlash.mclib.utils.MatrixUtils;
-//import mchorse.metamorph.api.Morph;
+import com.eliotlash.molang.expressions.MolangExpression;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import software.bernie.geckolib3.particles.components.appearance.BedrockComponentCollisionAppearance;
+import software.bernie.geckolib3.particles.components.appearance.BedrockComponentCollisionTinting;
 
-import javax.vecmath.*;
+import javax.vecmath.Matrix3f;
+import javax.vecmath.SingularMatrixException;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BedrockParticle
-{
+public class BedrockParticle {
     /* Randoms */
     public float random1 = (float) Math.random();
     public float random2 = (float) Math.random();
@@ -50,12 +51,12 @@ public class BedrockParticle
 
     /**
      * This is used to estimate whether an object is only bouncing or lying on a surface
-     *
+     * <p>
      * CollisionTime won't work when e.g. the particle bounces of the surface and directly in the next
      * update cycle hits the same surface side, like from top of the block to bottom of the block...
      * I think this probably never happens in practice
      */
-    public Vector3f collisionTime = new Vector3f(-2f, -2f,-2f);
+    public Vector3f collisionTime = new Vector3f(-2f, -2f, -2f);
     public HashMap<Entity, Vector3f> entityCollisionTime = new HashMap<>();
     public boolean collided;
     public int bounces;
@@ -98,40 +99,35 @@ public class BedrockParticle
 
     private Vector3d global = new Vector3d();
 
-    public BedrockParticle()
-    {
+    public BedrockParticle() {
         this.speed.set((float) Math.random() - 0.5F, (float) Math.random() - 0.5F, (float) Math.random() - 0.5F);
         this.speed.normalize();
         this.matrix.setIdentity();
     }
 
-    public boolean isCollisionTexture(BedrockEmitter emitter)
-    {
+    public boolean isCollisionTexture(BedrockEmitter emitter) {
         return MolangExpression.isOne(emitter.scheme.getOrCreate(BedrockComponentCollisionAppearance.class).enabled) && this.intersected;
     }
 
-    public boolean isCollisionTinting(BedrockEmitter emitter)
-    {
+    public boolean isCollisionTinting(BedrockEmitter emitter) {
         return MolangExpression.isOne(emitter.scheme.getOrCreate(BedrockComponentCollisionTinting.class).enabled) && this.intersected;
     }
 
-    public int getExpireAge()
-    {
+    public int getExpireAge() {
         return this.expireAge;
     }
 
-    public int getExpirationDelay()
-    {
+    public int getExpirationDelay() {
         return this.expirationDelay;
     }
 
     /**
      * Copy this particle to the given particle (it does not copy fields that are initialized by components)
+     *
      * @param to destiny to copy values to
      * @return copied particle
      */
-    public BedrockParticle softCopy(BedrockParticle to)
-    {
+    public BedrockParticle softCopy(BedrockParticle to) {
         to.age = this.age;
         to.expireAge = this.expireAge;
         to.expirationDelay = this.expirationDelay;
@@ -139,8 +135,7 @@ public class BedrockParticle
         to.collisionTime = (Vector3f) this.collisionTime.clone();
         to.entityCollisionTime = new HashMap<>();
 
-        for(Map.Entry<Entity, Vector3f> entry : this.entityCollisionTime.entrySet())
-        {
+        for (Map.Entry<Entity, Vector3f> entry : this.entityCollisionTime.entrySet()) {
             to.entityCollisionTime.put(entry.getKey(), (Vector3f) entry.getValue().clone());
         }
 
@@ -161,8 +156,7 @@ public class BedrockParticle
         return to;
     }
 
-    public double getDistanceSq(BedrockEmitter emitter)
-    {
+    public double getDistanceSq(BedrockEmitter emitter) {
         Vector3d pos = this.getGlobalPosition(emitter);
 
         double dx = emitter.cX - pos.x;
@@ -172,24 +166,20 @@ public class BedrockParticle
         return dx * dx + dy * dy + dz * dz;
     }
 
-    public double getAge(float partialTick)
-    {
+    public double getAge(float partialTick) {
         return (this.age + partialTick) / 20.0;
     }
 
-    public Vector3d getGlobalPosition(BedrockEmitter emitter)
-    {
+    public Vector3d getGlobalPosition(BedrockEmitter emitter) {
         return this.getGlobalPosition(emitter, this.position);
     }
 
-    public Vector3d getGlobalPosition(BedrockEmitter emitter, Vector3d vector)
-    {
+    public Vector3d getGlobalPosition(BedrockEmitter emitter, Vector3d vector) {
         double px = vector.x;
         double py = vector.y;
         double pz = vector.z;
 
-        if (this.relativePosition && this.relativeRotation)
-        {
+        if (this.relativePosition && this.relativeRotation) {
             Vector3f v = new Vector3f((float) px, (float) py, (float) pz);
             emitter.rotation.transform(v);
 
@@ -207,53 +197,42 @@ public class BedrockParticle
         return this.global;
     }
 
-    public void update(BedrockEmitter emitter)
-    {
+    public void update(BedrockEmitter emitter) {
         this.prevRotation = this.rotation;
         this.prevPosition.set(this.position);
 
         this.setupMatrix(emitter);
 
-        if (!this.manual)
-        {
+        if (!this.manual) {
             //this.position.add(this.offset);
 
-            if (this.realisticCollisionDrag && Math.round(this.speed.x*10000) == 0 && Math.round(this.speed.y*10000) == 0 && Math.round(this.speed.z*10000) == 0)
-            {
+            if (this.realisticCollisionDrag && Math.round(this.speed.x * 10000) == 0 && Math.round(this.speed.y * 10000) == 0 && Math.round(this.speed.z * 10000) == 0) {
                 this.dragFactor = 0;
                 this.speed.scale(0);
             }
 
             /* lazy fix for transforming from moving intertial system back to global space */
-            if (this.entityCollisionTime.isEmpty())
-            {
+            if (this.entityCollisionTime.isEmpty()) {
                 transformOffsetToGlobal();
-            }
-            else
-            {
-                for (HashMap.Entry<Entity, Vector3f> entry : this.entityCollisionTime.entrySet())
-                {
-                    if (entry.getValue().y != this.age)
-                    {
+            } else {
+                for (HashMap.Entry<Entity, Vector3f> entry : this.entityCollisionTime.entrySet()) {
+                    if (entry.getValue().y != this.age) {
                         transformOffsetToGlobal();
                     }
                 }
             }
 
-            float rotationAcceleration = this.rotationAcceleration / 20F -this.rotationDrag * this.rotationVelocity;
+            float rotationAcceleration = this.rotationAcceleration / 20F - this.rotationDrag * this.rotationVelocity;
             this.rotationVelocity += rotationAcceleration / 20F;
             this.rotation = this.initialRotation + this.rotationVelocity * this.age;
 
             /* Position */
-            if (this.age == 0)
-            {
-                if (this.relativeDirection)
-                {
+            if (this.age == 0) {
+                if (this.relativeDirection) {
                     emitter.rotation.transform(this.speed);
                 }
 
-                if (this.linearVelocity != 0)
-                {
+                if (this.linearVelocity != 0) {
                     Vector3f v = new Vector3f(emitter.lastGlobal);
                     v.x -= emitter.prevGlobal.x;
                     v.y -= emitter.prevGlobal.y;
@@ -264,15 +243,13 @@ public class BedrockParticle
                     this.speed.z += v.z * this.linearVelocity;
                 }
 
-                if (this.angularVelocity != 0)
-                {
+                if (this.angularVelocity != 0) {
                     Matrix3f rotation1 = new Matrix3f(emitter.rotation);
                     Matrix3f identity = new Matrix3f();
 
                     identity.setIdentity();
 
-                    try
-                    {
+                    try {
                         Matrix3f rotation0 = new Matrix3f(emitter.prevRotation);
 
                         rotation0.invert();
@@ -292,13 +269,12 @@ public class BedrockParticle
                         this.speed.x += v.x * this.angularVelocity;
                         this.speed.y += v.y * this.angularVelocity;
                         this.speed.z += v.z * this.angularVelocity;
-                    }
-                    catch (SingularMatrixException e) {} //maybe check if determinant is zero
+                    } catch (SingularMatrixException e) {
+                    } //maybe check if determinant is zero
                 }
             }
 
-            if (this.relativeAcceleration)
-            {
+            if (this.relativeAcceleration) {
                 emitter.rotation.transform(this.acceleration);
             }
 
@@ -306,8 +282,7 @@ public class BedrockParticle
 
             drag.scale(-(this.drag + this.dragFactor));
 
-            if (this.gravity)
-            {
+            if (this.gravity) {
                 this.acceleration.y -= 9.81;
             }
 
@@ -320,8 +295,7 @@ public class BedrockParticle
             speed0.y *= this.accelerationFactor.y;
             speed0.z *= this.accelerationFactor.z;
 
-            if (this.relativePosition || this.relativeRotation)
-            {
+            if (this.relativePosition || this.relativeRotation) {
                 this.matrix.transform(speed0);
             }
 
@@ -340,44 +314,34 @@ public class BedrockParticle
         }
 
         if (this.lifetime >= 0 &&
-            (this.age >= this.lifetime || (this.age >= this.expireAge && this.expireAge != -1)) )
-        {
+            (this.age >= this.lifetime || (this.age >= this.expireAge && this.expireAge != -1))) {
             this.dead = true;
         }
 
-        this.age ++;
+        this.age++;
     }
 
     /**
      * Sets the expirationDelay and expireAge - the smallest expire age wins. Negative expiration delays always overwrite/win.
      */
-    public void setExpirationDelay(double delay)
-    {
+    public void setExpirationDelay(double delay) {
         int expirationDelay = (int) delay;
 
-        if (this.age + expirationDelay < this.expireAge || this.expireAge == -1)
-        {
+        if (this.age + expirationDelay < this.expireAge || this.expireAge == -1) {
             this.expirationDelay = Math.abs(expirationDelay);
             this.expireAge = this.age + this.expirationDelay;
         }
     }
 
-    public void setupMatrix(BedrockEmitter emitter)
-    {
-        if (this.relativePosition)
-        {
-            if (this.relativeRotation)
-            {
+    public void setupMatrix(BedrockEmitter emitter) {
+        if (this.relativePosition) {
+            if (this.relativeRotation) {
                 this.matrix.setIdentity();
-            }
-            else if (!this.matrixSet)
-            {
+            } else if (!this.matrixSet) {
                 this.matrix.set(emitter.rotation);
                 this.matrixSet = true;
             }
-        }
-        else if (this.relativeRotation)
-        {
+        } else if (this.relativeRotation) {
             this.matrix.set(emitter.rotation);
         }
     }
@@ -386,8 +350,7 @@ public class BedrockParticle
      * This method adds the offset to the speed to transform from a moving inertial system to the global space
      * (especially for inertia)
      */
-    public void transformOffsetToGlobal()
-    {
+    public void transformOffsetToGlobal() {
         this.offset.scale(6); //scale it up so it gets more noticeable (artistic choice)
 
         this.speed.x += this.offset.x;
@@ -398,10 +361,8 @@ public class BedrockParticle
     }
 
     @SideOnly(Side.CLIENT)
-    public EntityLivingBase getDummy(BedrockEmitter emitter)
-    {
-        if (this.dummy == null)
-        {
+    public EntityLivingBase getDummy(BedrockEmitter emitter) {
+        if (this.dummy == null) {
             this.dummy = new DummyEntity(Minecraft.getMinecraft().theWorld);
         }
 

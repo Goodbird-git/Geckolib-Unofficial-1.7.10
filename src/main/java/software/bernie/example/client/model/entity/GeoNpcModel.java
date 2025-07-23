@@ -1,7 +1,6 @@
 package software.bernie.example.client.model.entity;
 
 import net.minecraft.util.ResourceLocation;
-import software.bernie.example.entity.BikeEntity;
 import software.bernie.example.entity.GeoNpcEntity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedGeoModel;

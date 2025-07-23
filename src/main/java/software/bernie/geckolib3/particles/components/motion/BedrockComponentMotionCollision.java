@@ -1,23 +1,23 @@
 package software.bernie.geckolib3.particles.components.motion;
 
+import com.eliotlash.mclib.math.Operation;
+import com.eliotlash.mclib.utils.Interpolations;
+import com.eliotlash.mclib.utils.MathUtils;
+import com.eliotlash.molang.MolangException;
+import com.eliotlash.molang.MolangParser;
+import com.eliotlash.molang.expressions.MolangExpression;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import net.geckominecraft.util.math.BlockPos;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.AxisAlignedBB;
 import software.bernie.geckolib3.particles.components.BedrockComponentBase;
 import software.bernie.geckolib3.particles.components.IComponentParticleUpdate;
 import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
 import software.bernie.geckolib3.particles.emitter.BedrockParticle;
 import software.bernie.geckolib3.util.DummyCollisionEntity;
-import com.eliotlash.mclib.math.Operation;
-import com.eliotlash.mclib.utils.Interpolations;
-import com.eliotlash.molang.MolangException;
-import com.eliotlash.molang.MolangParser;
-import com.eliotlash.molang.expressions.MolangExpression;
-import com.eliotlash.mclib.utils.MathUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.AxisAlignedBB;
-import net.geckominecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Vector3d;
@@ -25,8 +25,7 @@ import javax.vecmath.Vector3f;
 import java.util.HashMap;
 import java.util.List;
 
-public class BedrockComponentMotionCollision extends BedrockComponentBase implements IComponentParticleUpdate
-{
+public class BedrockComponentMotionCollision extends BedrockComponentBase implements IComponentParticleUpdate {
     public MolangExpression enabled = MolangParser.ONE;
     public boolean preserveEnergy = false;
     public boolean entityCollision;
@@ -49,79 +48,56 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
     private Vector3d current = new Vector3d();
     private BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
-    public static float getComponent(Vector3f vector, Axis component)
-    {
-        if (component == Axis.X)
-        {
+    public static float getComponent(Vector3f vector, Axis component) {
+        if (component == Axis.X) {
             return vector.x;
-        }
-        else if (component == Axis.Y)
-        {
+        } else if (component == Axis.Y) {
             return vector.y;
         }
 
         return vector.z;
     }
 
-    public static void setComponent(Vector3f vector, Axis component, float value)
-    {
-        if (component == Axis.X)
-        {
+    public static void setComponent(Vector3f vector, Axis component, float value) {
+        if (component == Axis.X) {
             vector.x = value;
-        }
-        else if (component == Axis.Y)
-        {
+        } else if (component == Axis.Y) {
             vector.y = value;
-        }
-        else
-        {
+        } else {
             vector.z = value;
         }
     }
 
-    public static void negateComponent(Vector3f vector, Axis component)
-    {
+    public static void negateComponent(Vector3f vector, Axis component) {
         setComponent(vector, component, -getComponent(vector, component));
     }
 
-    public static double getComponent(Vector3d vector, Axis component)
-    {
-        if (component == Axis.X)
-        {
+    public static double getComponent(Vector3d vector, Axis component) {
+        if (component == Axis.X) {
             return vector.x;
-        }
-        else if (component == Axis.Y)
-        {
+        } else if (component == Axis.Y) {
             return vector.y;
         }
 
         return vector.z;
     }
 
-    public static void setComponent(Vector3d vector, Axis component, double value)
-    {
-        if (component == Axis.X)
-        {
+    public static void setComponent(Vector3d vector, Axis component, double value) {
+        if (component == Axis.X) {
             vector.x = value;
-        }
-        else if (component == Axis.Y)
-        {
+        } else if (component == Axis.Y) {
             vector.y = value;
-        }
-        else
-        {
+        } else {
             vector.z = value;
         }
     }
 
-    public static void negateComponent(Vector3d vector, Axis component)
-    {
+    public static void negateComponent(Vector3d vector, Axis component) {
         setComponent(vector, component, -getComponent(vector, component));
     }
 
     @Override
-    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException
-    {
+    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException {
         if (!elem.isJsonObject()) return super.fromJson(elem, parser);
 
         JsonObject element = elem.getAsJsonObject();
@@ -129,39 +105,40 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         if (element.has("enabled")) this.enabled = parser.parseJson(element.get("enabled"));
         if (element.has("entityCollision")) this.entityCollision = element.get("entityCollision").getAsBoolean();
         if (element.has("momentum")) this.momentum = element.get("momentum").getAsBoolean();
-        if (element.has("realistic_collision_drag")) this.realisticCollisionDrag = element.get("realistic_collision_drag").getAsBoolean();
+        if (element.has("realistic_collision_drag"))
+            this.realisticCollisionDrag = element.get("realistic_collision_drag").getAsBoolean();
         if (element.has("collision_drag")) this.collisionDrag = element.get("collision_drag").getAsFloat();
-        if (element.has("coefficient_of_restitution")) this.bounciness = element.get("coefficient_of_restitution").getAsFloat();
-        if (element.has("bounciness_randomness")) this.randomBounciness = element.get("bounciness_randomness").getAsFloat();
-        if (element.has("preserveEnergy") && element.get("preserveEnergy").isJsonPrimitive())
-        {
+        if (element.has("coefficient_of_restitution"))
+            this.bounciness = element.get("coefficient_of_restitution").getAsFloat();
+        if (element.has("bounciness_randomness"))
+            this.randomBounciness = element.get("bounciness_randomness").getAsFloat();
+        if (element.has("preserveEnergy") && element.get("preserveEnergy").isJsonPrimitive()) {
             JsonPrimitive energy = element.get("preserveEnergy").getAsJsonPrimitive();
 
-            if (energy.isBoolean())
-            {
+            if (energy.isBoolean()) {
                 this.preserveEnergy = energy.getAsBoolean();
-            }
-            else
-            {
+            } else {
                 this.preserveEnergy = MolangExpression.isOne(parser.parseJson(energy));
             }
         }
         if (element.has("damp")) this.damp = element.get("damp").getAsFloat();
         if (element.has("random_damp")) this.randomDamp = element.get("random_damp").getAsFloat();
-        if (element.has("split_particle_count")) this.splitParticleCount = element.get("split_particle_count").getAsInt();
-        if (element.has("split_particle_speedThreshold")) this.splitParticleSpeedThreshold = element.get("split_particle_speedThreshold").getAsFloat();
+        if (element.has("split_particle_count"))
+            this.splitParticleCount = element.get("split_particle_count").getAsInt();
+        if (element.has("split_particle_speedThreshold"))
+            this.splitParticleSpeedThreshold = element.get("split_particle_speedThreshold").getAsFloat();
         if (element.has("collision_radius")) this.radius = element.get("collision_radius").getAsFloat();
         if (element.has("expire_on_contact")) this.expireOnImpact = element.get("expire_on_contact").getAsBoolean();
         if (element.has("expirationDelay")) this.expirationDelay = parser.parseJson(element.get("expirationDelay"));
-        if (element.has("realisticCollision")) this.realisticCollision = element.get("realisticCollision").getAsBoolean();
+        if (element.has("realisticCollision"))
+            this.realisticCollision = element.get("realisticCollision").getAsBoolean();
 
         return super.fromJson(element, parser);
     }
 
 
     @Override
-    public JsonElement toJson()
-    {
+    public JsonElement toJson() {
         JsonObject object = new JsonObject();
 
         if (!MolangExpression.isOne(this.enabled)) object.add("enabled", this.enabled.toJson());
@@ -176,37 +153,37 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         if (this.damp != 0) object.addProperty("damp", this.damp);
         if (this.randomDamp != 0) object.addProperty("random_damp", this.randomDamp);
         if (this.splitParticleCount != 0) object.addProperty("split_particle_count", this.splitParticleCount);
-        if (this.splitParticleSpeedThreshold != 0) object.addProperty("split_particle_speedThreshold", this.splitParticleSpeedThreshold);
+        if (this.splitParticleSpeedThreshold != 0)
+            object.addProperty("split_particle_speedThreshold", this.splitParticleSpeedThreshold);
         if (this.radius != 0.01F) object.addProperty("collision_radius", this.radius);
         if (this.expireOnImpact) object.addProperty("expire_on_contact", true);
-        if (!MolangExpression.isZero(this.expirationDelay)) object.add("expirationDelay", this.expirationDelay.toJson());
+        if (!MolangExpression.isZero(this.expirationDelay))
+            object.add("expirationDelay", this.expirationDelay.toJson());
 
         return object;
     }
 
     @Override
-    public void update(BedrockEmitter emitter, BedrockParticle particle)
-    {
+    public void update(BedrockEmitter emitter, BedrockParticle particle) {
         particle.realisticCollisionDrag = this.realisticCollisionDrag;
 
-        if (emitter.world == null)
-        {
+        if (emitter.world == null) {
             return;
         }
 
         float r = this.radius;
 
         float partialTicks = Minecraft.getMinecraft().timer.renderPartialTicks;
-        double curPosX = Interpolations.lerp(particle.prevPosition.x,particle.position.x, partialTicks);
-        double curPosY = Interpolations.lerp(particle.prevPosition.y,particle.position.y, partialTicks);
-        double curPosZ = Interpolations.lerp(particle.prevPosition.z,particle.position.z, partialTicks);
-        double prevPartialTicks = Math.max(partialTicks-0.02,0);
-        double prevPosX = Interpolations.lerp(particle.prevPosition.x,particle.position.x, prevPartialTicks);
-        double prevPosY = Interpolations.lerp(particle.prevPosition.y,particle.position.y, prevPartialTicks);
-        double prevPosZ = Interpolations.lerp(particle.prevPosition.z,particle.position.z, prevPartialTicks);
+        double curPosX = Interpolations.lerp(particle.prevPosition.x, particle.position.x, partialTicks);
+        double curPosY = Interpolations.lerp(particle.prevPosition.y, particle.position.y, partialTicks);
+        double curPosZ = Interpolations.lerp(particle.prevPosition.z, particle.position.z, partialTicks);
+        double prevPartialTicks = Math.max(partialTicks - 0.02, 0);
+        double prevPosX = Interpolations.lerp(particle.prevPosition.x, particle.position.x, prevPartialTicks);
+        double prevPosY = Interpolations.lerp(particle.prevPosition.y, particle.position.y, prevPartialTicks);
+        double prevPosZ = Interpolations.lerp(particle.prevPosition.z, particle.position.z, prevPartialTicks);
 
-        this.previous.set(particle.getGlobalPosition(emitter, new Vector3d(prevPosX,prevPosY,prevPosZ)));
-        this.current.set(particle.getGlobalPosition(emitter, new Vector3d(curPosX,curPosY,curPosZ)));
+        this.previous.set(particle.getGlobalPosition(emitter, new Vector3d(prevPosX, prevPosY, prevPosZ)));
+        this.current.set(particle.getGlobalPosition(emitter, new Vector3d(curPosX, curPosY, curPosZ)));
 //        this.previous.set(particle.getGlobalPosition(emitter, particle.prevPosition));
 //        this.current.set(particle.getGlobalPosition(emitter));
 
@@ -220,8 +197,7 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
 
         this.pos.set((int) now.x, (int) now.y, (int) now.z);
 
-        if (veryBig || !emitter.world.blockExists(pos.getX(),pos.getY(),pos.getZ()))
-        {
+        if (veryBig || !emitter.world.blockExists(pos.getX(), pos.getY(), pos.getZ())) {
             return;
         }
 
@@ -235,20 +211,16 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         HashMap<Entity, AxisAlignedBB> entityAABBs = new HashMap<Entity, AxisAlignedBB>();
         HashMap<Entity, CollisionOffset> staticEntityAABBs = new HashMap<>(); //for newtons first law
         /* for own hitbox implementation: check for hitbox expanded for the previous position - prevent fast moving tunneling */
-        List<AxisAlignedBB> list = emitter.world.getCollidingBoundingBoxes(new DummyCollisionEntity(emitter.world, AxisAlignedBB.getBoundingBox(0,-1,0,0,-2,0)), aabb.expand(x, y, z));
+        List<AxisAlignedBB> list = emitter.world.getCollidingBoundingBoxes(new DummyCollisionEntity(emitter.world, AxisAlignedBB.getBoundingBox(0, -1, 0, 0, -2, 0)), aabb.expand(x, y, z));
 
-        if ((!list.isEmpty() || (!entities.isEmpty() && this.entityCollision)) && !particle.intersected)
-        {
+        if ((!list.isEmpty() || (!entities.isEmpty() && this.entityCollision)) && !particle.intersected) {
             particle.firstIntersection = particle.age;
             particle.intersected = true;
         }
 
-        if (!particle.manual && !Operation.equals(this.enabled.get(), 0))
-        {
-            if (this.entityCollision)
-            {
-                for (Entity entity : entities)
-                {
+        if (!particle.manual && !Operation.equals(this.enabled.get(), 0)) {
+            if (this.entityCollision) {
+                for (Entity entity : entities) {
                     AxisAlignedBB aabb2 = AxisAlignedBB.getBoundingBox(prev.x - r, prev.y - r, prev.z - r, prev.x + r, prev.y + r, prev.z + r);
                     AxisAlignedBB entityAABB = entity.getBoundingBox();
 
@@ -263,18 +235,14 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
                     z2 = entityAABB.calculateZOffset(aabb2, z2);
                     aabb2 = aabb2.offset(0.0D, 0.0D, z2);
 
-                    if (d0 == y2 && origX == x2 && origZ == z2)
-                    {
+                    if (d0 == y2 && origX == x2 && origZ == z2) {
                         entityAABBs.put(entity, entityAABB); //Note to myself: maybe start already here with collision response?
-                    }
-                    else
-                    {
+                    } else {
                         list.add(entityAABB);
                         staticEntityAABBs.put(entity, new CollisionOffset(entityAABB, x2, y2, z2));
 
-                        if (this.momentum && d0 == y2)
-                        {
-                            momentum(particle,entity);
+                        if (this.momentum && d0 == y2) {
+                            momentum(particle, entity);
                         }
                     }
                 }
@@ -286,14 +254,12 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
             y = offsetData.y;
             z = offsetData.z;
 
-            if (d0 != y || origX != x || origZ != z)
-            {
+            if (d0 != y || origX != x || origZ != z) {
                 this.collision(particle, emitter, prev);
 
                 now.set(aabb.minX + r, aabb.minY + r, aabb.minZ + r);
 
-                if (d0 != y)
-                {
+                if (d0 != y) {
                     if (d0 < y) now.y = aabb.minY;
                     else now.y = aabb.maxY;
 
@@ -305,30 +271,24 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
                     /* remove unecessary elements from collisionTime*/
                     particle.entityCollisionTime.keySet().retainAll(staticEntityAABBs.keySet());
 
-                    for (HashMap.Entry<Entity, CollisionOffset> entry : staticEntityAABBs.entrySet())
-                    {
+                    for (HashMap.Entry<Entity, CollisionOffset> entry : staticEntityAABBs.entrySet()) {
                         CollisionOffset offsetData2 = entry.getValue();
                         AxisAlignedBB entityAABB = offsetData2.aabb;
                         Entity collidingEntity = entry.getKey();
 
-                        if (d0 != offsetData2.y && origX == offsetData2.x && origZ == offsetData2.z)
-                        {
+                        if (d0 != offsetData2.y && origX == offsetData2.x && origZ == offsetData2.z) {
                             inertia(particle, collidingEntity, now);
                         }
 
-                        if (particle.entityCollisionTime.containsKey(collidingEntity))
-                        {
+                        if (particle.entityCollisionTime.containsKey(collidingEntity)) {
                             particle.entityCollisionTime.get(collidingEntity).y = particle.age;
-                        }
-                        else
-                        {
+                        } else {
                             particle.entityCollisionTime.put(entry.getKey(), new Vector3f(-1F, particle.age, -1F));
                         }
                     }
                 }
 
-                if (origX != x)
-                {
+                if (origX != x) {
                     if (origX < x) now.x = aabb.minX;
                     else now.x = aabb.maxX;
 
@@ -337,8 +297,7 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
                     collisionHandler(particle, emitter, Axis.X, now, prev);
                 }
 
-                if (origZ != z)
-                {
+                if (origZ != z) {
                     if (origZ < z) now.z = aabb.minZ;
                     else now.z = aabb.maxZ;
 
@@ -350,27 +309,22 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
                 particle.position.set(now);
 
                 drag(particle);
-            }
-            else if (entityAABBs.isEmpty() && this.realisticCollisionDrag) //no collision - reset collision drag
+            } else if (entityAABBs.isEmpty() && this.realisticCollisionDrag) //no collision - reset collision drag
             {
                 particle.dragFactor = 0;
             }
 
 
-            for (HashMap.Entry<Entity, AxisAlignedBB> entry : entityAABBs.entrySet())
-            {
+            for (HashMap.Entry<Entity, AxisAlignedBB> entry : entityAABBs.entrySet()) {
                 AxisAlignedBB entityAABB = entry.getValue();
                 Entity entity = entry.getKey();
 
                 Vector3f speedEntity = new Vector3f((float) (entity.posX - entity.prevPosX), (float) (entity.posY - entity.prevPosY), (float) (entity.posZ - entity.prevPosZ));
                 Vector3f ray;
 
-                if (speedEntity.x != 0 || speedEntity.y != 0 || speedEntity.z != 0)
-                {
+                if (speedEntity.x != 0 || speedEntity.y != 0 || speedEntity.z != 0) {
                     ray = speedEntity;
-                }
-                else
-                {
+                } else {
                     /* fixes the issue of particles falling through the entity
                      * when they lie on the surface while the hitbox changes
                      * downside: the position is not always accurate depending on the movement*/
@@ -385,58 +339,47 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
 
                 Vector3d frac = intersect(ray, particle.getGlobalPosition(emitter), entityAABB);
 
-                if (frac != null)
-                {
+                if (frac != null) {
                     particle.position.add(frac);
 
                     AxisAlignedBB aabb2 = AxisAlignedBB.getBoundingBox(particle.position.x - r, particle.position.y - r, particle.position.z - r, particle.position.x + r, particle.position.y + r, particle.position.z + r);
 
                     collision(particle, emitter, prev);
 
-                    if ((aabb2.minX < entityAABB.maxX && aabb2.maxX > entityAABB.maxX) || (aabb2.maxX > entityAABB.minX && aabb2.minX < entityAABB.minX))
-                    {
+                    if ((aabb2.minX < entityAABB.maxX && aabb2.maxX > entityAABB.maxX) || (aabb2.maxX > entityAABB.minX && aabb2.minX < entityAABB.minX)) {
                         entityCollision(particle, emitter, entity, Axis.X, prev);
                     }
 
-                    if ((aabb2.minY < entityAABB.maxY && aabb2.maxY > entityAABB.maxY) || (aabb2.maxY > entityAABB.minY && aabb2.minY < entityAABB.minY))
-                    {
+                    if ((aabb2.minY < entityAABB.maxY && aabb2.maxY > entityAABB.maxY) || (aabb2.maxY > entityAABB.minY && aabb2.minY < entityAABB.minY)) {
                         entityCollision(particle, emitter, entity, Axis.Y, prev);
                     }
 
-                    if ((aabb2.minZ < entityAABB.maxZ && aabb2.maxZ > entityAABB.maxZ) || (aabb2.maxZ > entityAABB.minZ && aabb2.minZ < entityAABB.minZ))
-                    {
+                    if ((aabb2.minZ < entityAABB.maxZ && aabb2.maxZ > entityAABB.maxZ) || (aabb2.maxZ > entityAABB.minZ && aabb2.minZ < entityAABB.minZ)) {
                         entityCollision(particle, emitter, entity, Axis.Z, prev);
                     }
                 }
             }
 
-            if (!entityAABBs.isEmpty())
-            {
+            if (!entityAABBs.isEmpty()) {
                 this.drag(particle);
             }
         }
     }
 
-    public void collision(BedrockParticle particle, BedrockEmitter emitter, Vector3d prev)
-    {
-        if (this.expireOnImpact)
-        {
+    public void collision(BedrockParticle particle, BedrockEmitter emitter, Vector3d prev) {
+        if (this.expireOnImpact) {
             double expirationDelay = this.expirationDelay.get();
 
-            if (expirationDelay != 0 && !particle.collided)
-            {
+            if (expirationDelay != 0 && !particle.collided) {
                 particle.setExpirationDelay(expirationDelay);
-            }
-            else if (expirationDelay == 0 && !particle.collided)
-            {
+            } else if (expirationDelay == 0 && !particle.collided) {
                 particle.dead = true;
 
                 return;
             }
         }
 
-        if (particle.relativePosition)
-        {
+        if (particle.relativePosition) {
             particle.relativePosition = false;
             particle.prevPosition.set(prev);
         }
@@ -444,14 +387,12 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         particle.collided = true;
     }
 
-    public void entityCollision(BedrockParticle particle, BedrockEmitter emitter, Entity entity, Axis component, Vector3d prev)
-    {
+    public void entityCollision(BedrockParticle particle, BedrockEmitter emitter, Entity entity, Axis component, Vector3d prev) {
         Vector3f entitySpeed = new Vector3f((float) (entity.posX - entity.prevPosX), (float) (entity.posY - entity.prevPosY), (float) (entity.posZ - entity.prevPosZ));
-        Vector3d entityPosition = new Vector3d(entity.posX, entity.posY,entity.posZ);
+        Vector3d entityPosition = new Vector3d(entity.posX, entity.posY, entity.posZ);
 
-        if (this.momentum)
-        {
-            momentum(particle,entity);
+        if (this.momentum) {
+            momentum(particle, entity);
         }
 
         /* collisionTime should be not changed - otherwise the particles will stop when moving against moving entites */
@@ -471,12 +412,9 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         }
 
         /* particle speed is always switched (realistcCollision==true), as it always collides with the entity, but it should only have one correct direction */
-        if (getComponent(particle.speed, component) > 0)
-        {
+        if (getComponent(particle.speed, component) > 0) {
             if (getComponent(entitySpeed, component) < 0) negateComponent(particle.speed, component);
-        }
-        else if (getComponent(particle.speed, component) < 0)
-        {
+        } else if (getComponent(particle.speed, component) < 0) {
             if (getComponent(entitySpeed, component) > 0) negateComponent(particle.speed, component);
         }
 
@@ -485,65 +423,50 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         setComponent(particle.position, component, getComponent(particle.position, component) + getComponent(particle.speed, component) / 20F);
     }
 
-    public void collisionHandler(BedrockParticle particle, BedrockEmitter emitter, Axis component, Vector3d now, Vector3d prev)
-    {
+    public void collisionHandler(BedrockParticle particle, BedrockEmitter emitter, Axis component, Vector3d now, Vector3d prev) {
         float collisionTime = getComponent(particle.collisionTime, component);
         float speed = getComponent(particle.speed, component);
         float accelerationFactor = getComponent(particle.accelerationFactor, component);
 
         /* realistic collision */
-        if (this.realisticCollision)
-        {
-            if (collisionTime != (particle.age - 1))
-            {
-                if (this.bounciness != 0)
-                {
+        if (this.realisticCollision) {
+            if (collisionTime != (particle.age - 1)) {
+                if (this.bounciness != 0) {
                     setComponent(particle.speed, component, -speed * this.bounciness);
                 }
-            }
-            else if (collisionTime == (particle.age - 1))
-            {
+            } else if (collisionTime == (particle.age - 1)) {
                 setComponent(particle.speed, component, 0); //particle laid on that surface since last tick
             }
-        }
-        else
-        {
+        } else {
             setComponent(particle.accelerationFactor, component, accelerationFactor * -this.bounciness);
         }
 
-        if (collisionTime != (particle.age - 1))
-        {
+        if (collisionTime != (particle.age - 1)) {
             /* random bounciness */
-            if (this.randomBounciness != 0 /* && Math.round(particle.speed.x) != 0 */)
-            {
+            if (this.randomBounciness != 0 /* && Math.round(particle.speed.x) != 0 */) {
                 particle.speed = this.randomBounciness(particle.speed, component, this.randomBounciness);
             }
 
             /* split particles */
-            if (this.splitParticleCount != 0)
-            {
+            if (this.splitParticleCount != 0) {
                 this.splitParticle(particle, emitter, component, now, prev);
             }
 
             /* damping */
-            if (damp != 0)
-            {
+            if (damp != 0) {
                 particle.speed = this.damping(particle.speed);
             }
         }
 
-        if (collisionTime != particle.age - 1)
-        {
+        if (collisionTime != particle.age - 1) {
             particle.bounces++;
         }
 
         setComponent(particle.collisionTime, component, particle.age);
     }
 
-    public void inertia(BedrockParticle particle, Entity entity, @Nullable Vector3d now)
-    {
-        if (this.collisionDrag==0)
-        {
+    public void inertia(BedrockParticle particle, Entity entity, @Nullable Vector3d now) {
+        if (this.collisionDrag == 0) {
             return;
         }
 
@@ -553,7 +476,7 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         double prevPrevPosY = entity.prevPosY;
         double prevPrevPosZ = entity.prevPosZ;
 
-        Vector3d prevEntitySpeed = new Vector3d(entity.prevPosX-prevPrevPosX, entity.prevPosY-prevPrevPosY, entity.prevPosZ-prevPrevPosZ);
+        Vector3d prevEntitySpeed = new Vector3d(entity.prevPosX - prevPrevPosX, entity.prevPosY - prevPrevPosY, entity.prevPosZ - prevPrevPosZ);
 
         /*if (Math.round((prevEntitySpeed.x-entitySpeed.x)*1000D) != 0 || Math.round((prevEntitySpeed.y-entitySpeed.y)*1000D) != 0 || Math.round((prevEntitySpeed.z-entitySpeed.z)*1000D) != 0)
         {
@@ -561,59 +484,46 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         }*/
 
         /* for first collision from the inertial system of the particle it is acceleration from zero to current velocity */
-        if (!particle.entityCollisionTime.containsKey(entity))
-        {
+        if (!particle.entityCollisionTime.containsKey(entity)) {
             prevEntitySpeed.scale(0);
-        }
-        else
-        {
+        } else {
             /* stick the particle on top of the entity */
             particle.offset.x = entitySpeed.x;
             particle.offset.z = entitySpeed.z;
 
-            if (now==null)
-            {
+            if (now == null) {
                 particle.position.x += entitySpeed.x;
                 particle.position.z += entitySpeed.z;
-            }
-            else
-            {
+            } else {
                 now.x += entitySpeed.x;
                 now.z += entitySpeed.z;
             }
         }
 
-        particle.speed.x += Math.round((prevEntitySpeed.x-entitySpeed.x)*1000D)/250D; //scale it up so it gets more noticable
-        particle.speed.y += Math.round((prevEntitySpeed.y-entitySpeed.y)*1000D)/250D;
-        particle.speed.z += Math.round((prevEntitySpeed.z-entitySpeed.z)*1000D)/250D;
+        particle.speed.x += Math.round((prevEntitySpeed.x - entitySpeed.x) * 1000D) / 250D; //scale it up so it gets more noticable
+        particle.speed.y += Math.round((prevEntitySpeed.y - entitySpeed.y) * 1000D) / 250D;
+        particle.speed.z += Math.round((prevEntitySpeed.z - entitySpeed.z) * 1000D) / 250D;
     }
 
-    public void momentum(BedrockParticle particle, Entity entity)
-    {
+    public void momentum(BedrockParticle particle, Entity entity) {
         particle.speed.x += 2 * (entity.posX - entity.prevPosX);
         particle.speed.y += 2 * (entity.posY - entity.prevPosY);
         particle.speed.z += 2 * (entity.posZ - entity.prevPosZ);
     }
 
-    public void drag(BedrockParticle particle)
-    {
+    public void drag(BedrockParticle particle) {
         /* only apply drag when speed is almost not zero and randombounciness and realisticCollision are off
          * prevent particles from accelerating away when randomBounciness is active */
-        if (!((this.randomBounciness != 0 || this.realisticCollision) && Math.round(particle.speed.x*10000) == 0 && Math.round(particle.speed.y*10000) == 0 && Math.round(particle.speed.z*10000) == 0))
-        {
-            if (this.realisticCollisionDrag)
-            {
-                particle.dragFactor = 3*this.collisionDrag;
-            }
-            else
-            {
+        if (!((this.randomBounciness != 0 || this.realisticCollision) && Math.round(particle.speed.x * 10000) == 0 && Math.round(particle.speed.y * 10000) == 0 && Math.round(particle.speed.z * 10000) == 0)) {
+            if (this.realisticCollisionDrag) {
+                particle.dragFactor = 3 * this.collisionDrag;
+            } else {
                 particle.dragFactor += this.collisionDrag;
             }
         }
     }
 
-    public Vector3f damping(Vector3f vector)
-    {
+    public Vector3f damping(Vector3f vector) {
         float random = (float) (this.randomDamp * (Math.random() * 2 - 1));
         float clampedValue = MathUtils.clamp((1 - this.damp) + random, 0, 1);
 
@@ -622,17 +532,14 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         return vector;
     }
 
-    public void splitParticle(BedrockParticle particle, BedrockEmitter emitter, Axis component, Vector3d now, Vector3d prev)
-    {
+    public void splitParticle(BedrockParticle particle, BedrockEmitter emitter, Axis component, Vector3d now, Vector3d prev) {
         float speed = getComponent(particle.speed, component);
 
-        if (!(Math.abs(speed) > Math.abs(this.splitParticleSpeedThreshold)))
-        {
+        if (!(Math.abs(speed) > Math.abs(this.splitParticleSpeedThreshold))) {
             return;
         }
 
-        for (int i = 0; i < this.splitParticleCount; i++)
-        {
+        for (int i = 0; i < this.splitParticleCount; i++) {
             BedrockParticle splitParticle = emitter.createParticle(false);
 
             particle.softCopy(splitParticle);
@@ -653,8 +560,7 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
             randomSpeed.scale(1.0f / this.splitParticleCount);
             splitParticle.speed.set(randomSpeed);
 
-            if (this.damp != 0)
-            {
+            if (this.damp != 0) {
                 splitParticle.speed = this.damping(splitParticle.speed);
             }
 
@@ -664,10 +570,8 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         particle.dead = true;
     }
 
-    public Vector3f randomBounciness(Vector3f vector0, Axis component, float randomness)
-    {
-        if (randomness != 0)
-        {
+    public Vector3f randomBounciness(Vector3f vector0, Axis component, float randomness) {
+        if (randomness != 0) {
             /* don't change the vector0 - pointer behaviour not wanted here */
             Vector3f vector = new Vector3f(vector0);
             /* scale down the vector components not involved in the collision reflection */
@@ -680,48 +584,36 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
 
             float vectorValue = getComponent(vector, component);
 
-            if (component == Axis.X)
-            {
+            if (component == Axis.X) {
                 vector.y += random2;
                 vector.z += random3;
-            }
-            else if (component == Axis.Y)
-            {
+            } else if (component == Axis.Y) {
                 vector.x += random2;
                 vector.z += random3;
-            }
-            else
-            {
+            } else {
                 vector.y += random2;
                 vector.x += random3;
             }
 
-            if (this.bounciness != 0)
-            {
+            if (this.bounciness != 0) {
                 setComponent(vector, component, vectorValue + ((vectorValue < 0) ? -random1 : random1));
                 vector.scale(prevLength / vector.length()); //scale back to original length
-            }
-            else if (vector.x != 0 || vector.y != 0 || vector.z != 0)
-            {
+            } else if (vector.x != 0 || vector.y != 0 || vector.z != 0) {
                 /* if bounciness=0 then the speed of a specific component wont't affect the particles movement
                  * so the particles speed needs to be scaled back without taking that component into account
                  * when bounciness=0 the energy of that component gets absorbed by the collision block and therefore is lost for the particle
                  */
-                if (this.preserveEnergy)
-                {
+                if (this.preserveEnergy) {
                     setComponent(vector, component, 0);
                 }
 
                 /* if the vector is now zero... don't execute 1/vector.length() -> 1/0 not possible */
-                if (vector.x != 0 || vector.y != 0 || vector.z != 0)
-                {
+                if (vector.x != 0 || vector.y != 0 || vector.z != 0) {
                     vector.scale(prevLength / vector.length());
                 }
 
                 setComponent(vector, component, vectorValue);
-            }
-            else /* bounciness == 0 and vector is zero (rare case, but not impossible) */
-            {
+            } else /* bounciness == 0 and vector is zero (rare case, but not impossible) */ {
                 /* if you don't want particles to stop, while others randomly slide away,
                  * when bounciness==0, then return vector0 */
                 return vector0;
@@ -733,13 +625,11 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         return vector0;
     }
 
-    public Vector3d intersect(Vector3f ray, Vector3d orig, AxisAlignedBB aabb)
-    {
+    public Vector3d intersect(Vector3f ray, Vector3d orig, AxisAlignedBB aabb) {
         double tmin = (aabb.minX - orig.x) / ray.x;
         double tmax = (aabb.maxX - orig.x) / ray.x;
 
-        if (tmin > tmax)
-        {
+        if (tmin > tmax) {
             double tminTmp = tmin;
             tmin = tmax;
             tmax = tminTmp;
@@ -748,8 +638,7 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         double tymin = (aabb.minY - orig.y) / ray.y;
         double tymax = (aabb.maxY - orig.y) / ray.y;
 
-        if (tymin > tymax)
-        {
+        if (tymin > tymax) {
             double tyminTmp = tymin;
             tymin = tymax;
             tymax = tyminTmp;
@@ -767,8 +656,7 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         double tzmin = (aabb.minZ - orig.z) / ray.z;
         double tzmax = (aabb.maxZ - orig.z) / ray.z;
 
-        if (tzmin > tzmax)
-        {
+        if (tzmin > tzmax) {
             double tzminTmp = tzmin;
             tzmin = tzmax;
             tzmax = tzminTmp;
@@ -790,16 +678,14 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
     /**
      * @param aabb AxisAlignedBoundingBox of the main aabb
      * @param list List of AxisAlignedBoundingBoxs of the targets
-     * @param x origin
-     * @param y origin
-     * @param z origin
+     * @param x    origin
+     * @param y    origin
+     * @param z    origin
      * @return CollisionOffset which includes aabb, x, y, z
      */
-    public CollisionOffset calculateOffsets(AxisAlignedBB aabb, List<AxisAlignedBB> list, double x, double y, double z)
-    {
-        for (AxisAlignedBB axisalignedbb : list)
-        {
-            if(aabb.minY<axisalignedbb.maxY){
+    public CollisionOffset calculateOffsets(AxisAlignedBB aabb, List<AxisAlignedBB> list, double x, double y, double z) {
+        for (AxisAlignedBB axisalignedbb : list) {
+            if (aabb.minY < axisalignedbb.maxY) {
                 aabb.minY = axisalignedbb.maxY;
             }
             y = axisalignedbb.calculateYOffset(aabb, y);
@@ -807,15 +693,13 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
 
         aabb = aabb.offset(0.0D, y, 0.0D);
 
-        for (AxisAlignedBB axisalignedbb1 : list)
-        {
+        for (AxisAlignedBB axisalignedbb1 : list) {
             x = axisalignedbb1.calculateXOffset(aabb, x);
         }
 
         aabb = aabb.offset(x, 0.0D, 0.0D);
 
-        for (AxisAlignedBB axisalignedbb2 : list)
-        {
+        for (AxisAlignedBB axisalignedbb2 : list) {
             z = axisalignedbb2.calculateZOffset(aabb, z);
         }
 
@@ -824,25 +708,22 @@ public class BedrockComponentMotionCollision extends BedrockComponentBase implem
         return new CollisionOffset(aabb, x, y, z);
     }
 
-    public enum Axis{
-        X,Y,Z
+    public enum Axis {
+        X, Y, Z
     }
 
     @Override
-    public int getSortingIndex()
-    {
+    public int getSortingIndex() {
         return 50;
     }
 
-    public class CollisionOffset
-    {
+    public class CollisionOffset {
         public AxisAlignedBB aabb;
         public double x;
         public double y;
         public double z;
 
-        public CollisionOffset(AxisAlignedBB aabb, double x, double y, double z)
-        {
+        public CollisionOffset(AxisAlignedBB aabb, double x, double y, double z) {
             this.aabb = aabb;
             this.x = x;
             this.y = y;

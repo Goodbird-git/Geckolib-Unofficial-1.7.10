@@ -1,12 +1,11 @@
 package software.bernie.example.client.model.tile;
 
 import net.minecraft.util.ResourceLocation;
-import software.bernie.example.block.tile.BotariumTileEntity;
 import software.bernie.example.block.tile.DiagonalTileEntity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-public class DiagonalModel  extends AnimatedGeoModel<DiagonalTileEntity> {
+public class DiagonalModel extends AnimatedGeoModel<DiagonalTileEntity> {
     @Override
     public ResourceLocation getAnimationFileLocation(DiagonalTileEntity entity) {
         return new ResourceLocation(GeckoLib.ModID, "animations/bat.animation.json");

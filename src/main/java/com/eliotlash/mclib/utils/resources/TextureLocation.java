@@ -1,34 +1,30 @@
 package com.eliotlash.mclib.utils.resources;
 
+import net.minecraft.util.ResourceLocation;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import net.minecraft.util.ResourceLocation;
-
 /**
  * Texture location
- *
+ * <p>
  * A hack class that allows to use uppercase characters in the path 1.11.2 and
  * up.
  */
-public class TextureLocation extends ResourceLocation
-{
-    public TextureLocation(String domain, String path)
-    {
+public class TextureLocation extends ResourceLocation {
+    public TextureLocation(String domain, String path) {
         super(domain, path);
 
         this.set(domain, path);
     }
 
-    public TextureLocation(String string)
-    {
+    public TextureLocation(String string) {
         super(string);
 
         this.set(string);
     }
 
-    public void set(String location)
-    {
+    public void set(String location) {
         String[] split = location.split(":");
         String domain = split.length > 0 ? split[0] : "minecraft";
         String path = split.length > 1 ? split[1] : "";
@@ -36,36 +32,27 @@ public class TextureLocation extends ResourceLocation
         this.set(domain, path);
     }
 
-    public void set(String domain, String path)
-    {
+    public void set(String domain, String path) {
         /* Guess what it does */
         Field[] fields = ResourceLocation.class.getDeclaredFields();
 
-        for (Field field : fields)
-        {
-            try
-            {
+        for (Field field : fields) {
+            try {
                 this.unlockField(field);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        try
-        {
+        try {
             fields[0].set(this, domain);
             fields[1].set(this, path);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    protected void unlockField(Field field) throws Exception
-    {
+    protected void unlockField(Field field) throws Exception {
         field.setAccessible(true);
 
         Field modifiers = Field.class.getDeclaredField("modifiers");

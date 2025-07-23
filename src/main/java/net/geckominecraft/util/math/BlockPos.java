@@ -1,10 +1,11 @@
 package net.geckominecraft.util.math;
 
 import com.google.common.collect.AbstractIterator;
-import java.util.Iterator;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
+
+import java.util.Iterator;
 
 public class BlockPos extends Vec3i {
     public static final BlockPos ORIGIN = new BlockPos(0, 0, 0);
@@ -38,7 +39,7 @@ public class BlockPos extends Vec3i {
     }
 
     public BlockPos add(double x, double y, double z) {
-        return x == 0.0 && y == 0.0 && z == 0.0 ? this : new BlockPos((double)this.getX() + x, (double)this.getY() + y, (double)this.getZ() + z);
+        return x == 0.0 && y == 0.0 && z == 0.0 ? this : new BlockPos((double) this.getX() + x, (double) this.getY() + y, (double) this.getZ() + z);
     }
 
     public BlockPos add(int x, int y, int z) {
@@ -114,13 +115,13 @@ public class BlockPos extends Vec3i {
     }
 
     public long toLong() {
-        return ((long)this.getX() & 67108863L) << 38 | ((long)this.getY() & 4095L) << 26 | ((long)this.getZ() & 67108863L) << 0;
+        return ((long) this.getX() & 67108863L) << 38 | ((long) this.getY() & 4095L) << 26 | ((long) this.getZ() & 67108863L) << 0;
     }
 
     public static BlockPos fromLong(long serialized) {
-        int i = (int)(serialized << 0 >> 38);
-        int j = (int)(serialized << 26 >> 52);
-        int k = (int)(serialized << 38 >> 38);
+        int i = (int) (serialized << 0 >> 38);
+        int j = (int) (serialized << 26 >> 52);
+        int k = (int) (serialized << 38 >> 38);
         return new BlockPos(i, j, k);
     }
 
@@ -137,7 +138,7 @@ public class BlockPos extends Vec3i {
                             this.lastReturned = blockpos;
                             return this.lastReturned;
                         } else if (this.lastReturned.equals(blockpos1)) {
-                            return (BlockPos)this.endOfData();
+                            return (BlockPos) this.endOfData();
                         } else {
                             int i = this.lastReturned.getX();
                             int j = this.lastReturned.getY();
@@ -175,7 +176,7 @@ public class BlockPos extends Vec3i {
                             this.theBlockPos = new MutableBlockPos(blockpos.getX(), blockpos.getY(), blockpos.getZ());
                             return this.theBlockPos;
                         } else if (this.theBlockPos.equals(blockpos1)) {
-                            return (MutableBlockPos)this.endOfData();
+                            return (MutableBlockPos) this.endOfData();
                         } else {
                             int i = this.theBlockPos.getX();
                             int j = this.theBlockPos.getY();

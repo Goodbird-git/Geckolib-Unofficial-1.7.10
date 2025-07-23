@@ -1,32 +1,29 @@
 package software.bernie.geckolib3.particles.components.rate;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import software.bernie.geckolib3.particles.components.BedrockComponentBase;
-import software.bernie.geckolib3.particles.components.IComponentParticleMorphRender;
-import software.bernie.geckolib3.particles.components.IComponentParticleRender;
-import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
-import software.bernie.geckolib3.particles.emitter.BedrockParticle;
-import net.minecraft.client.renderer.Tessellator;
 import com.eliotlash.mclib.math.Constant;
 import com.eliotlash.molang.MolangException;
 import com.eliotlash.molang.MolangParser;
 import com.eliotlash.molang.expressions.MolangExpression;
 import com.eliotlash.molang.expressions.MolangValue;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import net.minecraft.client.renderer.Tessellator;
+import software.bernie.geckolib3.particles.components.BedrockComponentBase;
+import software.bernie.geckolib3.particles.components.IComponentParticleMorphRender;
+import software.bernie.geckolib3.particles.components.IComponentParticleRender;
+import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
+import software.bernie.geckolib3.particles.emitter.BedrockParticle;
 
-public class BedrockComponentRateSteady extends BedrockComponentRate implements IComponentParticleRender, IComponentParticleMorphRender
-{
+public class BedrockComponentRateSteady extends BedrockComponentRate implements IComponentParticleRender, IComponentParticleMorphRender {
     public static final MolangExpression DEFAULT_PARTICLES = new MolangValue(null, new Constant(50));
 
     public MolangExpression spawnRate = MolangParser.ONE;
 
-    public BedrockComponentRateSteady()
-    {
+    public BedrockComponentRateSteady() {
         this.particles = DEFAULT_PARTICLES;
     }
 
-    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException
-    {
+    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException {
         if (!elem.isJsonObject()) return super.fromJson(elem, parser);
 
         JsonObject element = elem.getAsJsonObject();
@@ -38,8 +35,7 @@ public class BedrockComponentRateSteady extends BedrockComponentRate implements 
     }
 
     @Override
-    public JsonElement toJson()
-    {
+    public JsonElement toJson() {
         JsonObject object = new JsonObject();
 
         if (!MolangExpression.isOne(this.spawnRate)) object.add("spawn_rate", this.spawnRate.toJson());
@@ -49,40 +45,33 @@ public class BedrockComponentRateSteady extends BedrockComponentRate implements 
     }
 
     @Override
-    public void preRender(BedrockEmitter emitter, float partialTicks)
-    {}
+    public void preRender(BedrockEmitter emitter, float partialTicks) {
+    }
 
     @Override
-    public void render(BedrockEmitter emitter, BedrockParticle particle, Tessellator builder, float partialTicks)
-    {}
+    public void render(BedrockEmitter emitter, BedrockParticle particle, Tessellator builder, float partialTicks) {
+    }
 
     @Override
-    public void renderOnScreen(BedrockParticle particle, int x, int y, float scale, float partialTicks)
-    {}
+    public void renderOnScreen(BedrockParticle particle, int x, int y, float scale, float partialTicks) {
+    }
 
     @Override
-    public void postRender(BedrockEmitter emitter, float partialTicks)
-    {
-        if (emitter.playing)
-        {
+    public void postRender(BedrockEmitter emitter, float partialTicks) {
+        if (emitter.playing) {
             double particles = emitter.getAge(partialTicks) * this.spawnRate.get();
             double diff = particles - emitter.spawnedParticles;
             double spawn = Math.round(diff);
 
-            if (spawn > 0)
-            {
+            if (spawn > 0) {
                 emitter.setEmitterVariables(partialTicks);
 
                 double track = spawn;
 
-                for (int i = 0; i < spawn; i++)
-                {
-                    if (emitter.particles.size() < this.particles.get())
-                    {
+                for (int i = 0; i < spawn; i++) {
+                    if (emitter.particles.size() < this.particles.get()) {
                         emitter.spawnParticle();
-                    }
-                    else
-                    {
+                    } else {
                         track -= 1;
                     }
                 }
@@ -93,8 +82,7 @@ public class BedrockComponentRateSteady extends BedrockComponentRate implements 
     }
 
     @Override
-    public int getSortingIndex()
-    {
+    public int getSortingIndex() {
         return 10;
     }
 }

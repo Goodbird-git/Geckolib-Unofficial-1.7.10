@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnimationLibrary  {
+public class AnimationLibrary {
     private HashMap<ResourceLocation, AnimationFile> folderAnimations = new HashMap<>();
     public File folder;
     public AnimationDirWatcher updateController;
@@ -32,32 +32,35 @@ public class AnimationLibrary  {
     public void reload(boolean sync) {
         folderAnimations.clear();
         recursiveWalk(this.folder);
-        if(sync) syncAll();
+        if (sync) syncAll();
     }
-    public void syncPlayer(EntityPlayer player){
-        for(Map.Entry<ResourceLocation,AnimationFile> entry : folderAnimations.entrySet()){
-            NetworkHandler.sendToPlayer(new PacketSendAnimation(entry.getValue(),entry.getKey().getResourcePath()),player);
+
+    public void syncPlayer(EntityPlayer player) {
+        for (Map.Entry<ResourceLocation, AnimationFile> entry : folderAnimations.entrySet()) {
+            NetworkHandler.sendToPlayer(new PacketSendAnimation(entry.getValue(), entry.getKey().getResourcePath()), player);
         }
     }
-    public void syncAll(){
-        if(MinecraftServer.getServer()!=null) {
+
+    public void syncAll() {
+        if (MinecraftServer.getServer() != null) {
             for (Map.Entry<ResourceLocation, AnimationFile> entry : folderAnimations.entrySet()) {
                 NetworkHandler.sendToAll(new PacketSendAnimation(entry.getValue(), entry.getKey().getResourcePath()));
             }
         }
     }
 
-    public void syncAdd(ResourceLocation location){
-        if(MinecraftServer.getServer()!=null) {
+    public void syncAdd(ResourceLocation location) {
+        if (MinecraftServer.getServer() != null) {
             NetworkHandler.sendToAll(new PacketSendAnimation(folderAnimations.get(location), location.getResourcePath()));
         }
     }
 
-    public void syncRemove(ResourceLocation location){
-        if(MinecraftServer.getServer()!=null) {
+    public void syncRemove(ResourceLocation location) {
+        if (MinecraftServer.getServer() != null) {
             NetworkHandler.sendToAll(new PacketRemoveAnimation(location.getResourcePath()));
         }
     }
+
     public void recursiveWalk(File folder) {
         for (File file : folder.listFiles()) {
             if (file.isFile() && file.getName().endsWith(".json")) {
@@ -81,7 +84,7 @@ public class AnimationLibrary  {
 
     public String getNameFromFile(File file) {
         String folderPath = folder.getAbsolutePath();
-        return file.getAbsolutePath().substring(folderPath.length()+1).replace('\\','/');
+        return file.getAbsolutePath().substring(folderPath.length() + 1).replace('\\', '/');
     }
 
     public void storeModel(File file) {

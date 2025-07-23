@@ -1,11 +1,7 @@
 package software.bernie.example.entity;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIControlledByPlayer;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,29 +14,32 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
+import javax.annotation.Nullable;
+
 public class BikeEntity extends EntityAnimal implements IAnimatable {
-	private AnimationFactory factory = new AnimationFactory(this);
-	private final EntityAIControlledByPlayer aiControlledByPlayer;
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bike.idle", true));
-		return PlayState.CONTINUE;
-	}
+    private AnimationFactory factory = new AnimationFactory(this);
+    private final EntityAIControlledByPlayer aiControlledByPlayer;
 
-	public BikeEntity(World worldIn) {
-		super(worldIn);
-		this.ignoreFrustumCheck = true;
-		this.tasks.addTask(2, this.aiControlledByPlayer = new EntityAIControlledByPlayer(this, 0.3F));
-		this.setSize(0.5F, 0.6F);
-	}
+    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bike.idle", true));
+        return PlayState.CONTINUE;
+    }
 
-	@Override
-	public boolean interact(EntityPlayer player) {
-		if (this.riddenByEntity == null) {
-			player.mountEntity(this);
-			return super.interact(player);
-		}
-		return super.interact(player);
-	}
+    public BikeEntity(World worldIn) {
+        super(worldIn);
+        this.ignoreFrustumCheck = true;
+        this.tasks.addTask(2, this.aiControlledByPlayer = new EntityAIControlledByPlayer(this, 0.3F));
+        this.setSize(0.5F, 0.6F);
+    }
+
+    @Override
+    public boolean interact(EntityPlayer player) {
+        if (this.riddenByEntity == null) {
+            player.mountEntity(this);
+            return super.interact(player);
+        }
+        return super.interact(player);
+    }
 
 //	@Override
 //	public void travel(float strafe, float vertical, float forward) {
@@ -65,29 +64,29 @@ public class BikeEntity extends EntityAnimal implements IAnimatable {
 //		}
 //	}
 
-	@Nullable
-	public Entity getControllingPassenger() {
-		return this.ridingEntity;
-	}
+    @Nullable
+    public Entity getControllingPassenger() {
+        return this.ridingEntity;
+    }
 
-	@Override
-	public boolean canBeSteered() {
-		return true;
-	}
+    @Override
+    public boolean canBeSteered() {
+        return true;
+    }
 
-	@Override
-	public void registerControllers(AnimationData data) {
-		data.addAnimationController(new AnimationController<BikeEntity>(this, "controller", 0, this::predicate));
-	}
+    @Override
+    public void registerControllers(AnimationData data) {
+        data.addAnimationController(new AnimationController<BikeEntity>(this, "controller", 0, this::predicate));
+    }
 
-	@Override
-	public AnimationFactory getFactory() {
-		return this.factory;
-	}
+    @Override
+    public AnimationFactory getFactory() {
+        return this.factory;
+    }
 
-	@Nullable
-	@Override
-	public EntityAgeable createChild(EntityAgeable ageable) {
-		return null;
-	}
+    @Nullable
+    @Override
+    public EntityAgeable createChild(EntityAgeable ageable) {
+        return null;
+    }
 }

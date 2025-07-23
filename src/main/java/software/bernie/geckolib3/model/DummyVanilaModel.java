@@ -1,15 +1,14 @@
 package software.bernie.geckolib3.model;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
-import org.lwjgl.opengl.GL11;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 public class DummyVanilaModel extends ModelBase {
     public GeoEntityRenderer renderer;
 
-    public DummyVanilaModel() {}
+    public DummyVanilaModel() {
+    }
 
     public DummyVanilaModel(GeoEntityRenderer renderer) {
         this.renderer = renderer;

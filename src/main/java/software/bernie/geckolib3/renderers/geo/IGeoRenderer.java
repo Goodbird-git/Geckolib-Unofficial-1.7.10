@@ -1,14 +1,12 @@
 package software.bernie.geckolib3.renderers.geo;
 
-import javax.vecmath.*;
-
+import net.geckominecraft.client.renderer.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import net.geckominecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.util.Color;
@@ -22,6 +20,11 @@ import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
 import software.bernie.geckolib3.util.MatrixStack;
 import software.bernie.geckolib3.util.PositionUtils;
 
+import javax.vecmath.Matrix3f;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
+import javax.vecmath.Vector4f;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Map;
@@ -125,7 +128,7 @@ public interface IGeoRenderer<T> {
 
             for (GeoVertex vertex : quad.vertices) {
                 Vector4f vector4f = new Vector4f(vertex.position.x, vertex.position.y, vertex.position.z,
-                        1.0F);
+                    1.0F);
 
                 MATRIX_STACK.getModelMatrix().transform(vector4f);
                 builder.setColorRGBA_F(red, green, blue, alpha);
@@ -134,6 +137,7 @@ public interface IGeoRenderer<T> {
             }
         }
     }
+
     /*
     (-0.4095761, 0.5882118, 0.70710677, 1.0)
     (0.409576, 1.1617882, 0.70710677, 1.0)
@@ -211,7 +215,7 @@ public interface IGeoRenderer<T> {
         emitter.rotation.setIdentity();
 
         MATRIX_STACK.push();
-        MATRIX_STACK.getModelMatrix().mul(new Matrix4f(cur2.m00,cur2.m01,cur2.m02,0, cur2.m10,cur2.m11,cur2.m12,0,cur2.m20,cur2.m21,cur2.m22,0,0,0,0,1));
+        MATRIX_STACK.getModelMatrix().mul(new Matrix4f(cur2.m00, cur2.m01, cur2.m02, 0, cur2.m10, cur2.m11, cur2.m12, 0, cur2.m20, cur2.m21, cur2.m22, 0, 0, 0, 0, 1));
         GeoBone[] bonePath = getPathFromRoot(locator);
         for (int i = 0; i < bonePath.length; i++) {
             GeoBone bone = bonePath[i];

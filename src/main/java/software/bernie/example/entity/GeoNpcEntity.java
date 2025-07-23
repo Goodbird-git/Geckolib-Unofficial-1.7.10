@@ -1,13 +1,9 @@
 package software.bernie.example.entity;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import software.bernie.example.GeckoLibMod;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.PlayState;
@@ -16,10 +12,6 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.particles.BedrockLibrary;
-import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
-
-import java.util.Map;
 
 public class GeoNpcEntity extends EntityCreature implements IAnimatable, IAnimationTickable {
     private AnimationFactory factory = new AnimationFactory(this);
@@ -33,7 +25,7 @@ public class GeoNpcEntity extends EntityCreature implements IAnimatable, IAnimat
         super(worldIn);
         this.ignoreFrustumCheck = true;
         this.setSize(0.7F, 1.3F);
-        this.setCurrentItemOrArmor(0,new ItemStack(Items.stick));
+        this.setCurrentItemOrArmor(0, new ItemStack(Items.stick));
     }
 
     @Override

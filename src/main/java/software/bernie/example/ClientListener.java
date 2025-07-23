@@ -2,7 +2,6 @@ package software.bernie.example;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -17,15 +16,22 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import software.bernie.example.block.tile.BotariumTileEntity;
 import software.bernie.example.block.tile.FertilizerTileEntity;
 import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
-import software.bernie.example.client.renderer.entity.*;
+import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
+import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
+import software.bernie.example.client.renderer.entity.GeoNpcRenderer;
+import software.bernie.example.client.renderer.entity.LERenderer;
+import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.client.renderer.tile.BotariumTileRenderer;
 import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
-import software.bernie.example.entity.*;
+import software.bernie.example.entity.BikeEntity;
+import software.bernie.example.entity.GeoExampleEntity;
+import software.bernie.example.entity.GeoExampleEntityLayer;
+import software.bernie.example.entity.GeoNpcEntity;
+import software.bernie.example.entity.ReplacedCreeperEntity;
 import software.bernie.example.item.PotatoArmorItem;
 import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.ItemRegistry;
-import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoReplacedEntityRenderer;
 import software.bernie.geckolib3.renderers.geo.RenderBlockItem;
@@ -48,10 +54,10 @@ public class ClientListener {
         MinecraftForgeClient.registerItemRenderer(ItemRegistry.JACK_IN_THE_BOX, new JackInTheBoxRenderer());
     }
 
-    public static void bindRender(Block block, TileEntity tile, TileEntitySpecialRenderer tesr){
+    public static void bindRender(Block block, TileEntity tile, TileEntitySpecialRenderer tesr) {
         ClientRegistry.bindTileEntitySpecialRenderer(tile.getClass(), tesr);
         Item blockItem = ItemBlock.getItemFromBlock(block);
-        MinecraftForgeClient.registerItemRenderer(blockItem,new RenderBlockItem(tesr, tile));
+        MinecraftForgeClient.registerItemRenderer(blockItem, new RenderBlockItem(tesr, tile));
     }
 
     @SideOnly(Side.CLIENT)

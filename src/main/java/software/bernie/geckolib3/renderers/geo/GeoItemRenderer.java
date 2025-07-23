@@ -1,10 +1,8 @@
 package software.bernie.geckolib3.renderers.geo;
 
-import java.util.Collections;
-import java.util.Objects;
-
-import net.minecraft.client.Minecraft;
+import com.eliotlash.mclib.utils.MatrixUtils;
 import net.geckominecraft.client.renderer.GlStateManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,9 +17,12 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
-import com.eliotlash.mclib.utils.MatrixUtils;
 
-import javax.vecmath.*;
+import javax.vecmath.Matrix4d;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3d;
+import java.util.Collections;
+import java.util.Objects;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class GeoItemRenderer<T extends Item & IAnimatable> implements IGeoRenderer<T>, IItemRenderer {
@@ -77,7 +78,8 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> implements I
         this.render((T) itemStack.getItem(), itemStack);
         GL11.glPopMatrix();
     }
-    public Vector3d getCurrentRenderPos(){
+
+    public Vector3d getCurrentRenderPos() {
         Entity camera = Minecraft.getMinecraft().renderViewEntity;
         Matrix4f matrix4f = getCurrentMatrix();
         MatrixUtils.Transformation transformation = MatrixUtils.extractTransformations(null, matrix4f);
@@ -86,27 +88,27 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> implements I
         double dz = matrix4f.m23;
 
         Matrix4d rotMatrixX = new Matrix4d();
-        rotMatrixX.rotX((camera.rotationPitch)/360*Math.PI*2);
+        rotMatrixX.rotX((camera.rotationPitch) / 360 * Math.PI * 2);
         Matrix4d rotMatrixY = new Matrix4d();
-        rotMatrixY.rotY((-camera.rotationYaw)/360*Math.PI*2);
-        Vector3d vecZ = new Vector3d(0,0,1);
+        rotMatrixY.rotY((-camera.rotationYaw) / 360 * Math.PI * 2);
+        Vector3d vecZ = new Vector3d(0, 0, 1);
         rotMatrixX.transform(vecZ);
         rotMatrixY.transform(vecZ);
 
-        Vector3d vecL = new Vector3d(1,0,0);
+        Vector3d vecL = new Vector3d(1, 0, 0);
         rotMatrixX.transform(vecL);
         rotMatrixY.transform(vecL);
         vecZ.scale(-1);
 
-        Vector3d vecU = new Vector3d(0,1,0);
+        Vector3d vecU = new Vector3d(0, 1, 0);
         rotMatrixX.transform(vecU);
         rotMatrixY.transform(vecU);
 
         vecZ.scale(dz);
         vecU.scale(du);
         vecL.scale(-dl);
-        Vector3d pos = new Vector3d(vecZ.x+vecU.x+vecL.x,vecZ.y+vecU.y+vecL.y,vecZ.z+vecU.z+vecL.z);
-        Vector3d res = new Vector3d(pos.x+camera.posX, pos.y+camera.posY,pos.z+camera.posZ);
+        Vector3d pos = new Vector3d(vecZ.x + vecU.x + vecL.x, vecZ.y + vecU.y + vecL.y, vecZ.z + vecU.z + vecL.z);
+        Vector3d res = new Vector3d(pos.x + camera.posX, pos.y + camera.posY, pos.z + camera.posZ);
         return res;
     }
 
@@ -130,7 +132,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> implements I
         this.currentItemStack = itemStack;
         GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
         AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0,
-                Minecraft.getMinecraft().timer.renderPartialTicks, false, Collections.singletonList(itemStack));
+            Minecraft.getMinecraft().timer.renderPartialTicks, false, Collections.singletonList(itemStack));
         modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
         GlStateManager.pushMatrix();
         GlStateManager.translate(0, 0.01f, 0);
@@ -140,7 +142,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> implements I
         Color renderColor = getRenderColor(animatable, 0f);
         GL11.glRotatef(90, 0, 1, 0);
         render(model, animatable, 0, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
-                (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
+            (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
         GlStateManager.popMatrix();
     }
 
@@ -152,6 +154,6 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> implements I
     @Override
     public Integer getUniqueID(T animatable) {
         return Objects.hash(currentItemStack.getItem(), currentItemStack.stackSize,
-                currentItemStack.hasTagCompound() ? currentItemStack.getTagCompound().toString() : 1);
+            currentItemStack.hasTagCompound() ? currentItemStack.getTagCompound().toString() : 1);
     }
 }

@@ -1,24 +1,14 @@
 package software.bernie.geckolib3.particles;
 
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.file.AnimationFile;
-import software.bernie.geckolib3.file.AnimationFileLoader;
-import software.bernie.geckolib3.file.GeoModelLoader;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.molang.MolangRegistrar;
-import software.bernie.geckolib3.watchers.ParticleDirWatcher;
 import com.eliotlash.mclib.utils.JsonUtils;
+import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import software.bernie.geckolib3.watchers.ParticleDirWatcher;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class BedrockLibrary {
@@ -51,20 +41,21 @@ public class BedrockLibrary {
         this.presets.putAll(this.factory);
         recursiveWalk(this.folder);
     }
-    public void recursiveWalk(File folder){
+
+    public void recursiveWalk(File folder) {
         for (File file : folder.listFiles()) {
             if (file.isFile() && file.getName().endsWith(".json")) {
                 this.storeScheme(file);
             }
-            if(file.isDirectory()){
+            if (file.isDirectory()) {
                 recursiveWalk(file);
             }
         }
     }
 
     public BedrockScheme get(String identifier) {
-        for (BedrockScheme scheme: presets.values()) {
-            if(scheme.identifier.equals(identifier)){
+        for (BedrockScheme scheme : presets.values()) {
+            if (scheme.identifier.equals(identifier)) {
                 return scheme;
             }
         }
@@ -88,7 +79,7 @@ public class BedrockLibrary {
             if (presets.containsKey(schemeName)) {
                 presets.get(schemeName).toReload = true;
             }
-            scheme.name=schemeName;
+            scheme.name = schemeName;
             this.presets.put(schemeName, scheme);
         }
     }
@@ -118,7 +109,7 @@ public class BedrockLibrary {
         BedrockScheme scheme = this.loadFactory(name);
 
         if (scheme != null) {
-            scheme.name=getName(name);
+            scheme.name = getName(name);
             this.factory.put(getName(name), scheme);
         }
     }
@@ -128,7 +119,7 @@ public class BedrockLibrary {
      */
     public BedrockScheme loadFactory(ResourceLocation resLoc) {
         try {
-            return BedrockScheme.parse(IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("assets/"+resLoc.getResourceDomain()+"/" + resLoc.getResourcePath()), StandardCharsets.UTF_8)).factory(true);
+            return BedrockScheme.parse(IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("assets/" + resLoc.getResourceDomain() + "/" + resLoc.getResourcePath()), StandardCharsets.UTF_8)).factory(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -136,9 +127,9 @@ public class BedrockLibrary {
         return null;
     }
 
-    public String getName(ResourceLocation resLoc){
+    public String getName(ResourceLocation resLoc) {
         String[] parts = resLoc.getResourcePath().split("/");
-        String name = parts[parts.length-1];
+        String name = parts[parts.length - 1];
         return name.substring(0, name.indexOf(".json"));
     }
 

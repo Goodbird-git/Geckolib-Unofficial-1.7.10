@@ -15,33 +15,33 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class GeoExampleEntityLayer extends EntityCreature implements IAnimatable, IAnimationTickable {
 
-	private AnimationFactory factory = new AnimationFactory(this);
+    private AnimationFactory factory = new AnimationFactory(this);
 
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.geoLayerEntity.idle", true));
-		return PlayState.CONTINUE;
-	}
+    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.geoLayerEntity.idle", true));
+        return PlayState.CONTINUE;
+    }
 
-	public GeoExampleEntityLayer(World worldIn) {
-		super(worldIn);
-		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-	}
+    public GeoExampleEntityLayer(World worldIn) {
+        super(worldIn);
+        this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+    }
 
-	@Override
-	public void registerControllers(AnimationData data) {
-		data.addAnimationController(
-				new AnimationController<GeoExampleEntityLayer>(this, "controller", 50, this::predicate));
-	}
+    @Override
+    public void registerControllers(AnimationData data) {
+        data.addAnimationController(
+            new AnimationController<GeoExampleEntityLayer>(this, "controller", 50, this::predicate));
+    }
 
-	@Override
-	public AnimationFactory getFactory() {
-		return this.factory;
-	}
+    @Override
+    public AnimationFactory getFactory() {
+        return this.factory;
+    }
 
 
-	@Override
-	public int tickTimer() {
-		return ticksExisted;
-	}
+    @Override
+    public int tickTimer() {
+        return ticksExisted;
+    }
 
 }
