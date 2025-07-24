@@ -1,16 +1,15 @@
 package software.bernie.geckolib3.particles.components.meta;
 
+import com.eliotlash.molang.MolangException;
+import com.eliotlash.molang.MolangParser;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import software.bernie.geckolib3.particles.components.BedrockComponentBase;
 import software.bernie.geckolib3.particles.components.IComponentParticleInitialize;
 import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
 import software.bernie.geckolib3.particles.emitter.BedrockParticle;
-import com.eliotlash.molang.MolangException;
-import com.eliotlash.molang.MolangParser;
 
-public class BedrockComponentLocalSpace extends BedrockComponentBase implements IComponentParticleInitialize
-{
+public class BedrockComponentLocalSpace extends BedrockComponentBase implements IComponentParticleInitialize {
     public boolean position;
     public boolean rotation;
     public boolean scale;
@@ -21,8 +20,7 @@ public class BedrockComponentLocalSpace extends BedrockComponentBase implements 
     public float linearVelocity;
     public float angularVelocity;
 
-    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException
-    {
+    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException {
         if (!elem.isJsonObject()) return super.fromJson(elem, parser);
 
         JsonObject element = elem.getAsJsonObject();
@@ -41,8 +39,7 @@ public class BedrockComponentLocalSpace extends BedrockComponentBase implements 
     }
 
     @Override
-    public JsonElement toJson()
-    {
+    public JsonElement toJson() {
         JsonObject object = new JsonObject();
 
         if (this.position) object.addProperty("position", true);
@@ -52,15 +49,14 @@ public class BedrockComponentLocalSpace extends BedrockComponentBase implements 
         if (this.direction) object.addProperty("direction", true);
         if (this.acceleration) object.addProperty("acceleration", true);
         if (this.gravity) object.addProperty("gravity", true);
-        if (this.linearVelocity!=0) object.addProperty("linear_velocity", this.linearVelocity);
-        if (this.angularVelocity!=0) object.addProperty("angular_velocity", this.angularVelocity);
+        if (this.linearVelocity != 0) object.addProperty("linear_velocity", this.linearVelocity);
+        if (this.angularVelocity != 0) object.addProperty("angular_velocity", this.angularVelocity);
 
         return object;
     }
 
     @Override
-    public void apply(BedrockEmitter emitter, BedrockParticle particle)
-    {
+    public void apply(BedrockEmitter emitter, BedrockParticle particle) {
         particle.relativePosition = this.position;
         particle.relativeRotation = this.rotation;
         particle.relativeScale = this.scale;
@@ -75,8 +71,7 @@ public class BedrockComponentLocalSpace extends BedrockComponentBase implements 
     }
 
     @Override
-    public int getSortingIndex()
-    {
+    public int getSortingIndex() {
         return 6;
     }
 }

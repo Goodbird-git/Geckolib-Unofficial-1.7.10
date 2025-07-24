@@ -10,30 +10,30 @@ import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity> {
-	@Override
-	public ResourceLocation getAnimationFileLocation(FertilizerTileEntity animatable) {
-		if (animatable.getWorldObj().isRaining()) {
-			return new ResourceLocation(GeckoLib.ModID, "animations/fertilizer.animation.json");
-		} else {
-			return new ResourceLocation(GeckoLib.ModID, "animations/botarium.animation.json");
-		}
-	}
+    @Override
+    public ResourceLocation getAnimationFileLocation(FertilizerTileEntity animatable) {
+        if (animatable.getWorldObj().isRaining()) {
+            return new ResourceLocation(GeckoLib.ModID, "animations/fertilizer.animation.json");
+        } else {
+            return new ResourceLocation(GeckoLib.ModID, "animations/botarium.animation.json");
+        }
+    }
 
-	@Override
-	public ResourceLocation getModelLocation(FertilizerTileEntity animatable) {
-		if (animatable.getWorldObj().isRaining()) {
-			return new ResourceLocation(GeckoLib.ModID, "geo/fertilizer.geo.json");
-		} else {
-			return new ResourceLocation(GeckoLib.ModID, "geo/botarium.geo.json");
-		}
-	}
+    @Override
+    public ResourceLocation getModelLocation(FertilizerTileEntity animatable) {
+        if (animatable.getWorldObj().isRaining()) {
+            return new ResourceLocation(GeckoLib.ModID, "geo/fertilizer.geo.json");
+        } else {
+            return new ResourceLocation(GeckoLib.ModID, "geo/botarium.geo.json");
+        }
+    }
 
-	@Override
-	public ResourceLocation getTextureLocation(FertilizerTileEntity entity) {
-		if (entity.getWorldObj().isRaining()) {
-			return new ResourceLocation(GeckoLib.ModID, "textures/block/fertilizer.png");
-		} else {
-			return new ResourceLocation(GeckoLib.ModID, "textures/block/botarium.png");
-		}
-	}
+    @Override
+    public ResourceLocation getTextureLocation(FertilizerTileEntity entity) {
+        if (entity.getWorldObj().isRaining()) {
+            return new ResourceLocation(GeckoLib.ModID, "textures/block/fertilizer.png");
+        } else {
+            return new ResourceLocation(GeckoLib.ModID, "textures/block/botarium.png");
+        }
+    }
 }

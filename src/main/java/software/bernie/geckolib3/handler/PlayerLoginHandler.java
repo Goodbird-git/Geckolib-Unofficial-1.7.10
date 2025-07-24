@@ -7,7 +7,7 @@ import software.bernie.geckolib3.resource.ModelLibrary;
 
 public class PlayerLoginHandler {
     @SubscribeEvent
-    public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event){
+    public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         ModelLibrary.instance.syncPlayer(event.player);
         AnimationLibrary.instance.syncPlayer(event.player);
     }

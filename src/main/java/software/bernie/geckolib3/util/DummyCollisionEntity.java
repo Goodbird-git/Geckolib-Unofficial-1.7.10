@@ -7,12 +7,14 @@ import net.minecraft.world.World;
 
 public class DummyCollisionEntity extends Entity {
     public AxisAlignedBB bb;
-    public DummyCollisionEntity(World p_i1582_1_){
+
+    public DummyCollisionEntity(World p_i1582_1_) {
         super(p_i1582_1_);
     }
+
     public DummyCollisionEntity(World p_i1582_1_, AxisAlignedBB bb) {
         super(p_i1582_1_);
-        this.bb=bb;
+        this.bb = bb;
     }
 
     @Override

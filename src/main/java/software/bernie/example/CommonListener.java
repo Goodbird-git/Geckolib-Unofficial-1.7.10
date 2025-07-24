@@ -37,10 +37,10 @@ public class CommonListener {
 
     public static void onRegisterEntities() {
         int id = 0;
-        EntityRegistry.registerModEntity(BikeEntity.class,"bike",id++,GeckoLibMod.instance,160,2,false);
-        EntityRegistry.registerModEntity(GeoExampleEntity.class,"example",id++,GeckoLibMod.instance,160,2,false);
-        EntityRegistry.registerModEntity(GeoExampleEntityLayer.class,"examplelayer",id++,GeckoLibMod.instance,160,2,false);
-        EntityRegistry.registerModEntity(GeoNpcEntity.class,"geonpc",id++,GeckoLibMod.instance,160,2,false);
+        EntityRegistry.registerModEntity(BikeEntity.class, "bike", id++, GeckoLibMod.instance, 160, 2, false);
+        EntityRegistry.registerModEntity(GeoExampleEntity.class, "example", id++, GeckoLibMod.instance, 160, 2, false);
+        EntityRegistry.registerModEntity(GeoExampleEntityLayer.class, "examplelayer", id++, GeckoLibMod.instance, 160, 2, false);
+        EntityRegistry.registerModEntity(GeoNpcEntity.class, "geonpc", id++, GeckoLibMod.instance, 160, 2, false);
         /* Tile entities */
         GameRegistry.registerTileEntity(BotariumTileEntity.class, "botariumtile");
         GameRegistry.registerTileEntity(FertilizerTileEntity.class, "fertilizertile");
@@ -48,22 +48,22 @@ public class CommonListener {
     }
 
     public static void onRegisterItems() {
-        ItemRegistry.JACK_IN_THE_BOX= new JackInTheBoxItem();
+        ItemRegistry.JACK_IN_THE_BOX = new JackInTheBoxItem();
         ItemRegistry.JACK_IN_THE_BOX.setUnlocalizedName("jackintheboxitem");
         GameRegistry.registerItem(ItemRegistry.JACK_IN_THE_BOX, "jackintheboxitem");
 
         ItemRegistry.POTATO_HEAD = registerItem(
-                new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, 0), "potato_head");
+            new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, 0), "potato_head");
         ItemRegistry.POTATO_CHEST = registerItem(
-                new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, 1), "potato_chest");
+            new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, 1), "potato_chest");
         ItemRegistry.POTATO_LEGGINGS = registerItem(
-                new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, 2), "potato_leggings");
+            new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, 2), "potato_leggings");
         ItemRegistry.POTATO_BOOTS = registerItem(
-                new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, 3), "potato_boots");
+            new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, 3), "potato_boots");
     }
 
     private static <T extends Item> T registerItem(T item, String name) {
-        GameRegistry.registerItem(item.setUnlocalizedName(name).setTextureName("geckolib3:"+name), name);
+        GameRegistry.registerItem(item.setUnlocalizedName(name).setTextureName("geckolib3:" + name), name);
         return item;
     }
 

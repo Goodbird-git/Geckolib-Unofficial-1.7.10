@@ -1,19 +1,18 @@
 package com.eliotlash.mclib.utils.resources;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-
+import com.eliotlash.mclib.utils.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import com.eliotlash.mclib.utils.MathUtils;
 
-public class GifTexture extends AbstractTexture
-{
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+
+public class GifTexture extends AbstractTexture {
     public static int globalTick = 0;
     public static int entityTick = -1;
 
@@ -26,16 +25,13 @@ public class GifTexture extends AbstractTexture
 
     public int duration;
 
-    public static void bindTexture(ResourceLocation location, int ticks, float partialTicks)
-    {
+    public static void bindTexture(ResourceLocation location, int ticks, float partialTicks) {
         TextureManager textures = Minecraft.getMinecraft().renderEngine;
 
-        if (location.getResourcePath().endsWith("gif"))
-        {
+        if (location.getResourcePath().endsWith("gif")) {
             ITextureObject object = textures.getTexture(location);
 
-            if (object instanceof GifTexture)
-            {
+            if (object instanceof GifTexture) {
                 GifTexture texture = (GifTexture) object;
 
                 location = texture.getFrame(ticks, partialTicks);
@@ -45,35 +41,30 @@ public class GifTexture extends AbstractTexture
         textures.bindTexture(location);
     }
 
-    public static void updateTick()
-    {
+    public static void updateTick() {
         globalTick += 1;
     }
 
-    public GifTexture(ResourceLocation texture, int[] delays, ResourceLocation[] frames)
-    {
+    public GifTexture(ResourceLocation texture, int[] delays, ResourceLocation[] frames) {
         this.base = texture;
         this.delays = Arrays.copyOf(delays, delays.length);
         this.frames = frames;
     }
 
-    public void calculateDuration()
-    {
+    public void calculateDuration() {
         this.duration = 0;
 
-        for (int delay : this.delays)
-        {
+        for (int delay : this.delays) {
             this.duration += delay;
         }
     }
 
     @Override
-    public void loadTexture(IResourceManager resourceManager) throws IOException
-    {}
+    public void loadTexture(IResourceManager resourceManager) throws IOException {
+    }
 
     @Override
-    public int getGlTextureId()
-    {
+    public int getGlTextureId() {
         Minecraft mc = Minecraft.getMinecraft();
         TextureManager textures = mc.renderEngine;
         ResourceLocation rl = this.getFrame(entityTick > -1 ? entityTick : globalTick, mc.timer.renderPartialTicks);
@@ -88,22 +79,19 @@ public class GifTexture extends AbstractTexture
     }
 
     @Override
-    public void deleteGlTexture()
-    {}
+    public void deleteGlTexture() {
+    }
 
-    public ResourceLocation getFrame(int ticks, float partialTicks)
-    {
+    public ResourceLocation getFrame(int ticks, float partialTicks) {
         int tick = (int) ((ticks + partialTicks) * 5 % this.duration);
 
         int duration = 0;
         int index = 0;
 
-        for (int delay : this.delays)
-        {
+        for (int delay : this.delays) {
             duration += delay;
 
-            if (tick < duration)
-            {
+            if (tick < duration) {
                 break;
             }
 
@@ -115,32 +103,24 @@ public class GifTexture extends AbstractTexture
         return this.frames[index];
     }
 
-    private void updateMultiTex(ITextureObject texture)
-    {
-        if (!tried)
-        {
-            try
-            {
+    private void updateMultiTex(ITextureObject texture) {
+        if (!tried) {
+            try {
                 fieldMultiTex = AbstractTexture.class.getField("multiTex");
-            }
-            catch (NoSuchFieldException | SecurityException e)
-            {
+            } catch (NoSuchFieldException | SecurityException e) {
                 fieldMultiTex = null;
             }
 
             tried = true;
         }
 
-        if (texture instanceof AbstractTexture && fieldMultiTex != null)
-        {
-            try
-            {
+        if (texture instanceof AbstractTexture && fieldMultiTex != null) {
+            try {
                 Object obj = fieldMultiTex.get(texture);
 
                 fieldMultiTex.set(this, obj);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
             }
-            catch (IllegalArgumentException | IllegalAccessException e)
-            {}
         }
     }
 }

@@ -9,25 +9,25 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class ReplacedCreeperEntity implements IAnimatable {
-	AnimationFactory factory = new AnimationFactory(this);
+    AnimationFactory factory = new AnimationFactory(this);
 
-	@Override
-	public void registerControllers(AnimationData data) {
-		data.addAnimationController(
-				new AnimationController<ReplacedCreeperEntity>(this, "controller", 20, this::predicate));
-	}
+    @Override
+    public void registerControllers(AnimationData data) {
+        data.addAnimationController(
+            new AnimationController<ReplacedCreeperEntity>(this, "controller", 20, this::predicate));
+    }
 
-	private <P extends IAnimatable> PlayState predicate(AnimationEvent<P> event) {
-		if (!(event.getLimbSwingAmount() > -0.15F && event.getLimbSwingAmount() < 0.15F)) {
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("creeper_walk", true));
-		} else {
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("creeper_idle", true));
-		}
-		return PlayState.CONTINUE;
-	}
+    private <P extends IAnimatable> PlayState predicate(AnimationEvent<P> event) {
+        if (!(event.getLimbSwingAmount() > -0.15F && event.getLimbSwingAmount() < 0.15F)) {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("creeper_walk", true));
+        } else {
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("creeper_idle", true));
+        }
+        return PlayState.CONTINUE;
+    }
 
-	@Override
-	public AnimationFactory getFactory() {
-		return factory;
-	}
+    @Override
+    public AnimationFactory getFactory() {
+        return factory;
+    }
 }

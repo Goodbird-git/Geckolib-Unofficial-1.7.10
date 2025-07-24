@@ -7,7 +7,9 @@
     "mcversion": "${minecraftVersion}",
     "url": "http://berniesoftware.com/",
     "updateUrl": "",
-    "authorList": ["Gecko, Goodbird, Eliot, AzureDoom, McHorse, DerToaster"],
+    "authorList": [
+      "Gecko, Goodbird, Eliot, AzureDoom, McHorse, DerToaster"
+    ],
     "credits": "",
     "logoFile": "geckolib.png",
     "screenshots": [],

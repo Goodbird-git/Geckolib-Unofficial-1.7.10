@@ -3,11 +3,9 @@ package software.bernie.geckolib3.particles.components.shape;
 import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
 import software.bernie.geckolib3.particles.emitter.BedrockParticle;
 
-public class BedrockComponentShapeEntityAABB extends BedrockComponentShapeBase
-{
+public class BedrockComponentShapeEntityAABB extends BedrockComponentShapeBase {
     @Override
-    public void apply(BedrockEmitter emitter, BedrockParticle particle)
-    {
+    public void apply(BedrockEmitter emitter, BedrockParticle particle) {
         float centerX = (float) this.offset[0].get();
         float centerY = (float) this.offset[1].get();
         float centerZ = (float) this.offset[2].get();
@@ -16,8 +14,7 @@ public class BedrockComponentShapeEntityAABB extends BedrockComponentShapeBase
         float h = 0;
         float d = 0;
 
-        if (emitter.target != null)
-        {
+        if (emitter.target != null) {
             w = emitter.target.width;
             h = emitter.target.height;
             d = emitter.target.width;
@@ -27,8 +24,7 @@ public class BedrockComponentShapeEntityAABB extends BedrockComponentShapeBase
         particle.position.y = centerY + ((float) Math.random() - 0.5F) * h;
         particle.position.z = centerZ + ((float) Math.random() - 0.5F) * d;
 
-        if (this.surface)
-        {
+        if (this.surface) {
             int roll = (int) (Math.random() * 6 * 100) % 6;
 
             if (roll == 0) particle.position.x = centerX + w / 2F;

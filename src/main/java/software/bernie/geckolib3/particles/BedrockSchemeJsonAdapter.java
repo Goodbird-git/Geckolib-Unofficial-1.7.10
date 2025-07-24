@@ -1,5 +1,8 @@
 package software.bernie.geckolib3.particles;
 
+import com.eliotlash.mclib.math.Operation;
+import com.eliotlash.mclib.utils.resources.RLUtils;
+import com.eliotlash.molang.MolangException;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.JsonDeserializationContext;
@@ -38,37 +41,24 @@ import software.bernie.geckolib3.particles.components.shape.BedrockComponentShap
 import software.bernie.geckolib3.particles.components.shape.BedrockComponentShapeEntityAABB;
 import software.bernie.geckolib3.particles.components.shape.BedrockComponentShapePoint;
 import software.bernie.geckolib3.particles.components.shape.BedrockComponentShapeSphere;
-import com.eliotlash.mclib.math.Operation;
-import com.eliotlash.molang.MolangException;
-import com.eliotlash.mclib.utils.resources.RLUtils;
 
 import java.lang.reflect.Type;
 import java.util.Map;
 
-public class BedrockSchemeJsonAdapter implements JsonDeserializer<BedrockScheme>, JsonSerializer<BedrockScheme>
-{
+public class BedrockSchemeJsonAdapter implements JsonDeserializer<BedrockScheme>, JsonSerializer<BedrockScheme> {
     public BiMap<String, Class<? extends BedrockComponentBase>> components = HashBiMap.create();
 
-    public static boolean isEmpty(JsonElement element)
-    {
-        if (element.isJsonArray())
-        {
+    public static boolean isEmpty(JsonElement element) {
+        if (element.isJsonArray()) {
             return element.getAsJsonArray().size() == 0;
-        }
-        else if (element.isJsonObject())
-        {
+        } else if (element.isJsonObject()) {
             return element.getAsJsonObject().entrySet().size() == 0;
-        }
-        else if (element.isJsonPrimitive())
-        {
+        } else if (element.isJsonPrimitive()) {
             JsonPrimitive primitive = element.getAsJsonPrimitive();
 
-            if (primitive.isString())
-            {
+            if (primitive.isString()) {
                 return primitive.getAsString().isEmpty();
-            }
-            else if (primitive.isNumber())
-            {
+            } else if (primitive.isNumber()) {
                 return Operation.equals(primitive.getAsDouble(), 0);
             }
         }
@@ -76,8 +66,7 @@ public class BedrockSchemeJsonAdapter implements JsonDeserializer<BedrockScheme>
         return element.isJsonNull();
     }
 
-    public BedrockSchemeJsonAdapter()
-    {
+    public BedrockSchemeJsonAdapter() {
         /* Meta components */
         this.components.put("minecraft:emitter_local_space", BedrockComponentLocalSpace.class);
         this.components.put("minecraft:emitter_initialization", BedrockComponentInitialization.class);
@@ -121,24 +110,19 @@ public class BedrockSchemeJsonAdapter implements JsonDeserializer<BedrockScheme>
     }
 
     @Override
-    public BedrockScheme deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
-    {
+    public BedrockScheme deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         BedrockScheme scheme = new BedrockScheme();
 
-        if (!json.isJsonObject())
-        {
+        if (!json.isJsonObject()) {
             throw new JsonParseException("The root element of Bedrock particle should be an object!");
         }
 
         /* Skip format_version check to avoid breaking semi-compatible particles */
         JsonObject root = json.getAsJsonObject();
 
-        try
-        {
+        try {
             this.parseEffect(scheme, this.getObject(root, "particle_effect", "No particle_effect was found..."));
-        }
-        catch (MolangException e)
-        {
+        } catch (MolangException e) {
             throw new JsonParseException("Couldn't parse some MoLang expression!", e);
         }
 
@@ -147,16 +131,13 @@ public class BedrockSchemeJsonAdapter implements JsonDeserializer<BedrockScheme>
         return scheme;
     }
 
-    private void parseEffect(BedrockScheme scheme, JsonObject effect) throws JsonParseException, MolangException
-    {
+    private void parseEffect(BedrockScheme scheme, JsonObject effect) throws JsonParseException, MolangException {
         this.parseDescription(scheme, this.getObject(effect, "description", "No particle_effect.description was found..."));
 
-        if (effect.has("curves"))
-        {
+        if (effect.has("curves")) {
             JsonElement curves = effect.get("curves");
 
-            if (curves.isJsonObject())
-            {
+            if (curves.isJsonObject()) {
                 this.parseCurves(scheme, curves.getAsJsonObject());
             }
         }
@@ -167,26 +148,21 @@ public class BedrockSchemeJsonAdapter implements JsonDeserializer<BedrockScheme>
     /**
      * Parse description object (which contains ID of the particle, material type and texture)
      */
-    private void parseDescription(BedrockScheme scheme, JsonObject description) throws JsonParseException
-    {
-        if (description.has("identifier"))
-        {
+    private void parseDescription(BedrockScheme scheme, JsonObject description) throws JsonParseException {
+        if (description.has("identifier")) {
             scheme.identifier = description.get("identifier").getAsString();
         }
 
         JsonObject parameters = this.getObject(description, "basic_render_parameters", "No particle_effect.basic_render_parameters was found...");
 
-        if (parameters.has("material"))
-        {
+        if (parameters.has("material")) {
             scheme.material = BedrockMaterial.fromString(parameters.get("material").getAsString());
         }
 
-        if (parameters.has("texture"))
-        {
+        if (parameters.has("texture")) {
             String texture = parameters.get("texture").getAsString();
 
-            if (!texture.equals("textures/particle/particles"))
-            {
+            if (!texture.equals("textures/particle/particles")) {
                 scheme.texture = RLUtils.create(texture);
             }
         }
@@ -195,14 +171,11 @@ public class BedrockSchemeJsonAdapter implements JsonDeserializer<BedrockScheme>
     /**
      * Parse curves object
      */
-    private void parseCurves(BedrockScheme scheme, JsonObject curves) throws MolangException
-    {
-        for (Map.Entry<String, JsonElement> entry : curves.entrySet())
-        {
+    private void parseCurves(BedrockScheme scheme, JsonObject curves) throws MolangException {
+        for (Map.Entry<String, JsonElement> entry : curves.entrySet()) {
             JsonElement element = entry.getValue();
 
-            if (element.isJsonObject())
-            {
+            if (element.isJsonObject()) {
                 BedrockCurve curve = new BedrockCurve();
 
                 curve.fromJson(element.getAsJsonObject(), scheme.parser);
@@ -211,41 +184,31 @@ public class BedrockSchemeJsonAdapter implements JsonDeserializer<BedrockScheme>
         }
     }
 
-    private void parseComponents(BedrockScheme scheme, JsonObject components) throws MolangException
-    {
-        for (Map.Entry<String, JsonElement> entry : components.entrySet())
-        {
+    private void parseComponents(BedrockScheme scheme, JsonObject components) throws MolangException {
+        for (Map.Entry<String, JsonElement> entry : components.entrySet()) {
             String key = entry.getKey();
 
-            if (this.components.containsKey(key))
-            {
+            if (this.components.containsKey(key)) {
                 BedrockComponentBase component = null;
 
-                try
-                {
+                try {
                     component = this.components.get(key).getConstructor().newInstance();
+                } catch (Exception e) {
                 }
-                catch (Exception e)
-                {}
 
-                if (component != null)
-                {
+                if (component != null) {
                     component.fromJson(entry.getValue(), scheme.parser);
                     scheme.components.add(component);
-                }
-                else
-                {
+                } else {
                     System.out.println("Failed to parse given component " + key + " in " + scheme.identifier + "!");
                 }
             }
         }
     }
 
-    private JsonObject getObject(JsonObject object, String key, String message) throws JsonParseException
-    {
+    private JsonObject getObject(JsonObject object, String key, String message) throws JsonParseException {
         /* Skip format_version check to avoid breaking semi-compatible particles */
-        if (!object.has(key) && !object.get(key).isJsonObject())
-        {
+        if (!object.has(key) && !object.get(key).isJsonObject()) {
             throw new JsonParseException(message);
         }
 
@@ -256,8 +219,7 @@ public class BedrockSchemeJsonAdapter implements JsonDeserializer<BedrockScheme>
      * Turn given bedrock scheme into JSON
      */
     @Override
-    public JsonElement serialize(BedrockScheme src, Type typeOfSrc, JsonSerializationContext context)
-    {
+    public JsonElement serialize(BedrockScheme src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject object = new JsonObject();
         JsonObject effect = new JsonObject();
 
@@ -271,8 +233,7 @@ public class BedrockSchemeJsonAdapter implements JsonDeserializer<BedrockScheme>
         return object;
     }
 
-    private void addDescription(JsonObject effect, BedrockScheme scheme)
-    {
+    private void addDescription(JsonObject effect, BedrockScheme scheme) {
         JsonObject desc = new JsonObject();
         JsonObject render = new JsonObject();
 
@@ -284,36 +245,30 @@ public class BedrockSchemeJsonAdapter implements JsonDeserializer<BedrockScheme>
         render.addProperty("material", scheme.material.id);
         render.addProperty("texture", "textures/particle/particles");
 
-        if (scheme.texture != null && !scheme.texture.equals(BedrockScheme.DEFAULT_TEXTURE))
-        {
+        if (scheme.texture != null && !scheme.texture.equals(BedrockScheme.DEFAULT_TEXTURE)) {
             render.addProperty("texture", scheme.texture.toString());
         }
     }
 
-    private void addCurves(JsonObject effect, BedrockScheme scheme)
-    {
+    private void addCurves(JsonObject effect, BedrockScheme scheme) {
         JsonObject curves = new JsonObject();
 
         effect.add("curves", curves);
 
-        for (Map.Entry<String, BedrockCurve> entry : scheme.curves.entrySet())
-        {
+        for (Map.Entry<String, BedrockCurve> entry : scheme.curves.entrySet()) {
             curves.add(entry.getKey(), entry.getValue().toJson());
         }
     }
 
-    private void addComponents(JsonObject effect, BedrockScheme scheme)
-    {
+    private void addComponents(JsonObject effect, BedrockScheme scheme) {
         JsonObject components = new JsonObject();
 
         effect.add("components", components);
 
-        for (BedrockComponentBase component : scheme.components)
-        {
+        for (BedrockComponentBase component : scheme.components) {
             JsonElement element = component.toJson();
 
-            if (this.isEmpty(element) && !component.canBeEmpty())
-            {
+            if (this.isEmpty(element) && !component.canBeEmpty()) {
                 continue;
             }
 

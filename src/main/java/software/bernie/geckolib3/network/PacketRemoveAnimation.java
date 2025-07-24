@@ -7,7 +7,6 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.file.AnimationFile;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
 import java.util.HashMap;

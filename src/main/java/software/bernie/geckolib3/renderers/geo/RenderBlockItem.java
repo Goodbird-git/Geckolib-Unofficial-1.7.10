@@ -7,8 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.IItemRenderer;
 import org.lwjgl.opengl.GL11;
 
-public class RenderBlockItem implements IItemRenderer
-{
+public class RenderBlockItem implements IItemRenderer {
     protected TileEntitySpecialRenderer render;
     protected TileEntity dummytile;
 
@@ -29,7 +28,7 @@ public class RenderBlockItem implements IItemRenderer
         if (type == IItemRenderer.ItemRenderType.ENTITY) {
             GL11.glTranslatef(-0.5f, 0.0f, -0.5f);
         }
-        if(dummytile.getWorldObj()==null){
+        if (dummytile.getWorldObj() == null) {
             dummytile.setWorldObj(Minecraft.getMinecraft().theWorld);
         }
         this.render.renderTileEntityAt(this.dummytile, 0.0, 0.0, 0.0, 0.0f);

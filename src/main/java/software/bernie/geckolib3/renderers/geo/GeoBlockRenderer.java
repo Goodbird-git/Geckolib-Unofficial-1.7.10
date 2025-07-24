@@ -1,8 +1,8 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import net.geckominecraft.client.renderer.GlStateManager;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.client.Minecraft;
-import net.geckominecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -15,10 +15,11 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.example.config.ConfigHandler;
 
 @SuppressWarnings({"unchecked"})
 public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> extends TileEntitySpecialRenderer
-        implements IGeoRenderer<T> {
+    implements IGeoRenderer<T> {
     static {
         AnimationController.addModelFetcher((IAnimatable object) -> {
             if (object instanceof TileEntity) {
@@ -57,17 +58,24 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
         }
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, z);
-        GlStateManager.translate(0, 0.01f, 0);
-        GlStateManager.translate(0.5, 0, 0.5);
+        try {
+            GlStateManager.translate(x, y, z);
+            GlStateManager.translate(0, 0.01f, 0);
+            GlStateManager.translate(0.5, 0, 0.5);
 
         rotateBlock(getFacing(tile));
 
         Minecraft.getMinecraft().renderEngine.bindTexture(getTextureLocation((T) tile));
         Color renderColor = getRenderColor((T) tile, partialTicks);
         render(model, (T) tile, partialTicks, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
-                (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
-        GlStateManager.popMatrix();
+            (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
+        } catch (Exception e) {
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
+        } finally {
+            GlStateManager.popMatrix();
+        }
     }
 
     @Override
@@ -99,7 +107,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
     }
 
     protected EnumFacing getFacing(TileEntity tile) {
-        EnumFacing[] faces = {EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH, EnumFacing.WEST, };
+        EnumFacing[] faces = {EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH, EnumFacing.WEST,};
         if (tile.blockType instanceof BlockDirectional) {
             return faces[BlockDirectional.getDirection(tile.getBlockMetadata())];
         }

@@ -10,18 +10,18 @@ import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class BotariumModel extends AnimatedGeoModel<BotariumTileEntity> {
-	@Override
-	public ResourceLocation getAnimationFileLocation(BotariumTileEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "animations/botarium.animation.json");
-	}
+    @Override
+    public ResourceLocation getAnimationFileLocation(BotariumTileEntity entity) {
+        return new ResourceLocation(GeckoLib.ModID, "animations/botarium.animation.json");
+    }
 
-	@Override
-	public ResourceLocation getModelLocation(BotariumTileEntity animatable) {
-		return new ResourceLocation(GeckoLib.ModID, "geo/botarium.geo.json");
-	}
+    @Override
+    public ResourceLocation getModelLocation(BotariumTileEntity animatable) {
+        return new ResourceLocation(GeckoLib.ModID, "geo/botarium.geo.json");
+    }
 
-	@Override
-	public ResourceLocation getTextureLocation(BotariumTileEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "textures/block/botarium.png");
-	}
+    @Override
+    public ResourceLocation getTextureLocation(BotariumTileEntity entity) {
+        return new ResourceLocation(GeckoLib.ModID, "textures/block/botarium.png");
+    }
 }

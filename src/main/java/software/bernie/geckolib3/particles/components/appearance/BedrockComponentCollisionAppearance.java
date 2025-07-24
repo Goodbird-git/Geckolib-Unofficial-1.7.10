@@ -1,30 +1,28 @@
 package software.bernie.geckolib3.particles.components.appearance;
 
+import com.eliotlash.mclib.utils.Interpolations;
+import com.eliotlash.mclib.utils.resources.RLUtils;
+import com.eliotlash.molang.MolangException;
+import com.eliotlash.molang.MolangParser;
+import com.eliotlash.molang.expressions.MolangExpression;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.particles.BedrockMaterial;
 import software.bernie.geckolib3.particles.BedrockScheme;
 import software.bernie.geckolib3.particles.components.BedrockComponentBase;
 import software.bernie.geckolib3.particles.components.IComponentParticleRender;
 import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
 import software.bernie.geckolib3.particles.emitter.BedrockParticle;
-import net.minecraft.client.renderer.Tessellator;
-import com.eliotlash.molang.MolangException;
-import com.eliotlash.molang.MolangParser;
-import com.eliotlash.molang.expressions.MolangExpression;
-import com.eliotlash.mclib.utils.Interpolations;
-import com.eliotlash.mclib.utils.resources.RLUtils;
-import net.minecraft.util.ResourceLocation;
-
-import java.util.Map;
-import java.util.Set;
 
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
+import java.util.Map;
+import java.util.Set;
 
-public class BedrockComponentCollisionAppearance extends BedrockComponentAppearanceBillboard implements IComponentParticleRender
-{
+public class BedrockComponentCollisionAppearance extends BedrockComponentAppearanceBillboard implements IComponentParticleRender {
     /* Options */
     public BedrockMaterial material = BedrockMaterial.OPAQUE;
     public ResourceLocation texture = BedrockScheme.DEFAULT_TEXTURE;
@@ -34,29 +32,24 @@ public class BedrockComponentCollisionAppearance extends BedrockComponentAppeara
     public boolean lit; //gets set from GuiCollisionLighting
 
     @Override
-    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException
-    {
+    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException {
         if (!elem.isJsonObject()) return super.fromJson(elem, parser);
 
         JsonObject element = elem.getAsJsonObject();
 
         if (element.has("enabled")) this.enabled = parser.parseJson(element.get("enabled"));
-        if (element.has("lit"))
-        {
+        if (element.has("lit")) {
             this.lit = element.get("lit").getAsBoolean();
         }
 
-        if (element.has("material"))
-        {
+        if (element.has("material")) {
             this.material = BedrockMaterial.fromString(element.get("material").getAsString());
         }
 
-        if (element.has("texture"))
-        {
+        if (element.has("texture")) {
             String texture = element.get("texture").getAsString();
 
-            if (!texture.equals("textures/particle/particles"))
-            {
+            if (!texture.equals("textures/particle/particles")) {
                 this.texture = RLUtils.create(texture);
             }
         }
@@ -65,16 +58,14 @@ public class BedrockComponentCollisionAppearance extends BedrockComponentAppeara
     }
 
     @Override
-    public JsonElement toJson()
-    {
+    public JsonElement toJson() {
         JsonObject object = new JsonObject();
 
         object.add("enabled", this.enabled.toJson());
         object.addProperty("lit", this.lit);
         object.addProperty("material", this.material.id);
 
-        if (this.texture != null && !this.texture.equals(BedrockScheme.DEFAULT_TEXTURE))
-        {
+        if (this.texture != null && !this.texture.equals(BedrockScheme.DEFAULT_TEXTURE)) {
             object.addProperty("texture", this.texture.toString());
         }
 
@@ -82,8 +73,7 @@ public class BedrockComponentCollisionAppearance extends BedrockComponentAppeara
         JsonObject superJson = (JsonObject) super.toJson();
         Set<Map.Entry<String, JsonElement>> entries = superJson.entrySet();
 
-        for(Map.Entry<String, JsonElement> entry : entries)
-        {
+        for (Map.Entry<String, JsonElement> entry : entries) {
             object.add(entry.getKey(), entry.getValue());
         }
 
@@ -91,18 +81,15 @@ public class BedrockComponentCollisionAppearance extends BedrockComponentAppeara
     }
 
     @Override
-    public void preRender(BedrockEmitter emitter, float partialTicks)
-    {}
+    public void preRender(BedrockEmitter emitter, float partialTicks) {
+    }
 
     @Override
-    public void render(BedrockEmitter emitter, BedrockParticle particle, Tessellator builder, float partialTicks)
-    {
+    public void render(BedrockEmitter emitter, BedrockParticle particle, Tessellator builder, float partialTicks) {
         boolean tmpLit = false;
 
-        if (!particle.isCollisionTexture(emitter))
-        {
-            if (particle.isCollisionTinting(emitter))
-            {
+        if (!particle.isCollisionTexture(emitter)) {
+            if (particle.isCollisionTinting(emitter)) {
                 tmpLit = emitter.lit;
                 emitter.lit = this.lit;
                 emitter.scheme.get(BedrockComponentAppearanceBillboard.class).render(emitter, particle, builder, partialTicks);
@@ -110,9 +97,7 @@ public class BedrockComponentCollisionAppearance extends BedrockComponentAppeara
             }
 
             return; //when texture and tinting is false - this render method should not be used
-        }
-        else if (!particle.isCollisionTinting(emitter))
-        {
+        } else if (!particle.isCollisionTinting(emitter)) {
             //tinting false doesn't necessarily mean that lit was not passed - emitter.lit should be used
             tmpLit = this.lit;
             this.lit = emitter.lit;
@@ -142,8 +127,7 @@ public class BedrockComponentCollisionAppearance extends BedrockComponentAppeara
         this.transform.mul(this.rotation);
         this.transform.setTranslation(new Vector3f((float) px, (float) py, (float) pz));
 
-        for (Vector4f vertex : this.vertices)
-        {
+        for (Vector4f vertex : this.vertices) {
             this.transform.transform(vertex);
         }
 
@@ -173,19 +157,17 @@ public class BedrockComponentCollisionAppearance extends BedrockComponentAppeara
         t.addVertex(this.vertices[3].x, this.vertices[3].y, this.vertices[3].z);
 
 
-        if (!particle.isCollisionTinting(emitter))
-        {
+        if (!particle.isCollisionTinting(emitter)) {
             this.lit = tmpLit;
         }
     }
 
     @Override //not really important because it seems to be used for guiParticles - there is no collision
-    public void renderOnScreen(BedrockParticle particle, int x, int y, float scale, float partialTicks)
-    { }
+    public void renderOnScreen(BedrockParticle particle, int x, int y, float scale, float partialTicks) {
+    }
 
     @Override
-    public void calculateUVs(BedrockParticle particle, float partialTicks)
-    {
+    public void calculateUVs(BedrockParticle particle, float partialTicks) {
         /* Update particle's UVs and size */
         this.w = (float) this.sizeW.get() * 2.25F;
         this.h = (float) this.sizeH.get() * 2.25F;
@@ -195,31 +177,26 @@ public class BedrockComponentCollisionAppearance extends BedrockComponentAppeara
         float w = (float) this.uvW.get();
         float h = (float) this.uvH.get();
 
-        if (this.flipbook)
-        {
+        if (this.flipbook) {
             int index = (int) (particle.getAge(partialTicks) * this.fps);
             int max = (int) this.maxFrame.get();
 
-            if (this.stretchFPS)
-            {
+            if (this.stretchFPS) {
                 float lifetime = (particle.lifetime <= 0) ? 0 : (particle.age + partialTicks) / (particle.lifetime - particle.firstIntersection);
 
                 //for collided particles with expiration - stretch differently since lifetime changed
-                if (particle.getExpireAge() != -1)
-                {
+                if (particle.getExpireAge() != -1) {
                     lifetime = (particle.lifetime <= 0) ? 0 : (particle.age + partialTicks) / (particle.getExpirationDelay());
                 }
 
                 index = (int) (lifetime * max);
             }
 
-            if (this.loop && max != 0)
-            {
+            if (this.loop && max != 0) {
                 index = index % max;
             }
 
-            if (index > max)
-            {
+            if (index > max) {
                 index = max;
             }
 
@@ -234,12 +211,11 @@ public class BedrockComponentCollisionAppearance extends BedrockComponentAppeara
     }
 
     @Override
-    public void postRender(BedrockEmitter emitter, float partialTicks)
-    {}
+    public void postRender(BedrockEmitter emitter, float partialTicks) {
+    }
 
     @Override
-    public int getSortingIndex()
-    {
+    public int getSortingIndex() {
         return 200;
     }
 }

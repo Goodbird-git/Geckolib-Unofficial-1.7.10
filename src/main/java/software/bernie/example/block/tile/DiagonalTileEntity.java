@@ -25,7 +25,7 @@ public class DiagonalTileEntity extends TileEntity implements IAnimatable, IBBHo
     @Override
     public void registerControllers(AnimationData data) {
         data.addAnimationController(
-                new AnimationController<DiagonalTileEntity>(this, "controller", 0, this::predicate));
+            new AnimationController<DiagonalTileEntity>(this, "controller", 0, this::predicate));
     }
 
     @Override
@@ -35,6 +35,6 @@ public class DiagonalTileEntity extends TileEntity implements IAnimatable, IBBHo
 
     @Override
     public void setBoundingBox(ComplexBB bb) {
-        boundingBox=bb;
+        boundingBox = bb;
     }
 }

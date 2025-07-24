@@ -1,21 +1,15 @@
 package software.bernie.example.block;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import software.bernie.example.GeckoLibMod;
-import software.bernie.example.block.tile.BotariumTileEntity;
 import software.bernie.example.block.tile.DiagonalTileEntity;
-import software.bernie.geckolib3.collision.ComplexBB;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -65,7 +59,7 @@ public class DiagonalBlock extends Block implements ITileEntityProvider {
         if (boundingBox == null) {
             super.addCollisionBoxesToList(p_149743_1_, p_149743_2_, p_149743_3_, p_149743_4_, p_149743_5_, p_149743_6_, p_149743_7_);
         } else {
-            if(boundingBox.intersectsWith(p_149743_5_)){
+            if (boundingBox.intersectsWith(p_149743_5_)) {
                 p_149743_6_.add(boundingBox);
             }
         }

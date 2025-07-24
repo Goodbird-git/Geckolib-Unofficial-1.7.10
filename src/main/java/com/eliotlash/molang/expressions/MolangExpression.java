@@ -5,14 +5,13 @@
 
 package com.eliotlash.molang.expressions;
 
+import com.eliotlash.mclib.math.Constant;
 import com.eliotlash.mclib.math.IValue;
+import com.eliotlash.mclib.math.Operation;
 import com.eliotlash.molang.MolangParser;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import software.bernie.geckolib3.molang.MolangRegistrar;
-import software.bernie.geckolib3.resource.GeckoLibCache;
-import com.eliotlash.mclib.math.Constant;
-import com.eliotlash.mclib.math.Operation;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -21,7 +20,9 @@ import java.io.ObjectOutput;
 
 public abstract class MolangExpression implements IValue, Externalizable {
     public MolangParser context;
-    public MolangExpression(){}
+
+    public MolangExpression() {
+    }
 
     public static boolean isZero(MolangExpression expression) {
         return isConstant(expression, 0.0);
@@ -61,7 +62,7 @@ public abstract class MolangExpression implements IValue, Externalizable {
 
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException{
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         context = MolangRegistrar.getParser();
     }
 }

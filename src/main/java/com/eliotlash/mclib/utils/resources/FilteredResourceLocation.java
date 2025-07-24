@@ -9,8 +9,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.Objects;
 
-public class FilteredResourceLocation implements IWritableLocation<FilteredResourceLocation>
-{
+public class FilteredResourceLocation implements IWritableLocation<FilteredResourceLocation> {
     public static final int DEFAULT_COLOR = 0xffffffff;
 
     public ResourceLocation path;
@@ -29,60 +28,49 @@ public class FilteredResourceLocation implements IWritableLocation<FilteredResou
     public int pixelate = 1;
     public boolean erase;
 
-    public static FilteredResourceLocation from(NBTBase base)
-    {
-        try
-        {
+    public static FilteredResourceLocation from(NBTBase base) {
+        try {
             FilteredResourceLocation location = new FilteredResourceLocation();
 
             location.fromNbt(base);
 
             return location;
+        } catch (Exception e) {
         }
-        catch (Exception e)
-        {}
 
         return null;
     }
 
-    public static FilteredResourceLocation from(JsonElement element)
-    {
-        try
-        {
+    public static FilteredResourceLocation from(JsonElement element) {
+        try {
             FilteredResourceLocation location = new FilteredResourceLocation();
 
             location.fromJson(element);
 
             return location;
+        } catch (Exception e) {
         }
-        catch (Exception e)
-        {}
 
         return null;
     }
 
-    public FilteredResourceLocation()
-    {}
+    public FilteredResourceLocation() {
+    }
 
-    public FilteredResourceLocation(ResourceLocation path)
-    {
+    public FilteredResourceLocation(ResourceLocation path) {
         this.path = path;
     }
 
-    public int getWidth(int width)
-    {
-        if (!this.autoSize && this.sizeW > 0)
-        {
+    public int getWidth(int width) {
+        if (!this.autoSize && this.sizeW > 0) {
             return this.sizeW;
         }
 
         return width;
     }
 
-    public int getHeight(int height)
-    {
-        if (!this.autoSize && this.sizeH > 0)
-        {
+    public int getHeight(int height) {
+        if (!this.autoSize && this.sizeH > 0) {
             return this.sizeH;
         }
 
@@ -90,21 +78,17 @@ public class FilteredResourceLocation implements IWritableLocation<FilteredResou
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.path == null ? "" : this.path.toString();
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if (super.equals(obj))
-        {
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
             return true;
         }
 
-        if (obj instanceof FilteredResourceLocation)
-        {
+        if (obj instanceof FilteredResourceLocation) {
             FilteredResourceLocation frl = (FilteredResourceLocation) obj;
 
             return Objects.equals(this.path, frl.path)
@@ -124,8 +108,7 @@ public class FilteredResourceLocation implements IWritableLocation<FilteredResou
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int hashCode = this.path.hashCode();
 
         hashCode = 31 * hashCode + (this.autoSize ? 1 : 0);
@@ -142,16 +125,13 @@ public class FilteredResourceLocation implements IWritableLocation<FilteredResou
         return hashCode;
     }
 
-    public boolean isDefault()
-    {
+    public boolean isDefault() {
         return (this.autoSize || (this.sizeW == 0 && this.sizeH == 0)) && this.color == DEFAULT_COLOR && !this.scaleToLargest && this.scale == 1F && this.shiftX == 0 && this.shiftY == 0 && this.pixelate <= 1 && !this.erase;
     }
 
     @Override
-    public void fromNbt(NBTBase nbt) throws Exception
-    {
-        if (nbt instanceof NBTTagString)
-        {
+    public void fromNbt(NBTBase nbt) throws Exception {
+        if (nbt instanceof NBTTagString) {
             this.path = RLUtils.create(nbt);
 
             return;
@@ -161,62 +141,50 @@ public class FilteredResourceLocation implements IWritableLocation<FilteredResou
 
         this.path = RLUtils.create(tag.getString("Path"));
 
-        if (tag.hasKey("Color"))
-        {
+        if (tag.hasKey("Color")) {
             this.color = tag.getInteger("Color");
         }
 
-        if (tag.hasKey("Scale"))
-        {
+        if (tag.hasKey("Scale")) {
             this.scale = tag.getFloat("Scale");
         }
 
-        if (tag.hasKey("ScaleToLargest"))
-        {
+        if (tag.hasKey("ScaleToLargest")) {
             this.scaleToLargest = tag.getBoolean("ScaleToLargest");
         }
 
-        if (tag.hasKey("ShiftX"))
-        {
+        if (tag.hasKey("ShiftX")) {
             this.shiftX = tag.getInteger("ShiftX");
         }
 
-        if (tag.hasKey("ShiftY"))
-        {
+        if (tag.hasKey("ShiftY")) {
             this.shiftY = tag.getInteger("ShiftY");
         }
 
-        if (tag.hasKey("Pixelate"))
-        {
+        if (tag.hasKey("Pixelate")) {
             this.pixelate = tag.getInteger("Pixelate");
         }
 
-        if (tag.hasKey("Erase"))
-        {
+        if (tag.hasKey("Erase")) {
             this.erase = tag.getBoolean("Erase");
         }
 
-        if (tag.hasKey("AutoSize"))
-        {
+        if (tag.hasKey("AutoSize")) {
             this.autoSize = tag.getBoolean("AutoSize");
         }
 
-        if (tag.hasKey("SizeW"))
-        {
+        if (tag.hasKey("SizeW")) {
             this.sizeW = tag.getInteger("SizeW");
         }
 
-        if (tag.hasKey("SizeH"))
-        {
+        if (tag.hasKey("SizeH")) {
             this.sizeH = tag.getInteger("SizeH");
         }
     }
 
     @Override
-    public void fromJson(JsonElement element) throws Exception
-    {
-        if (element.isJsonPrimitive())
-        {
+    public void fromJson(JsonElement element) throws Exception {
+        if (element.isJsonPrimitive()) {
             this.path = RLUtils.create(element);
 
             return;
@@ -226,60 +194,49 @@ public class FilteredResourceLocation implements IWritableLocation<FilteredResou
 
         this.path = RLUtils.create(object.get("path").getAsString());
 
-        if (object.has("color"))
-        {
+        if (object.has("color")) {
             this.color = object.get("color").getAsInt();
         }
 
-        if (object.has("scale"))
-        {
+        if (object.has("scale")) {
             this.scale = object.get("scale").getAsFloat();
         }
 
-        if (object.has("scaleToLargest"))
-        {
+        if (object.has("scaleToLargest")) {
             this.scaleToLargest = object.get("scaleToLargest").getAsBoolean();
         }
 
-        if (object.has("shiftX"))
-        {
+        if (object.has("shiftX")) {
             this.shiftX = object.get("shiftX").getAsInt();
         }
 
-        if (object.has("shiftY"))
-        {
+        if (object.has("shiftY")) {
             this.shiftY = object.get("shiftY").getAsInt();
         }
 
-        if (object.has("pixelate"))
-        {
+        if (object.has("pixelate")) {
             this.pixelate = object.get("pixelate").getAsInt();
         }
 
-        if (object.has("erase"))
-        {
+        if (object.has("erase")) {
             this.erase = object.get("erase").getAsBoolean();
         }
 
-        if (object.has("autoSize"))
-        {
+        if (object.has("autoSize")) {
             this.autoSize = object.get("autoSize").getAsBoolean();
         }
 
-        if (object.has("sizeW"))
-        {
+        if (object.has("sizeW")) {
             this.sizeW = object.get("sizeW").getAsInt();
         }
 
-        if (object.has("sizeH"))
-        {
+        if (object.has("sizeH")) {
             this.sizeH = object.get("sizeH").getAsInt();
         }
     }
 
     @Override
-    public NBTBase writeNbt()
-    {
+    public NBTBase writeNbt() {
         NBTTagCompound tag = new NBTTagCompound();
 
         tag.setString("Path", this.toString());
@@ -299,8 +256,7 @@ public class FilteredResourceLocation implements IWritableLocation<FilteredResou
     }
 
     @Override
-    public JsonElement writeJson()
-    {
+    public JsonElement writeJson() {
         JsonObject object = new JsonObject();
 
         object.addProperty("path", this.toString());
@@ -320,14 +276,12 @@ public class FilteredResourceLocation implements IWritableLocation<FilteredResou
     }
 
     @Override
-    public ResourceLocation clone()
-    {
+    public ResourceLocation clone() {
         return RLUtils.clone(this.path);
     }
 
     @Override
-    public FilteredResourceLocation copy()
-    {
+    public FilteredResourceLocation copy() {
         return FilteredResourceLocation.from(this.writeNbt());
     }
 }

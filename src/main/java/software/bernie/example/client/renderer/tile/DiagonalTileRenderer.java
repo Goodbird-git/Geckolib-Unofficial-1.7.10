@@ -18,6 +18,6 @@ public class DiagonalTileRenderer extends GeoBlockRenderer<DiagonalTileEntity> {
 //        cube.setUv(new UvUnion(0,0));
 //        MatrixStack stack = new MatrixStack();
 //        animatable.boundingBox = new RotatableBB(GeoCube.createFromPojoCube(cube, model.properties, null,null),stack);//new ComplexBB(model, animatable.xCoord,animatable.yCoord,animatable.zCoord);
-        animatable.boundingBox = new ComplexBB(model, animatable.xCoord+0.5,animatable.yCoord,animatable.zCoord+0.5);
+        animatable.boundingBox = new ComplexBB(model, animatable.xCoord + 0.5, animatable.yCoord, animatable.zCoord + 0.5);
     }
 }

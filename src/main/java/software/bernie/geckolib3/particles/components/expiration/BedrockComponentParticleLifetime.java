@@ -1,5 +1,8 @@
 package software.bernie.geckolib3.particles.components.expiration;
 
+import com.eliotlash.molang.MolangException;
+import com.eliotlash.molang.MolangParser;
+import com.eliotlash.molang.expressions.MolangExpression;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -8,35 +11,25 @@ import software.bernie.geckolib3.particles.components.IComponentParticleInitiali
 import software.bernie.geckolib3.particles.components.IComponentParticleUpdate;
 import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
 import software.bernie.geckolib3.particles.emitter.BedrockParticle;
-import com.eliotlash.molang.MolangException;
-import com.eliotlash.molang.MolangParser;
-import com.eliotlash.molang.expressions.MolangExpression;
 
-public class BedrockComponentParticleLifetime extends BedrockComponentBase implements IComponentParticleInitialize, IComponentParticleUpdate
-{
+public class BedrockComponentParticleLifetime extends BedrockComponentBase implements IComponentParticleInitialize, IComponentParticleUpdate {
     public MolangExpression expression = MolangParser.ZERO;
     public boolean max;
 
     @Override
-    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException
-    {
+    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException {
         if (!elem.isJsonObject()) return super.fromJson(elem, parser);
 
         JsonObject element = elem.getAsJsonObject();
         JsonElement expression = null;
 
-        if (element.has("expiration_expression"))
-        {
+        if (element.has("expiration_expression")) {
             expression = element.get("expiration_expression");
             this.max = false;
-        }
-        else if (element.has("max_lifetime"))
-        {
+        } else if (element.has("max_lifetime")) {
             expression = element.get("max_lifetime");
             this.max = true;
-        }
-        else
-        {
+        } else {
             throw new JsonParseException("No expiration_expression or max_lifetime was found in minecraft:particle_lifetime_expression component");
         }
 
@@ -46,8 +39,7 @@ public class BedrockComponentParticleLifetime extends BedrockComponentBase imple
     }
 
     @Override
-    public JsonElement toJson()
-    {
+    public JsonElement toJson() {
         JsonObject object = new JsonObject();
 
         object.add(this.max ? "max_lifetime" : "expiration_expression", this.expression.toJson());
@@ -56,23 +48,17 @@ public class BedrockComponentParticleLifetime extends BedrockComponentBase imple
     }
 
     @Override
-    public void update(BedrockEmitter emitter, BedrockParticle particle)
-    {
-        if (!this.max && this.expression.get() != 0)
-        {
+    public void update(BedrockEmitter emitter, BedrockParticle particle) {
+        if (!this.max && this.expression.get() != 0) {
             particle.dead = true;
         }
     }
 
     @Override
-    public void apply(BedrockEmitter emitter, BedrockParticle particle)
-    {
-        if (this.max)
-        {
+    public void apply(BedrockEmitter emitter, BedrockParticle particle) {
+        if (this.max) {
             particle.lifetime = (int) (this.expression.get() * 20);
-        }
-        else
-        {
+        } else {
             particle.lifetime = -1;
         }
     }

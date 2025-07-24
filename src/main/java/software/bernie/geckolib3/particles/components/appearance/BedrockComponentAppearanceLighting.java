@@ -4,17 +4,14 @@ import software.bernie.geckolib3.particles.components.BedrockComponentBase;
 import software.bernie.geckolib3.particles.components.IComponentEmitterInitialize;
 import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
 
-public class BedrockComponentAppearanceLighting extends BedrockComponentBase implements IComponentEmitterInitialize
-{
+public class BedrockComponentAppearanceLighting extends BedrockComponentBase implements IComponentEmitterInitialize {
     @Override
-    public void apply(BedrockEmitter emitter)
-    {
+    public void apply(BedrockEmitter emitter) {
         emitter.lit = false;
     }
 
     @Override
-    public boolean canBeEmpty()
-    {
+    public boolean canBeEmpty() {
         return true;
     }
 }

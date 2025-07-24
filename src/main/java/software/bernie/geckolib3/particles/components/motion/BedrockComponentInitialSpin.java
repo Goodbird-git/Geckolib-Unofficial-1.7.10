@@ -1,23 +1,21 @@
 package software.bernie.geckolib3.particles.components.motion;
 
+import com.eliotlash.molang.MolangException;
+import com.eliotlash.molang.MolangParser;
+import com.eliotlash.molang.expressions.MolangExpression;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import software.bernie.geckolib3.particles.components.BedrockComponentBase;
 import software.bernie.geckolib3.particles.components.IComponentParticleInitialize;
 import software.bernie.geckolib3.particles.emitter.BedrockEmitter;
 import software.bernie.geckolib3.particles.emitter.BedrockParticle;
-import com.eliotlash.molang.MolangException;
-import com.eliotlash.molang.MolangParser;
-import com.eliotlash.molang.expressions.MolangExpression;
 
-public class BedrockComponentInitialSpin extends BedrockComponentBase implements IComponentParticleInitialize
-{
+public class BedrockComponentInitialSpin extends BedrockComponentBase implements IComponentParticleInitialize {
     public MolangExpression rotation = MolangParser.ZERO;
     public MolangExpression rate = MolangParser.ZERO;
 
     @Override
-    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException
-    {
+    public BedrockComponentBase fromJson(JsonElement elem, MolangParser parser) throws MolangException {
         if (!elem.isJsonObject()) return super.fromJson(elem, parser);
 
         JsonObject element = elem.getAsJsonObject();
@@ -29,8 +27,7 @@ public class BedrockComponentInitialSpin extends BedrockComponentBase implements
     }
 
     @Override
-    public JsonElement toJson()
-    {
+    public JsonElement toJson() {
         JsonObject object = new JsonObject();
 
         if (!MolangExpression.isZero(this.rotation)) object.add("rotation", this.rotation.toJson());
@@ -40,8 +37,7 @@ public class BedrockComponentInitialSpin extends BedrockComponentBase implements
     }
 
     @Override
-    public void apply(BedrockEmitter emitter, BedrockParticle particle)
-    {
+    public void apply(BedrockEmitter emitter, BedrockParticle particle) {
         particle.initialRotation = (float) this.rotation.get();
         particle.rotationVelocity = (float) this.rate.get() / 20;
     }

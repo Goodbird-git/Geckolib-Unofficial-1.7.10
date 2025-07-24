@@ -5,6 +5,10 @@
 
 package com.eliotlash.molang.expressions;
 
+import com.eliotlash.mclib.math.Variable;
+import com.eliotlash.molang.MolangParser;
+import software.bernie.geckolib3.molang.MolangRegistrar;
+
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -15,17 +19,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import com.eliotlash.molang.MolangParser;
-import software.bernie.geckolib3.molang.MolangRegistrar;
-import software.bernie.geckolib3.resource.GeckoLibCache;
-import com.eliotlash.mclib.math.Variable;
-
 public class MolangMultiStatement extends MolangExpression {
     public List<MolangExpression> expressions = new ArrayList();
     public Map<String, Variable> locals = new HashMap();
+
     public MolangMultiStatement() {
         super();
     }
+
     public MolangMultiStatement(MolangParser context) {
         super(context);
     }
@@ -34,8 +35,8 @@ public class MolangMultiStatement extends MolangExpression {
         double value = 0.0;
 
         MolangExpression expression;
-        for(Iterator var3 = this.expressions.iterator(); var3.hasNext(); value = expression.get()) {
-            expression = (MolangExpression)var3.next();
+        for (Iterator var3 = this.expressions.iterator(); var3.hasNext(); value = expression.get()) {
+            expression = (MolangExpression) var3.next();
         }
 
         return value;
@@ -45,10 +46,10 @@ public class MolangMultiStatement extends MolangExpression {
         StringJoiner builder = new StringJoiner("; ");
         Iterator var2 = this.expressions.iterator();
 
-        while(var2.hasNext()) {
-            MolangExpression expression = (MolangExpression)var2.next();
+        while (var2.hasNext()) {
+            MolangExpression expression = (MolangExpression) var2.next();
             builder.add(expression.toString());
-            if (expression instanceof MolangValue && ((MolangValue)expression).returns) {
+            if (expression instanceof MolangValue && ((MolangValue) expression).returns) {
                 break;
             }
         }
@@ -61,7 +62,7 @@ public class MolangMultiStatement extends MolangExpression {
         out.writeObject(locals);
     }
 
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException{
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         expressions = (List<MolangExpression>) in.readObject();
         locals = (Map<String, Variable>) in.readObject();
         context = MolangRegistrar.getParser();

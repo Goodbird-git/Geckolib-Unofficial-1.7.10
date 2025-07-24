@@ -10,14 +10,14 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
+import software.bernie.example.config.ConfigHandler;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 
-public class ReflectionUtils
-{
+public class ReflectionUtils {
     /**
      * Minecraft texture manager's field to the texture map (a map of
      * {@link ITextureObject} which is used to cache references to
@@ -39,19 +39,14 @@ public class ReflectionUtils
      * Get texture map from texture manager using reflection API
      */
     @SuppressWarnings("unchecked")
-    public static Map<ResourceLocation, ITextureObject> getTextures(TextureManager manager)
-    {
-        if (TEXTURE_MAP == null)
-        {
+    public static Map<ResourceLocation, ITextureObject> getTextures(TextureManager manager) {
+        if (TEXTURE_MAP == null) {
             setupTextureMapField(manager);
         }
 
-        try
-        {
+        try {
             return (Map<ResourceLocation, ITextureObject>) TEXTURE_MAP.get(manager);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -60,41 +55,34 @@ public class ReflectionUtils
      * Setup texture map field which is looked up using the reflection API
      */
     @SuppressWarnings("rawtypes")
-    public static void setupTextureMapField(TextureManager manager)
-    {
+    public static void setupTextureMapField(TextureManager manager) {
         /* Finding the field which has holds the texture cache */
-        for (Field field : manager.getClass().getDeclaredFields())
-        {
-            if (Modifier.isStatic(field.getModifiers()))
-            {
+        for (Field field : manager.getClass().getDeclaredFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
 
             field.setAccessible(true);
 
-            try
-            {
+            try {
                 Object value = field.get(manager);
 
-                if (value instanceof Map && ((Map) value).keySet().iterator().next() instanceof ResourceLocation)
-                {
+                if (value instanceof Map && ((Map) value).keySet().iterator().next() instanceof ResourceLocation) {
                     TEXTURE_MAP = field;
 
                     break;
                 }
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
+            } catch (Exception e) {
+                if (ConfigHandler.debugPrintStacktraces) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     @SideOnly(Side.CLIENT)
-    public static boolean registerResourcePack(IResourcePack pack)
-    {
-        try
-        {
+    public static boolean registerResourcePack(IResourcePack pack) {
+        try {
             Field field = FMLClientHandler.class.getDeclaredField("resourcePackList");
             field.setAccessible(true);
 
@@ -102,46 +90,38 @@ public class ReflectionUtils
             packs.add(pack);
             IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
 
-            if (manager instanceof SimpleReloadableResourceManager)
-            {
+            if (manager instanceof SimpleReloadableResourceManager) {
                 ((SimpleReloadableResourceManager) manager).reloadResourcePack(pack);
             }
 
             return false;
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+        } catch (Exception e) {
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
         }
 
         return false;
     }
 
     @Deprecated
-    public static boolean isOptifineShadowPass()
-    {
-        if (!SHADOW_PASS_CHECK)
-        {
-            try
-            {
+    public static boolean isOptifineShadowPass() {
+        if (!SHADOW_PASS_CHECK) {
+            try {
                 Class clazz = Class.forName("net.optifine.shaders.Shaders");
 
                 SHADOW_PASS = clazz.getDeclaredField("isShadowPass");
+            } catch (Exception e) {
             }
-            catch (Exception e)
-            {}
 
             SHADOW_PASS_CHECK = true;
         }
 
-        if (SHADOW_PASS != null)
-        {
-            try
-            {
+        if (SHADOW_PASS != null) {
+            try {
                 return (boolean) SHADOW_PASS.get(null);
+            } catch (Exception e) {
             }
-            catch (Exception e)
-            {}
         }
 
         return false;

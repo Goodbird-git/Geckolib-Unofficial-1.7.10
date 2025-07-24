@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
+import software.bernie.example.config.ConfigHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -14,42 +15,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class TextureProcessor
-{
+public class TextureProcessor {
     public static Pixels pixels = new Pixels();
     public static Pixels target = new Pixels();
 
-    public static BufferedImage postProcess(MultiResourceLocation multi)
-    {
+    public static BufferedImage postProcess(MultiResourceLocation multi) {
         BufferedImage image = process(multi);
         return image;
     }
 
-    public static BufferedImage process(MultiResourceLocation multi)
-    {
+    public static BufferedImage process(MultiResourceLocation multi) {
         IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
         List<BufferedImage> images = new ArrayList<BufferedImage>();
 
         int w = 0;
         int h = 0;
 
-        for (int i = 0; i < multi.children.size(); i++)
-        {
+        for (int i = 0; i < multi.children.size(); i++) {
             FilteredResourceLocation child = multi.children.get(i);
             BufferedImage image = null;
 
-            try
-            {
+            try {
                 IResource resource = manager.getResource(child.path);
 
                 image = ImageIO.read(resource.getInputStream());
 
                 w = Math.max(w, child.getWidth(image.getWidth()));
                 h = Math.max(h, child.getHeight(image.getHeight()));
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
+            } catch (Exception e) {
+                if (ConfigHandler.debugPrintStacktraces) {
+                    e.printStackTrace();
+                }
             }
 
             images.add(image);
@@ -58,12 +54,10 @@ public class TextureProcessor
         BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics g = image.getGraphics();
 
-        for (int i = 0; i < multi.children.size(); i++)
-        {
+        for (int i = 0; i < multi.children.size(); i++) {
             BufferedImage child = images.get(i);
 
-            if (child == null)
-            {
+            if (child == null) {
                 continue;
             }
 
@@ -71,27 +65,19 @@ public class TextureProcessor
             int iw = child.getWidth();
             int ih = child.getHeight();
 
-            if (filter.scaleToLargest)
-            {
+            if (filter.scaleToLargest) {
                 iw = w;
                 ih = h;
-            }
-            else if (filter.scale != 0 && filter.scale > 0)
-            {
+            } else if (filter.scale != 0 && filter.scale > 0) {
                 iw = (int) (iw * filter.scale);
                 ih = (int) (ih * filter.scale);
             }
 
-            if (iw > 0 && ih > 0)
-            {
-                if (filter.erase)
-                {
+            if (iw > 0 && ih > 0) {
+                if (filter.erase) {
                     processErase(image, child, filter, iw, ih);
-                }
-                else
-                {
-                    if (filter.color != 0xffffff || filter.pixelate > 1)
-                    {
+                } else {
+                    if (filter.color != 0xffffff || filter.pixelate > 1) {
                         processImage(child, filter);
                     }
 
@@ -108,8 +94,7 @@ public class TextureProcessor
     /**
      * Apply erasing
      */
-    private static void processErase(BufferedImage image, BufferedImage child, FilteredResourceLocation filter, int iw, int ih)
-    {
+    private static void processErase(BufferedImage image, BufferedImage child, FilteredResourceLocation filter, int iw, int ih) {
         BufferedImage mask = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
         Graphics g2 = mask.getGraphics();
 
@@ -119,12 +104,10 @@ public class TextureProcessor
         target.set(mask);
         pixels.set(image);
 
-        for (int p = 0, c = target.getCount(); p < c; p++)
-        {
+        for (int p = 0, c = target.getCount(); p < c; p++) {
             com.eliotlash.mclib.utils.Color pixel = target.getColor(p);
 
-            if (pixel.a > 0.999F)
-            {
+            if (pixel.a > 0.999F) {
                 pixel = pixels.getColor(p);
                 pixel.a = 0;
                 pixels.setColor(p, pixel);
@@ -135,27 +118,22 @@ public class TextureProcessor
     /**
      * Apply filters
      */
-    private static void processImage(BufferedImage child, FilteredResourceLocation frl)
-    {
+    private static void processImage(BufferedImage child, FilteredResourceLocation frl) {
         pixels.set(child);
 
         com.eliotlash.mclib.utils.Color filter = new com.eliotlash.mclib.utils.Color().set(frl.color);
         com.eliotlash.mclib.utils.Color pixel = new Color();
 
-        for (int i = 0, c = pixels.getCount(); i < c; i++)
-        {
+        for (int i = 0, c = pixels.getCount(); i < c; i++) {
             pixel.copy(pixels.getColor(i));
 
-            if (pixels.hasAlpha())
-            {
-                if (pixel.a <= 0)
-                {
+            if (pixels.hasAlpha()) {
+                if (pixel.a <= 0) {
                     continue;
                 }
             }
 
-            if (frl.pixelate > 1)
-            {
+            if (frl.pixelate > 1) {
                 int x = pixels.toX(i);
                 int y = pixels.toY(i);
                 boolean origin = x % frl.pixelate == 0 && y % frl.pixelate == 0;
@@ -166,8 +144,7 @@ public class TextureProcessor
                 pixel.copy(pixels.getColor(x, y));
                 pixels.setColor(i, pixel);
 
-                if (!origin)
-                {
+                if (!origin) {
                     continue;
                 }
             }

@@ -3,18 +3,14 @@ package software.bernie.geckolib3.particles;
 import net.geckominecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
-public enum  BedrockMaterial
-{
+public enum BedrockMaterial {
     OPAQUE("particles_opaque"), ALPHA("particles_alpha"), BLEND("particles_blend"), ADDITIVE("particles_add");
 
     public final String id;
 
-    public static BedrockMaterial fromString(String material)
-    {
-        for (BedrockMaterial mat : values())
-        {
-            if (mat.id.equals(material))
-            {
+    public static BedrockMaterial fromString(String material) {
+        for (BedrockMaterial mat : values()) {
+            if (mat.id.equals(material)) {
                 return mat;
             }
         }
@@ -22,15 +18,12 @@ public enum  BedrockMaterial
         return OPAQUE;
     }
 
-    private BedrockMaterial(String id)
-    {
+    private BedrockMaterial(String id) {
         this.id = id;
     }
 
-    public void beginGL()
-    {
-        switch (this)
-        {
+    public void beginGL() {
+        switch (this) {
             case OPAQUE:
                 GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
                 GlStateManager.alphaFunc(GL11.GL_GREATER, 0F);
@@ -58,10 +51,8 @@ public enum  BedrockMaterial
         }
     }
 
-    public void endGL()
-    {
-        switch (this)
-        {
+    public void endGL() {
+        switch (this) {
             case OPAQUE:
             case ALPHA:
             case BLEND:
