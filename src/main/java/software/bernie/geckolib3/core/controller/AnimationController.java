@@ -693,10 +693,11 @@ public class AnimationController<T extends IAnimatable> {
         //if (soundListener != null || particleListener != null || customInstructionListener != null) {
         for (EventKeyFrame<String> soundKeyFrame : currentAnimation.soundKeyFrames) {
             if (!this.executedKeyFrames.contains(soundKeyFrame) && tick >= soundKeyFrame.getStartTick()) {
-                SoundKeyframeEvent<T> event = new SoundKeyframeEvent<>(this.animatable, tick,
-                    soundKeyFrame.getEventData(), this);
-                soundListener.playSound(event);
-
+                if (soundListener != null) {
+                    SoundKeyframeEvent<T> event = new SoundKeyframeEvent<>(this.animatable, tick,
+                        soundKeyFrame.getEventData(), this);
+                    soundListener.playSound(event);
+                }
                 this.executedKeyFrames.add(soundKeyFrame);
             }
         }
@@ -718,10 +719,11 @@ public class AnimationController<T extends IAnimatable> {
         for (EventKeyFrame<String> customInstructionKeyFrame : currentAnimation.customInstructionKeyframes) {
             if (!this.executedKeyFrames.contains(customInstructionKeyFrame)
                 && tick >= customInstructionKeyFrame.getStartTick()) {
-                CustomInstructionKeyframeEvent<T> event = new CustomInstructionKeyframeEvent<>(this.animatable,
-                    tick, customInstructionKeyFrame.getEventData(), this);
-                customInstructionListener.executeInstruction(event);
-
+                if (customInstructionListener != null) {
+                    CustomInstructionKeyframeEvent<T> event = new CustomInstructionKeyframeEvent<>(this.animatable,
+                        tick, customInstructionKeyFrame.getEventData(), this);
+                    customInstructionListener.executeInstruction(event);
+                }
                 this.executedKeyFrames.add(customInstructionKeyFrame);
             }
         }
