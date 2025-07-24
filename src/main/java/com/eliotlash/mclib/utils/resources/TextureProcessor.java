@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
+import software.bernie.example.config.ConfigHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -42,7 +43,9 @@ public class TextureProcessor {
                 w = Math.max(w, child.getWidth(image.getWidth()));
                 h = Math.max(h, child.getHeight(image.getHeight()));
             } catch (Exception e) {
-                e.printStackTrace();
+                if (ConfigHandler.debugPrintStacktraces) {
+                    e.printStackTrace();
+                }
             }
 
             images.add(image);

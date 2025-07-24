@@ -16,6 +16,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.AnimationUtils;
+import software.bernie.example.config.ConfigHandler;
 
 import java.util.Collections;
 
@@ -41,6 +42,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Rend
     @Override
     public void doRender(Entity entity, double x, double y, double z, float entityYaw, float partialTicks) {
         GlStateManager.pushMatrix();
+        try {
         GeoModel model = modelProvider.getModel(modelProvider.getModelLocation((T) entity));
         GlStateManager.rotate(
             entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks - 90.0F, 0.0F,
@@ -58,6 +60,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Rend
             ((IAnimatableModel<T>) modelProvider).setLivingAnimations((T) entity, this.getUniqueID(entity), predicate);
         }
         GlStateManager.pushMatrix();
+        try {
         Minecraft.getMinecraft().renderEngine.bindTexture(getTextureLocation(entity));
         Color renderColor = getRenderColor((T) entity, partialTicks);
 
@@ -65,8 +68,20 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Rend
             render(model, (T) entity, partialTicks, (float) renderColor.getRed() / 255f,
                 (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
                 (float) renderColor.getAlpha() / 255);
-        GlStateManager.popMatrix();
-        GlStateManager.popMatrix();
+        } catch (Exception e) {
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
+        } finally {
+            GlStateManager.popMatrix();
+        }
+        } catch (Exception e) {
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
+        } finally {
+            GlStateManager.popMatrix();
+        }
     }
 
     @Override

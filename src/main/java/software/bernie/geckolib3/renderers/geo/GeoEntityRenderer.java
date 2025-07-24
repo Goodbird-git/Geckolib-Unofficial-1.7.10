@@ -18,6 +18,7 @@ import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.example.config.ConfigHandler;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -58,7 +59,8 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
         if (!(entityObj instanceof EntityLivingBase)) return;
         EntityLivingBase entity = (EntityLivingBase) entityObj;
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, z);
+        try {
+            GlStateManager.translate(x, y, z);
         // TODO: entity.isPassenger() looks redundant here
         boolean shouldSit = /* entity.isPassenger() && */ (entity.ridingEntity != null
             && entity.ridingEntity.shouldRiderSit());
@@ -104,7 +106,8 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
         }
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(0, 0.01f, 0);
+        try {
+            GlStateManager.translate(0, 0.01f, 0);
         Minecraft.getMinecraft().renderEngine.bindTexture(getEntityTexture(entity));
         Color renderColor = getRenderColor((T) entity, partialTicks);
 
@@ -132,8 +135,20 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
             RenderHurtColor.unset();
         }
 
-        GlStateManager.popMatrix();
-        GlStateManager.popMatrix();
+        } catch (Exception e) {
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
+        } finally {
+            GlStateManager.popMatrix();
+        }
+        } catch (Exception e) {
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
+        } finally {
+            GlStateManager.popMatrix();
+        }
     }
 
     public Pair<Float, Float> calculateRotations(EntityLivingBase entity, float partialTicks, boolean shouldSit) {

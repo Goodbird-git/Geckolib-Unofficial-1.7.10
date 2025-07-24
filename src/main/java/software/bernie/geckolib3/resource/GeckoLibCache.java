@@ -17,6 +17,7 @@ import software.bernie.geckolib3.file.GeoModelLoader;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.molang.MolangRegistrar;
 import software.bernie.geckolib3.particles.BedrockLibrary;
+import software.bernie.example.config.ConfigHandler;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -80,7 +81,9 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
                 try {
                     tempAnimations.put(location, AnimationFileLoader.getInstance().loadAllAnimations(MolangRegistrar.getParser(), location, resourceManager));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    if (ConfigHandler.debugPrintStacktraces) {
+                        e.printStackTrace();
+                    }
                     System.err.println("[GeckoLib] " + "Error loading animation file \"" + location + "\"!" + e);
                 }
             }
@@ -89,7 +92,9 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
                 try {
                     tempModels.put(location, GeoModelLoader.getInstance().loadModel(resourceManager, location));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    if (ConfigHandler.debugPrintStacktraces) {
+                        e.printStackTrace();
+                    }
                     System.err.println("[GeckoLib] " + "Error loading model file \"" + location + "\"!" + e);
                 }
             }
@@ -98,7 +103,9 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
                 try {
                     BedrockLibrary.instance.storeFactory(location);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    if (ConfigHandler.debugPrintStacktraces) {
+                        e.printStackTrace();
+                    }
                     System.err.println("[GeckoLib] " + "Error loading model file \"" + location + "\"!" + e);
                 }
             }

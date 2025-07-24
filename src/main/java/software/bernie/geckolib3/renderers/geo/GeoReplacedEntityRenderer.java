@@ -18,6 +18,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
+import software.bernie.example.config.ConfigHandler;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
@@ -69,7 +70,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
         if (!(entityObj instanceof EntityLivingBase)) return;
         EntityLivingBase entity = (EntityLivingBase) entityObj;
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, z);
+        try {
+            GlStateManager.translate(x, y, z);
 
         // TODO: entity.isPassenger() looks redundant here
         boolean shouldSit = /* entity.isPassenger() && */ (entity.ridingEntity != null
@@ -138,7 +140,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
         }
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(0, 0.01f, 0);
+        try {
+            GlStateManager.translate(0, 0.01f, 0);
         Minecraft.getMinecraft().renderEngine.bindTexture(getEntityTexture(entity));
         Color renderColor = getRenderColor(entity, partialTicks);
 
@@ -159,8 +162,20 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
                 this.renderLeash((EntityLiving) entity, x, y, z, entityYaw, partialTicks);
             }
         }
-        GlStateManager.popMatrix();
-        GlStateManager.popMatrix();
+        } catch (Exception e) {
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
+        } finally {
+            GlStateManager.popMatrix();
+        }
+        } catch (Exception e) {
+            if (ConfigHandler.debugPrintStacktraces) {
+                e.printStackTrace();
+            }
+        } finally {
+            GlStateManager.popMatrix();
+        }
 
         // super.doRender(entity, x, y, z, entityYaw, partialTicks);
     }
