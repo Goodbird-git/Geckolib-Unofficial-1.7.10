@@ -115,6 +115,12 @@ public interface IGeoRenderer<T> {
         MATRIX_STACK.rotate(cube);
         MATRIX_STACK.moveBackFromPivot(cube);
 
+        boolean flat = cube.size.x == 0 || cube.size.y == 0 || cube.size.z == 0;
+        if (flat) {
+            GlStateManager.enablePolygonOffset();
+            GlStateManager.doPolygonOffset(-1.0F, -10.0F);
+        }
+
         for (GeoQuad quad : cube.quads) {
             if (quad == null) continue;
             Vector3f normal = new Vector3f(quad.normal.getX(), quad.normal.getY(), quad.normal.getZ());
@@ -143,6 +149,11 @@ public interface IGeoRenderer<T> {
                 builder.setNormal(normal.x, normal.y, normal.z);
                 builder.addVertexWithUV(vector4f.x, vector4f.y, vector4f.z, vertex.textureU, vertex.textureV);
             }
+        }
+
+        if (flat) {
+            GlStateManager.disablePolygonOffset();
+            GlStateManager.doPolygonOffset(0.0F, 0.0F);
         }
     }
 

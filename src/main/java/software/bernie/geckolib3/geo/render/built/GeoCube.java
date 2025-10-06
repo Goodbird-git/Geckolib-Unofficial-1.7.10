@@ -37,6 +37,10 @@ public class GeoCube implements Serializable {
         cube.mirror = cubeIn.getMirror();
         cube.inflate = cubeIn.getInflate() == null ? (boneInflate == null ? 0 : boneInflate) : cubeIn.getInflate() / 16;
 
+        if (cube.inflate == 0 && (cube.size.x == 0 || cube.size.y == 0 || cube.size.z == 0)) {
+            cube.inflate = 0.001;
+        }
+
         float textureHeight = properties.getTextureHeight().floatValue();
         float textureWidth = properties.getTextureWidth().floatValue();
 
