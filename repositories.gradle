@@ -6,6 +6,4 @@ repositories {
     maven { url "https://cfa2.cursemaven.com" }
     maven { url = 'https://maven.minecraftforge.net/' }
     maven { url  = 'https://plugins.gradle.org/m2/' }
-    jcenter()
-    mavenCentral()
 }
