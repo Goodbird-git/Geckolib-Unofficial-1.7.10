@@ -1,0 +1,71 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    api 'com.eliotlash.molang:molang:19'
+    api 'com.eliotlash.mclib:mclib:19'
+    api 'org.apache.commons:commons-lang3:3.11'
+    
+    // dont shade in, since the root project is already doing that (just use it)
+    api 'com.fasterxml.jackson.core:jackson-databind:2.9.0'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.0'
+}
+
+configurations {
+    runtimeElements {
+        attributes {
+            attribute(Attribute.of("com.gtnewhorizons.retrofuturagradle.obfuscation", String), 'mcp')
+            attribute(Attribute.of("rfgDeobfuscatorTransformed", Boolean), true)
+        }
+    }
+    apiElements {
+        attributes {
+            attribute(Attribute.of("com.gtnewhorizons.retrofuturagradle.obfuscation", String), 'mcp')
+            attribute(Attribute.of("rfgDeobfuscatorTransformed", Boolean), true)
+        }
+    }
+}
+
+def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
+if (snapshotVersion != null) {
+    version = "SNAPSHOT-" + snapshotVersion
+}
+
+jar {
+    from sourceSets.main.allSource
+    
+    manifest {
+        attributes([
+            "FMLModType"              : "LIBRARY",
+            "Specification-Title"     : "geckolib",
+            "Specification-Vendor"    : "geckolib",
+            "Specification-Version"   : "1", // We are version 1 of ourselves
+            "Implementation-Title"    : project.name,
+            "Implementation-Version"  : "${version}",
+            "Implementation-Vendor"   : "geckolib",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ]
+        )
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    archiveClassifier = 'sources'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+        }
+    }
+}
