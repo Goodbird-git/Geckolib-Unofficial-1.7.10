@@ -622,10 +622,7 @@ repositories {
                 artifact()
             }
         }
-        maven {
-            name "MMD Maven"
-            url "https://maven.mcmoddev.com/"
-        }
+        // MMD Maven removed — returned 403, all deps available on GTNH Maven
     }
 }
 
