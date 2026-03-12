@@ -15,6 +15,8 @@ public class NetworkHandler {
         wrapper.registerMessage(PacketRemoveModel.class, PacketRemoveModel.class, 1, Side.CLIENT);
         wrapper.registerMessage(PacketSendAnimation.class, PacketSendAnimation.class, 2, Side.CLIENT);
         wrapper.registerMessage(PacketRemoveAnimation.class, PacketRemoveAnimation.class, 3, Side.CLIENT);
+        wrapper.registerMessage(PacketSendItemDisplay.class, PacketSendItemDisplay.class, 4, Side.CLIENT);
+        wrapper.registerMessage(PacketRemoveItemDisplay.class, PacketRemoveItemDisplay.class, 5, Side.CLIENT);
     }
 
     public static void sendToPlayer(IMessage message, EntityPlayer player) {

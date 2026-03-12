@@ -21,6 +21,7 @@ import software.bernie.geckolib3.handler.PlayerLoginHandler;
 import software.bernie.geckolib3.network.NetworkHandler;
 import software.bernie.geckolib3.particles.BedrockLibrary;
 import software.bernie.geckolib3.resource.AnimationLibrary;
+import software.bernie.geckolib3.resource.ItemDisplayLibrary;
 import software.bernie.geckolib3.resource.ModelLibrary;
 
 import java.io.File;
@@ -34,6 +35,7 @@ public class GeckoLibMod {
     public static BedrockLibrary particleLibraryInstance;
     public static ModelLibrary modelLibraryInstance;
     public static AnimationLibrary animationLibraryInstance;
+    public static ItemDisplayLibrary itemDisplayLibraryInstance;
 
     public static CreativeTabs getGeckolibItemGroup() {
         if (ConfigHandler.enableExamples && geckolibItemGroup == null) {
@@ -72,6 +74,8 @@ public class GeckoLibMod {
         modelLibraryInstance.reload(false);
         animationLibraryInstance = new AnimationLibrary(new File("./animations"));
         animationLibraryInstance.reload(false);
+        itemDisplayLibraryInstance = new ItemDisplayLibrary(new File("./item_displays"));
+        itemDisplayLibraryInstance.reload(false);
 
     }
 

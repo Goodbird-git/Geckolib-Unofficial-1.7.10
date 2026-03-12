@@ -1,0 +1,61 @@
+{
+	"format_version": "1.21.20",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 32,
+				"texture_height": 32,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "sword",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "handle",
+					"parent": "sword",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-0.5, -3, -0.5], "size": [1, 4, 1], "uv": [0, 16]}
+					]
+				},
+				{
+					"name": "pommel",
+					"parent": "handle",
+					"pivot": [0, -3, 0],
+					"cubes": [
+						{"origin": [-1, -4, -1], "size": [2, 1, 2], "uv": [0, 24]}
+					]
+				},
+				{
+					"name": "guard",
+					"parent": "sword",
+					"pivot": [0, 1, 0],
+					"cubes": [
+						{"origin": [-3, 0.5, -0.5], "size": [6, 1, 1], "uv": [0, 12]}
+					]
+				},
+				{
+					"name": "blade",
+					"parent": "sword",
+					"pivot": [0, 1.5, 0],
+					"cubes": [
+						{"origin": [-1, 1.5, -0.5], "size": [2, 12, 1], "uv": [8, 0]}
+					]
+				},
+				{
+					"name": "blade_tip",
+					"parent": "blade",
+					"pivot": [0, 13.5, 0],
+					"cubes": [
+						{"origin": [-0.5, 13.5, -0.5], "size": [1, 2, 1], "uv": [0, 0]}
+					]
+				}
+			]
+		}
+	]
+}

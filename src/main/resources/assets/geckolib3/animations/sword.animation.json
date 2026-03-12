@@ -1,0 +1,66 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.sword.idle": {
+      "loop": true,
+      "animation_length": 2.0,
+      "bones": {
+        "blade": {
+          "rotation": {
+            "0.0": [0, 0, 0],
+            "0.5": [0, 0, 2],
+            "1.0": [0, 0, 0],
+            "1.5": [0, 0, -2],
+            "2.0": [0, 0, 0]
+          }
+        },
+        "blade_tip": {
+          "rotation": {
+            "0.0": [0, 0, 0],
+            "0.25": [0, 0, 0],
+            "0.75": [0, 5, 0],
+            "1.25": [0, 0, 0],
+            "1.75": [0, -5, 0],
+            "2.0": [0, 0, 0]
+          }
+        }
+      }
+    },
+    "animation.sword.swing": {
+      "loop": false,
+      "animation_length": 0.5,
+      "bones": {
+        "sword": {
+          "rotation": {
+            "0.0": [0, 0, 0],
+            "0.1": [0, 0, 45],
+            "0.25": [0, 0, -90],
+            "0.4": [0, 0, -15],
+            "0.5": [0, 0, 0]
+          }
+        }
+      }
+    },
+    "animation.sword.shimmer": {
+      "loop": true,
+      "animation_length": 3.0,
+      "bones": {
+        "sword": {
+          "rotation": {
+            "0.0": [0, 0, 0],
+            "1.5": [0, 360, 0],
+            "3.0": [0, 720, 0]
+          },
+          "position": {
+            "0.0": [0, 0, 0],
+            "0.75": [0, 1, 0],
+            "1.5": [0, 0, 0],
+            "2.25": [0, 1, 0],
+            "3.0": [0, 0, 0]
+          }
+        }
+      }
+    }
+  },
+  "geckolib_format_version": 2
+}

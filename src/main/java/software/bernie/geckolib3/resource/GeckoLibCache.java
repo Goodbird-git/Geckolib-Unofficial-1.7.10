@@ -14,6 +14,8 @@ import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.file.AnimationFile;
 import software.bernie.geckolib3.file.AnimationFileLoader;
 import software.bernie.geckolib3.file.GeoModelLoader;
+import software.bernie.geckolib3.file.ItemDisplayFile;
+import software.bernie.geckolib3.file.ItemDisplayFileLoader;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.molang.MolangRegistrar;
 import software.bernie.geckolib3.particles.BedrockLibrary;
@@ -49,8 +51,16 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
         return geoModels;
     }
 
+    public HashMap<ResourceLocation, ItemDisplayFile> getItemDisplays() {
+        if (!GeckoLib.hasInitialized) {
+            throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
+        }
+        return itemDisplays;
+    }
+
     private HashMap<ResourceLocation, AnimationFile> animations = new HashMap<>();
     private HashMap<ResourceLocation, GeoModel> geoModels = new HashMap<>();
+    private HashMap<ResourceLocation, ItemDisplayFile> itemDisplays = new HashMap<>();
 
 
     protected GeckoLibCache() {
@@ -69,6 +79,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
     public void onResourceManagerReload(IResourceManager resourceManager) {
         HashMap<ResourceLocation, AnimationFile> tempAnimations = new HashMap<>();
         HashMap<ResourceLocation, GeoModel> tempModels = new HashMap<>();
+        HashMap<ResourceLocation, ItemDisplayFile> tempDisplays = new HashMap<>();
         List<IResourcePack> packs = this.getPacks();
 
         if (packs == null) {
@@ -99,6 +110,21 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
                 }
             }
 
+            for (ResourceLocation location : this.getLocations(pack, "item_displays", fileName -> fileName.endsWith(".json"))) {
+                try {
+                    ItemDisplayFile display = ItemDisplayFileLoader.getInstance().loadFromStream(
+                        resourceManager.getResource(location).getInputStream());
+                    if (display != null) {
+                        tempDisplays.put(location, display);
+                    }
+                } catch (Exception e) {
+                    if (ConfigHandler.debugPrintStacktraces) {
+                        e.printStackTrace();
+                    }
+                    System.err.println("[GeckoLib] " + "Error loading item display file \"" + location + "\"!" + e);
+                }
+            }
+
             for (ResourceLocation location : this.getLocations(pack, "particles", fileName -> fileName.endsWith(".json"))) {
                 try {
                     BedrockLibrary.instance.storeFactory(location);
@@ -112,6 +138,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener {
         }
         animations = tempAnimations;
         geoModels = tempModels;
+        itemDisplays = tempDisplays;
         BedrockLibrary.instance.reload();
     }
 

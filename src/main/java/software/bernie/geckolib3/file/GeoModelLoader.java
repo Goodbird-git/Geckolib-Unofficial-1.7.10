@@ -28,8 +28,8 @@ public class GeoModelLoader {
             // flat list
             RawGeoModel rawModel = Converter
                 .fromJsonString(AnimationFileLoader.getResourceAsString(location, resourceManager));
-            if (rawModel.getFormatVersion() != FormatVersion.VERSION_1_12_0) {
-                throw new GeoModelException(location, "Wrong geometry json version, expected 1.12.0");
+            if (rawModel.getFormatVersion() == null) {
+                throw new GeoModelException(location, "Missing geometry json format_version");
             }
 
             // Parse the flat list of bones into a raw hierarchical tree of "BoneGroup"s
@@ -50,8 +50,8 @@ public class GeoModelLoader {
             // flat list
             RawGeoModel rawModel = Converter
                 .fromJsonString(AnimationFileLoader.getResourceAsString(file, location));
-            if (rawModel.getFormatVersion() != FormatVersion.VERSION_1_12_0) {
-                throw new GeoModelException(location, "Wrong geometry json version, expected 1.12.0");
+            if (rawModel.getFormatVersion() == null) {
+                throw new GeoModelException(location, "Missing geometry json format_version");
             }
 
             // Parse the flat list of bones into a raw hierarchical tree of "BoneGroup"s

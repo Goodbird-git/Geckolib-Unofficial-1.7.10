@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.io.IOException;
 
 public enum FormatVersion {
-    VERSION_1_12_0, VERSION_1_14_0;
+    VERSION_1_12_0, VERSION_1_14_0, VERSION_OTHER;
 
     @JsonValue
     public String toValue() {
@@ -15,8 +15,9 @@ public enum FormatVersion {
                 return "1.12.0";
             case VERSION_1_14_0:
                 return "1.14.0";
+            default:
+                return "other";
         }
-        return null;
     }
 
     @JsonCreator
@@ -25,6 +26,7 @@ public enum FormatVersion {
             return VERSION_1_12_0;
         if (value.equals("1.14.0"))
             return VERSION_1_14_0;
-        throw new IOException("Cannot deserialize FormatVersion");
+        // Accept any other version - geometry format is backwards compatible
+        return VERSION_OTHER;
     }
 }
