@@ -81,12 +81,12 @@ public class GeoItemStackRenderer implements IGeoRenderer<AnimatableStackWrapper
 
         GlStateManager.pushMatrix();
         try {
-//            GlStateManager.translate(0, 0.01f, 0);
-//            GlStateManager.translate(0.5, 0.5, 0.5);
+            GlStateManager.translate(0, 0.01f, 0);
+            GlStateManager.translate(0.5, 0.5, 0.5);
 
             Minecraft.getMinecraft().renderEngine.bindTexture(getTextureLocation(wrapper));
             Color renderColor = getRenderColor(wrapper, 0f);
-//            GL11.glRotatef(90, 0, 1, 0);
+            GL11.glRotatef(90, 0, 1, 0);
             render(model, wrapper, 0, (float) renderColor.getRed() / 255f,
                 (float) renderColor.getGreen() / 255f,
                 (float) renderColor.getBlue() / 255f,
