@@ -14,12 +14,13 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 //Our entity will be derived from the EntityCreature class, meaning that it will be a peaceful creature with some simple AI
 //It will also implement IAnimatable and IAnimationTickable interfaces, which are required for something to have a geckolib animated model
 public class GeoExampleEntity extends EntityCreature implements IAnimatable, IAnimationTickable {
     //We create a field for an animation factory - a special storage for all of the animation states for our entity
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
     //The constructor of our class, requires a World instance and uses it for the call of super-constructor
     public GeoExampleEntity(World worldIn) {

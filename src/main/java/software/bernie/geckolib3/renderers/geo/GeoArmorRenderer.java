@@ -23,12 +23,16 @@ import software.bernie.example.config.ConfigHandler;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class GeoArmorRenderer<T extends ItemArmor & IAnimatable> extends ModelBiped
     implements IGeoRenderer<T> {
     private static Map<Class<? extends ItemArmor>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
+    private static Map<Class<? extends ItemArmor>, Supplier<GeoArmorRenderer>> rendererFactories = new ConcurrentHashMap<>();
+    private static Map<Class<? extends ItemArmor>, Map<UUID, GeoArmorRenderer>> perEntityRenderers = new ConcurrentHashMap<>();
 
     static {
         AnimationController.addModelFetcher((IAnimatable object) -> {
@@ -59,8 +63,46 @@ public abstract class GeoArmorRenderer<T extends ItemArmor & IAnimatable> extend
         renderers.put(itemClass, renderer);
     }
 
+    /**
+     * Registers a factory for per-entity armor renderer instances.
+     * When a factory is registered, each entity gets its own renderer instance,
+     * preventing animation state bleed between entities wearing the same armor.
+     */
+    public static void registerArmorRenderer(Class<? extends ItemArmor> itemClass, Supplier<GeoArmorRenderer> factory) {
+        rendererFactories.put(itemClass, factory);
+        // Also register the first instance as the default for model fetcher lookups
+        if (!renderers.containsKey(itemClass)) {
+            renderers.put(itemClass, factory.get());
+        }
+    }
+
     public static GeoArmorRenderer getRenderer(Class<? extends ItemArmor> item) {
         return renderers.get(item);
+    }
+
+    /**
+     * Gets a per-entity renderer instance. If a factory was registered for this armor class,
+     * returns a cached renderer for the given entity (creating one if needed).
+     * Falls back to the shared per-class renderer if no factory is registered.
+     */
+    public static GeoArmorRenderer getRenderer(Class<? extends ItemArmor> item, EntityLivingBase entity) {
+        Supplier<GeoArmorRenderer> factory = rendererFactories.get(item);
+        if (factory != null && entity != null) {
+            Map<UUID, GeoArmorRenderer> entityCache = perEntityRenderers.computeIfAbsent(item, k -> new ConcurrentHashMap<>());
+            return entityCache.computeIfAbsent(entity.getUniqueID(), k -> factory.get());
+        }
+        return renderers.get(item);
+    }
+
+    /**
+     * Removes cached renderer instances for an entity (call on entity death/removal).
+     */
+    public static void removeArmorRendererForEntity(EntityLivingBase entity) {
+        if (entity == null) return;
+        UUID uuid = entity.getUniqueID();
+        for (Map<UUID, GeoArmorRenderer> cache : perEntityRenderers.values()) {
+            cache.remove(uuid);
+        }
     }
 
     private final AnimatedGeoModel<T> modelProvider;

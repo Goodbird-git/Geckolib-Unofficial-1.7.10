@@ -15,6 +15,7 @@ import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.example.entity.GeoExampleEntityLayer;
 import software.bernie.example.entity.GeoNpcEntity;
 import software.bernie.example.item.JackInTheBoxItem;
+import software.bernie.example.item.PistolItem;
 import software.bernie.example.item.PotatoArmorItem;
 import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.ItemRegistry;
@@ -51,6 +52,10 @@ public class CommonListener {
         ItemRegistry.JACK_IN_THE_BOX = new JackInTheBoxItem();
         ItemRegistry.JACK_IN_THE_BOX.setUnlocalizedName("jackintheboxitem");
         GameRegistry.registerItem(ItemRegistry.JACK_IN_THE_BOX, "jackintheboxitem");
+
+        ItemRegistry.PISTOL = new PistolItem();
+        ItemRegistry.PISTOL.setUnlocalizedName("pistol").setTextureName("geckolib3:pistol");
+        GameRegistry.registerItem(ItemRegistry.PISTOL, "pistol");
 
         ItemRegistry.POTATO_HEAD = registerItem(
             new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, 0), "potato_head");

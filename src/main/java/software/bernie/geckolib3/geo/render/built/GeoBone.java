@@ -3,6 +3,9 @@ package software.bernie.geckolib3.geo.render.built;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 
+import javax.vecmath.Matrix3f;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3f;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +26,6 @@ public class GeoBone implements IBone, Serializable {
     public boolean isHidden;
     public boolean areCubesHidden = false;
     public boolean hideChildBonesToo;
-    // I still have no idea what this field does, but its in the json file so
-    // ¯\_(ツ)_/¯
     public Boolean reset;
 
     private float scaleX = 1;
@@ -44,6 +45,27 @@ public class GeoBone implements IBone, Serializable {
     private float rotateZ;
 
     public transient Object extraData;
+
+    private transient Matrix4f modelSpaceXform;
+    private transient Matrix4f localSpaceXform;
+    private transient Matrix4f worldSpaceXform;
+    private transient Matrix3f worldSpaceNormal;
+
+    private transient boolean trackXform;
+    public transient Matrix4f rotMat;
+
+    {
+        modelSpaceXform = new Matrix4f();
+        modelSpaceXform.setIdentity();
+        localSpaceXform = new Matrix4f();
+        localSpaceXform.setIdentity();
+        worldSpaceXform = new Matrix4f();
+        worldSpaceXform.setIdentity();
+        worldSpaceNormal = new Matrix3f();
+        worldSpaceNormal.setIdentity();
+        trackXform = false;
+        rotMat = null;
+    }
 
     @Override
     public void setModelRendererName(String modelRendererName) {
@@ -218,5 +240,151 @@ public class GeoBone implements IBone, Serializable {
     public void setHidden(boolean selfHidden, boolean skipChildRendering) {
         this.isHidden = selfHidden;
         this.hideChildBonesToo = skipChildRendering;
+    }
+
+    // ---- Matrix transform tracking (ported from GeckoLib 1.16) ----
+
+    public GeoBone getParent() {
+        return this.parent;
+    }
+
+    public boolean isTrackingXform() {
+        return trackXform;
+    }
+
+    public void setTrackXform(boolean trackXform) {
+        this.trackXform = trackXform;
+    }
+
+    public Matrix4f getModelSpaceXform() {
+        setTrackXform(true);
+        return modelSpaceXform;
+    }
+
+    public void setModelSpaceXform(Matrix4f xform) {
+        this.modelSpaceXform.set(xform);
+    }
+
+    /**
+     * Gets the position of a bone relative to the model.
+     */
+    public Point3f getModelPosition() {
+        Matrix4f matrix = getModelSpaceXform();
+        float x = matrix.m03;
+        float y = matrix.m13;
+        float z = matrix.m23;
+        return new Point3f(-x * 16f, y * 16f, z * 16f);
+    }
+
+    public Matrix4f getLocalSpaceXform() {
+        setTrackXform(true);
+        return localSpaceXform;
+    }
+
+    public void setLocalSpaceXform(Matrix4f xform) {
+        this.localSpaceXform.set(xform);
+    }
+
+    /**
+     * Gets the position of a bone relative to the entity.
+     */
+    public Point3f getLocalPosition() {
+        Matrix4f matrix = getLocalSpaceXform();
+        return new Point3f(matrix.m03, matrix.m13, matrix.m23);
+    }
+
+    public Matrix4f getWorldSpaceXform() {
+        setTrackXform(true);
+        return worldSpaceXform;
+    }
+
+    public void setWorldSpaceXform(Matrix4f xform) {
+        this.worldSpaceXform.set(xform);
+    }
+
+    public Matrix3f getWorldSpaceNormal() {
+        return worldSpaceNormal;
+    }
+
+    public void setWorldSpaceNormal(Matrix3f normal) {
+        this.worldSpaceNormal.set(normal);
+    }
+
+    /**
+     * Gets the position of a bone relative to the world.
+     */
+    public Point3f getWorldPosition() {
+        Matrix4f matrix = getWorldSpaceXform();
+        return new Point3f(matrix.m03, matrix.m13, matrix.m23);
+    }
+
+    public void setModelPosition(Point3f pos) {
+        GeoBone p = getParent();
+        Matrix4f identity = new Matrix4f();
+        identity.setIdentity();
+        Matrix4f matrix = p == null ? identity : new Matrix4f(p.getModelSpaceXform());
+        matrix.invert();
+        float x = -(pos.x / 16f);
+        float y = pos.y / 16f;
+        float z = pos.z / 16f;
+        // Transform point by inverted parent matrix
+        float rx = matrix.m00 * x + matrix.m01 * y + matrix.m02 * z + matrix.m03;
+        float ry = matrix.m10 * x + matrix.m11 * y + matrix.m12 * z + matrix.m13;
+        float rz = matrix.m20 * x + matrix.m21 * y + matrix.m22 * z + matrix.m23;
+        setPosition(-rx * 16f, ry * 16f, rz * 16f);
+    }
+
+    public Matrix4f getModelRotationMat() {
+        Matrix4f matrix = new Matrix4f(getModelSpaceXform());
+        removeMatrixTranslation(matrix);
+        return matrix;
+    }
+
+    public static void removeMatrixTranslation(Matrix4f matrix) {
+        matrix.m03 = 0;
+        matrix.m13 = 0;
+        matrix.m23 = 0;
+    }
+
+    public void setModelRotationMat(Matrix4f mat) {
+        rotMat = mat;
+    }
+
+    // ---- Convenience position/rotation/scale utilities ----
+
+    public void addPosition(float x, float y, float z) {
+        setPositionX(getPositionX() + x);
+        setPositionY(getPositionY() + y);
+        setPositionZ(getPositionZ() + z);
+    }
+
+    public void setPosition(float x, float y, float z) {
+        setPositionX(x);
+        setPositionY(y);
+        setPositionZ(z);
+    }
+
+    public void addRotation(float x, float y, float z) {
+        setRotationX(getRotationX() + x);
+        setRotationY(getRotationY() + y);
+        setRotationZ(getRotationZ() + z);
+    }
+
+    public void setRotation(float x, float y, float z) {
+        setRotationX(x);
+        setRotationY(y);
+        setRotationZ(z);
+    }
+
+    public void setScale(float x, float y, float z) {
+        setScaleX(x);
+        setScaleY(y);
+        setScaleZ(z);
+    }
+
+    public void addRotationOffsetFromBone(GeoBone source) {
+        setRotationX(getRotationX() + source.getRotationX() - source.getInitialSnapshot().rotationValueX);
+        setRotationY(getRotationY() + source.getRotationY() - source.getInitialSnapshot().rotationValueY);
+        setRotationZ(getRotationZ() + source.getRotationZ() - source.getInitialSnapshot().rotationValueZ);
     }
 }

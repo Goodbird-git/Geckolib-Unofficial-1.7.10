@@ -61,22 +61,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> implements I
     public void renderItem(ItemRenderType var1, ItemStack itemStack, Object... var3) {
         GL11.glPushMatrix();
         try {
-
-            if (var1 == ItemRenderType.INVENTORY) {
-                GL11.glTranslated(-1, -1, 0);
-                GL11.glRotatef(90, 0, 1, 0);
-
-            }
-            if (var1 != ItemRenderType.EQUIPPED_FIRST_PERSON) {
-                GL11.glTranslated(0, -0.5, 0);
-            }
-            if (var1 == ItemRenderType.ENTITY) {
-//            Matrix4f matrix4f;
-//            PositionUtils.setInitialWorldPos();
-//            GL11.glTranslated(2,4.5,-4);
-//            Vector3d vec = PositionUtils.getCurrentRenderPos();
-//            double out=0;
-            }
+            applyRenderTypeTransforms(var1);
             this.render((T) itemStack.getItem(), itemStack);
         } catch (Exception e) {
             if (ConfigHandler.debugPrintStacktraces) {
@@ -84,6 +69,20 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> implements I
             }
         } finally {
             GL11.glPopMatrix();
+        }
+    }
+
+    /**
+     * Applies GL transforms for the given render type.
+     * Override this in subclasses to customize positioning per render context.
+     */
+    protected void applyRenderTypeTransforms(ItemRenderType type) {
+        if (type == ItemRenderType.INVENTORY) {
+            GL11.glTranslated(-1, -1, 0);
+            GL11.glRotatef(90, 0, 1, 0);
+        }
+        if (type != ItemRenderType.EQUIPPED_FIRST_PERSON) {
+            GL11.glTranslated(0, -0.5, 0);
         }
     }
 

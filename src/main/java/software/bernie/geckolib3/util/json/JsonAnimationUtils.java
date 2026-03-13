@@ -14,7 +14,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import software.bernie.geckolib3.core.builder.Animation;
-import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
+import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
 import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
@@ -223,13 +223,7 @@ public class JsonAnimationUtils {
         animation.boneAnimations = new ArrayList();
         JsonElement loop = animationJsonObject.get("loop");
         if (loop != null) {
-            if (loop.getAsString().equals("true")) {
-                animation.loop = EDefaultLoopTypes.LOOP;
-            } else if (loop.getAsString().equals("hold_on_last_frame")) {
-                animation.loop = EDefaultLoopTypes.HOLD_ON_LAST_FRAME;
-            } else {
-                animation.loop = EDefaultLoopTypes.PLAY_ONCE;
-            }
+            animation.loop = ILoopType.fromString(loop.getAsString());
         }
 
         // Handle parsing sound effect keyframes

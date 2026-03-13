@@ -64,6 +64,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
             seekTime = manager.tick;
         }
 
+        codeAnimations(entity, uniqueID, customPredicate);
+
         AnimationEvent<T> predicate;
         if (customPredicate == null) {
             predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false, Collections.emptyList());
@@ -77,6 +79,13 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
             animationProcessor.tickAnimation(entity, uniqueID, seekTime, predicate, MolangRegistrar.getParser(),
                 shouldCrashOnMissing);
         }
+    }
+
+    /**
+     * Override this to set up custom animations that run alongside or instead of
+     * file-based animations. Called every frame during setLivingAnimations.
+     */
+    public void codeAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent<?> customPredicate) {
     }
 
     @Override

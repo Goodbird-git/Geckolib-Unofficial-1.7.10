@@ -5,6 +5,7 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -18,23 +19,31 @@ import java.util.function.BiConsumer;
  * Animation state is keyed by a unique ID derived from the stack's NBT data.
  */
 public class AnimatableStackWrapper implements IAnimatable {
-    private static final AnimationFactory SHARED_FACTORY = new AnimationFactory(new IAnimatable() {
-        @Override
-        public void registerControllers(AnimationData data) {}
-
-        @Override
-        public AnimationFactory getFactory() {
-            return SHARED_FACTORY;
-        }
-    });
-
     private final ItemStack stack;
+    private final AnimationFactory factory;
     private BiConsumer<AnimatableStackWrapper, AnimationData> controllerRegistrar;
     private Object userData;
+    private int ownerEntityId;
+    private int slotIndex;
 
     public AnimatableStackWrapper(ItemStack stack) {
         this.stack = stack;
+        this.factory = GeckoLibUtil.createFactory(this);
     }
+
+    /**
+     * Sets the owner entity ID and slot index for per-instance animation identity.
+     * This ensures identical items in different slots or held by different entities
+     * each get their own animation state.
+     */
+    public AnimatableStackWrapper withIdentity(int ownerEntityId, int slotIndex) {
+        this.ownerEntityId = ownerEntityId;
+        this.slotIndex = slotIndex;
+        return this;
+    }
+
+    public int getOwnerEntityId() { return ownerEntityId; }
+    public int getSlotIndex() { return slotIndex; }
 
     /**
      * Sets a callback that will register animation controllers when animation data is first created.
@@ -73,7 +82,7 @@ public class AnimatableStackWrapper implements IAnimatable {
 
     @Override
     public AnimationFactory getFactory() {
-        return SHARED_FACTORY;
+        return factory;
     }
 
     /**
@@ -84,7 +93,9 @@ public class AnimatableStackWrapper implements IAnimatable {
         return Objects.hash(
             stack.getItem(),
             stack.getItemDamage(),
-            stack.hasTagCompound() ? stack.getTagCompound().toString() : 0
+            stack.hasTagCompound() ? stack.getTagCompound().toString() : 0,
+            ownerEntityId,
+            slotIndex
         );
     }
 

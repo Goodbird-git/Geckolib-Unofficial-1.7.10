@@ -5,8 +5,8 @@ import java.util.HashMap;
 import software.bernie.geckolib3.core.IAnimatable;
 
 public class AnimationFactory {
-	private final IAnimatable animatable;
-	private HashMap<Integer, AnimationData> animationDataMap = new HashMap<>();
+	protected final IAnimatable animatable;
+	private final HashMap<Integer, AnimationData> animationDataMap = new HashMap<>();
 
 	public AnimationFactory(IAnimatable animatable) {
 		this.animatable = animatable;
@@ -22,12 +22,20 @@ public class AnimationFactory {
 	 *                 will be returned.
 	 * @return the animatable manager
 	 */
-	public AnimationData getOrCreateAnimationData(Integer uniqueID) {
-		if (!animationDataMap.containsKey(uniqueID)) {
+	public AnimationData getOrCreateAnimationData(int uniqueID) {
+		if (!this.animationDataMap.containsKey(uniqueID)) {
 			AnimationData data = new AnimationData();
-			animatable.registerControllers(data);
-			animationDataMap.put(uniqueID, data);
+			this.animatable.registerControllers(data);
+			this.animationDataMap.put(uniqueID, data);
 		}
-		return animationDataMap.get(uniqueID);
+		return this.animationDataMap.get(uniqueID);
+	}
+
+	/**
+	 * @deprecated Use {@link AnimationFactory#getOrCreateAnimationData(int)}
+	 */
+	@Deprecated
+	public AnimationData getOrCreateAnimationData(Integer uniqueID) {
+		return getOrCreateAnimationData((int) uniqueID);
 	}
 }

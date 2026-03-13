@@ -27,10 +27,12 @@ import java.util.Collections;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class GeoItemStackRenderer implements IGeoRenderer<AnimatableStackWrapper> {
+    private static AnimatedGeoModel<AnimatableStackWrapper> activeModelProvider;
+
     static {
         AnimationController.addModelFetcher((IAnimatable object) -> {
-            if (object instanceof AnimatableStackWrapper) {
-                return null; // Animation is managed externally via the wrapper
+            if (object instanceof AnimatableStackWrapper && activeModelProvider != null) {
+                return (IAnimatableModel) activeModelProvider;
             }
             return null;
         });
@@ -63,6 +65,7 @@ public class GeoItemStackRenderer implements IGeoRenderer<AnimatableStackWrapper
     public void render(AnimatableStackWrapper wrapper, ItemStack itemStack) {
         this.currentWrapper = wrapper;
         this.currentItemStack = itemStack;
+        activeModelProvider = this.modelProvider;
 
         GeoModel model;
         try {

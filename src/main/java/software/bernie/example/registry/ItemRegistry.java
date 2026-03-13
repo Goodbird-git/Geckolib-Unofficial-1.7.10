@@ -2,10 +2,12 @@ package software.bernie.example.registry;
 
 import net.minecraft.item.Item;
 import software.bernie.example.item.JackInTheBoxItem;
+import software.bernie.example.item.PistolItem;
 import software.bernie.example.item.PotatoArmorItem;
 
 public class ItemRegistry {
     public static JackInTheBoxItem JACK_IN_THE_BOX;
+    public static PistolItem PISTOL;
 
     public static PotatoArmorItem POTATO_HEAD;
     public static PotatoArmorItem POTATO_CHEST;

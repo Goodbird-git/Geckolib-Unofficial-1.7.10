@@ -10,10 +10,11 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.item.GeoArmorItem;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 //This is an example of animated armor. Make sure to read the comments thoroughly and also check out PotatoArmorRenderer.
 public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
-    private AnimationFactory factory = new AnimationFactory(this);
+    private AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
     public PotatoArmorItem(ArmorMaterial materialIn, int renderIndexIn, int slot) {
         super(materialIn, renderIndexIn, slot);

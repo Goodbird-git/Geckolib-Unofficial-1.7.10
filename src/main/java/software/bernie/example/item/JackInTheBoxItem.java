@@ -17,7 +17,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class JackInTheBoxItem extends Item implements IAnimatable {
-    public AnimationFactory factory = new AnimationFactory(this);
+    public AnimationFactory factory = GeckoLibUtil.createFactory(this);
     private String controllerName = "popupController";
 
     private <P extends Item & IAnimatable> PlayState predicate(AnimationEvent<P> event) {

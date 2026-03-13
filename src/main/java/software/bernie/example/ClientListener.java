@@ -22,6 +22,7 @@ import software.bernie.example.client.renderer.entity.GeoNpcRenderer;
 import software.bernie.example.client.renderer.entity.LERenderer;
 import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
+import software.bernie.example.client.renderer.item.PistolRender;
 import software.bernie.example.client.renderer.tile.BotariumTileRenderer;
 import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
 import software.bernie.example.entity.BikeEntity;
@@ -52,6 +53,7 @@ public class ClientListener {
         //bindRender(BlockRegistry.DIAGONAL_BLOCK, new DiagonalTileEntity(), new DiagonalTileRenderer());
 
         MinecraftForgeClient.registerItemRenderer(ItemRegistry.JACK_IN_THE_BOX, new JackInTheBoxRenderer());
+        MinecraftForgeClient.registerItemRenderer(ItemRegistry.PISTOL, new PistolRender());
     }
 
     public static void bindRender(Block block, TileEntity tile, TileEntitySpecialRenderer tesr) {

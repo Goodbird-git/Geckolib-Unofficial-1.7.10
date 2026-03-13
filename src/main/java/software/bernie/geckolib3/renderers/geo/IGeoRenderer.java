@@ -79,6 +79,23 @@ public interface IGeoRenderer<T> {
         MATRIX_STACK.scale(bone);
         MATRIX_STACK.moveBackFromPivot(bone);
 
+        // Populate bone transform matrices for bones that are tracking transforms
+        if (bone.isTrackingXform()) {
+            bone.setModelSpaceXform(MATRIX_STACK.getModelMatrix());
+
+            // Local space is relative to the parent bone
+            GeoBone parent = bone.getParent();
+            if (parent != null && parent.isTrackingXform()) {
+                Matrix4f inverseParent = new Matrix4f(parent.getModelSpaceXform());
+                inverseParent.invert();
+                Matrix4f localXform = new Matrix4f(inverseParent);
+                localXform.mul(MATRIX_STACK.getModelMatrix());
+                bone.setLocalSpaceXform(localXform);
+            } else {
+                bone.setLocalSpaceXform(MATRIX_STACK.getModelMatrix());
+            }
+        }
+
         if (isBoneRenderOverriden(animatable, bone)) {
             drawOverridenBone(animatable, bone);
             MATRIX_STACK.pop();
@@ -171,6 +188,14 @@ public interface IGeoRenderer<T> {
     GeoModelProvider getGeoModelProvider();
 
     ResourceLocation getTextureLocation(T instance);
+
+    default float getWidthScale(T animatable) {
+        return 1F;
+    }
+
+    default float getHeightScale(T animatable) {
+        return 1F;
+    }
 
     default void renderEarly(GeoModel model, T animatable, float ticks, float red, float green, float blue, float alpha) {
     }

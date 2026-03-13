@@ -5,12 +5,14 @@
 
 package software.bernie.geckolib3.core.builder;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
-import org.apache.commons.lang3.SerializationUtils;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
 import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
@@ -28,23 +30,25 @@ public class Animation implements Serializable {
 
     public Animation() {
         this.loop = EDefaultLoopTypes.LOOP;
-        this.soundKeyFrames = new ArrayList();
-        this.particleKeyFrames = new ArrayList();
-        this.customInstructionKeyframes = new ArrayList();
+        this.soundKeyFrames = new ArrayList<>();
+        this.particleKeyFrames = new ArrayList<>();
+        this.customInstructionKeyframes = new ArrayList<>();
     }
 
+    /**
+     * Deep copies an animation via serialization.
+     */
     public static Animation copy(Animation animation) {
         try {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-            objectOutputStream.writeObject(animation);
-            objectOutputStream.flush();
-            String serialized = Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(animation);
+            oos.flush();
+            oos.close();
 
-            byte[] data = Base64.getDecoder().decode(serialized);
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
-            ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-            return (Animation) objectInputStream.readObject();
+            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            return (Animation) ois.readObject();
         } catch (Exception e) {
             return animation;
         }
