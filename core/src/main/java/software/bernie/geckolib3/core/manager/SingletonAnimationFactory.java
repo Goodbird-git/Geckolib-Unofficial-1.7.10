@@ -24,4 +24,14 @@ public class SingletonAnimationFactory extends AnimationFactory {
 		}
 		return this.animationDataMap.get(uniqueID);
 	}
+
+	@Override
+	public AnimationData getOrCreateAnimationData(int uniqueID, IAnimatable registrant) {
+		if (!this.animationDataMap.containsKey(uniqueID)) {
+			AnimationData data = new AnimationData();
+			registrant.registerControllers(data);
+			this.animationDataMap.put(uniqueID, data);
+		}
+		return this.animationDataMap.get(uniqueID);
+	}
 }

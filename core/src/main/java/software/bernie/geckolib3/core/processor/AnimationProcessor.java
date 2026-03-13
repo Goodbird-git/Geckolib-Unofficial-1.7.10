@@ -34,7 +34,7 @@ public class AnimationProcessor<T extends IAnimatable> {
 
 	public void tickAnimation(IAnimatable entity, Integer uniqueID, double seekTime, AnimationEvent event,
 			MolangParser parser, boolean crashWhenCantFindBone) {
-        if(seekTime!=animatedEntities.getOrDefault(uniqueID, 0.0)){
+        if(seekTime!=animatedEntities.getOrDefault(uniqueID, Double.MIN_VALUE)){
             animatedEntities.put(uniqueID, seekTime);
         }else {
             return;

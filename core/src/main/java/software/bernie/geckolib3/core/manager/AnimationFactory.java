@@ -32,6 +32,25 @@ public class AnimationFactory {
 	}
 
 	/**
+	 * Creates or gets cached animation data, using the specified registrant
+	 * to register controllers instead of the factory's stored animatable.
+	 * This allows a shared factory to serve multiple wrapper instances,
+	 * each registering their own controllers when their ID is first seen.
+	 *
+	 * @param uniqueID   A unique integer ID
+	 * @param registrant The IAnimatable that should register controllers for new entries
+	 * @return the animatable manager
+	 */
+	public AnimationData getOrCreateAnimationData(int uniqueID, IAnimatable registrant) {
+		if (!this.animationDataMap.containsKey(uniqueID)) {
+			AnimationData data = new AnimationData();
+			registrant.registerControllers(data);
+			this.animationDataMap.put(uniqueID, data);
+		}
+		return this.animationDataMap.get(uniqueID);
+	}
+
+	/**
 	 * @deprecated Use {@link AnimationFactory#getOrCreateAnimationData(int)}
 	 */
 	@Deprecated

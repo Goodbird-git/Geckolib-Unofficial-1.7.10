@@ -2,12 +2,10 @@ package software.bernie.geckolib3.item;
 
 import net.minecraft.item.ItemStack;
 import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
@@ -15,35 +13,19 @@ import java.util.function.BiConsumer;
  * to implement IAnimatable. This is useful for dynamic items like CustomNPC+ scripted/linked items
  * where the model, texture, and animation are defined per-stack via NBT rather than per-Item class.
  *
- * Each wrapper holds a reference to the ItemStack and provides its own AnimationFactory.
- * Animation state is keyed by a unique ID derived from the stack's NBT data.
+ * Uses a shared external AnimationFactory (following the wiki's singleton pattern)
+ * and stable GeckoLibID-based unique IDs for animation state isolation.
  */
 public class AnimatableStackWrapper implements IAnimatable {
-    private final ItemStack stack;
+    private ItemStack stack;
     private final AnimationFactory factory;
     private BiConsumer<AnimatableStackWrapper, AnimationData> controllerRegistrar;
     private Object userData;
-    private int ownerEntityId;
-    private int slotIndex;
 
-    public AnimatableStackWrapper(ItemStack stack) {
+    public AnimatableStackWrapper(ItemStack stack, AnimationFactory sharedFactory) {
         this.stack = stack;
-        this.factory = GeckoLibUtil.createFactory(this);
+        this.factory = sharedFactory;
     }
-
-    /**
-     * Sets the owner entity ID and slot index for per-instance animation identity.
-     * This ensures identical items in different slots or held by different entities
-     * each get their own animation state.
-     */
-    public AnimatableStackWrapper withIdentity(int ownerEntityId, int slotIndex) {
-        this.ownerEntityId = ownerEntityId;
-        this.slotIndex = slotIndex;
-        return this;
-    }
-
-    public int getOwnerEntityId() { return ownerEntityId; }
-    public int getSlotIndex() { return slotIndex; }
 
     /**
      * Sets a callback that will register animation controllers when animation data is first created.
@@ -62,15 +44,21 @@ public class AnimatableStackWrapper implements IAnimatable {
         return this;
     }
 
-    /**
-     * Gets the attached user data, or null if none was set.
-     */
     public Object getUserData() {
         return userData;
     }
 
     public ItemStack getStack() {
         return stack;
+    }
+
+    /**
+     * Updates the underlying ItemStack reference without creating a new wrapper.
+     * This preserves the controller's {@code this.animatable} reference, preventing
+     * stale wrapper issues when the ItemStack is recreated (e.g., inventory sync).
+     */
+    public void setStack(ItemStack stack) {
+        this.stack = stack;
     }
 
     @Override
@@ -86,23 +74,18 @@ public class AnimatableStackWrapper implements IAnimatable {
     }
 
     /**
-     * Generates a unique ID for this stack based on its NBT data.
-     * This ensures each unique item configuration gets its own animation state.
+     * Returns the stable unique ID for this stack, using GeckoLib's built-in ID system.
+     * If the stack has a GeckoLibID NBT tag (assigned by guaranteeIDForStack on the server),
+     * that stable ID is returned. Otherwise falls back to a hash of the item class.
      */
     public int getUniqueId() {
-        return Objects.hash(
-            stack.getItem(),
-            stack.getItemDamage(),
-            stack.hasTagCompound() ? stack.getTagCompound().toString() : 0,
-            ownerEntityId,
-            slotIndex
-        );
+        return GeckoLibUtil.getIDFromStack(stack);
     }
 
     /**
-     * Wraps an ItemStack for use with GeoItemStackRenderer.
+     * Wraps an ItemStack for use with a shared factory.
      */
-    public static AnimatableStackWrapper of(ItemStack stack) {
-        return new AnimatableStackWrapper(stack);
+    public static AnimatableStackWrapper of(ItemStack stack, AnimationFactory sharedFactory) {
+        return new AnimatableStackWrapper(stack, sharedFactory);
     }
 }
